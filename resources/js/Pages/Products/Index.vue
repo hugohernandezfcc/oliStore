@@ -4,11 +4,9 @@ import $ from 'jquery';
 import "datatables.net-responsive-dt/css/responsive.dataTables.min.css"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 import 'datatables.net-responsive-bs5';
-import JsZip from 'JsZip';
 import 'datatables.net-select';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-window.JsZip = JsZip;
 
 
 export default{
