@@ -12,7 +12,18 @@ export default{
         products: Array
     },
     methods:{
+        destroy(){
+            if(confirm('¿Deseas eliminar '+this.selectedProducts+' productos seleccionados?')){
+                for (let index = 0; index < this.products.length; index++) {
+                    const element = this.products[index];
+                    this.$inertia.delete(this.route('products.destroy', element.id));
+                }
 
+                setTimeout(()=>{
+                    location.reload();
+                },(this.products.length*1000));
+            }
+        }
     },
     data(){
         return {
@@ -41,9 +52,14 @@ export default{
                     </inertia-link>
                     
                 </div>
-                <div class="lg:basis-1/6 m-1">
-                    {{selectedProducts}} productos seleccionados
+
+                <div class="lg:basis-1/6 m-1" >
+                    <PrimaryButton  @click.prevent="destroy">
+                        eliminar {{selectedProducts}} productos seleccionados
+                    </PrimaryButton>
                 </div>
+
+                
             <!-- </div> -->
 
     </section>
