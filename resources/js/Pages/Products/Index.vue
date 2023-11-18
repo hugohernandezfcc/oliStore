@@ -7,32 +7,46 @@ import 'datatables.net-responsive-bs5';
 import 'datatables.net-select';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import Footer from '@/Components/Footer.vue';
+
 
 
 export default{
     components:{
-        AppLayout, PrimaryButton, SecondaryButton
+        AppLayout, PrimaryButton, SecondaryButton, Footer
     },
     props:{
         products: Array
+        
 
     },
     methods:{
-        onRowClick(event){
-            window.location.href = route('products.create') 
+        onRowClick(){
+            let rowCollectionSelected = new Array();
+            this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
+                rowCollectionSelected.push(recordSelected);
+            } );
+
+            this.rowCollectionSelected = rowCollectionSelected;
+            console.log(this.rowCollectionSelected);
         }
+
     },
     data(){
         return {
-            dt: null
+            rowCollectionSelected: new Array(),
+            dt: null,
+            
         }
     },
     mounted(){
         this.dt = $('#datatable').DataTable();
+        this.dt.on( 'select', () => this.onRowClick())
+        this.dt.on( 'deselect', () => this.onRowClick())
+        
+        console.log(this.rowCollectionSelected.length);
     }
 }
-
-
 
 </script>
 
@@ -50,20 +64,11 @@ export default{
         </div>
         <div class="shadow bg-white md:rounded-md p-4 m-4">
             
-            <div class="flex flex-wrap">
-                <div class="m-1">
-                    <SecondaryButton @click="selectedRecords">
-                        + Agregar Inventario
-                    </SecondaryButton>
-                </div>
-                <div class="m-1">
-                    <inertia-link :href="route('products.create')"> 
-                        <PrimaryButton >
-                            Crear Producto 
-                        </PrimaryButton>
-                    </inertia-link>
-                </div>
-            </div>
+            <inertia-link :href="route('products.create')" class="m-1"> 
+                <PrimaryButton >
+                    Crear Producto 
+                </PrimaryButton>
+            </inertia-link> 
             
 
             <br/>
@@ -89,6 +94,7 @@ export default{
                 }"
                 
                 :columns="[
+                    {data:'id'},
                     {data:'name'},
                     {data:'folio'},
                     {data:'Description'},
@@ -97,17 +103,11 @@ export default{
                     {data:'profit_percentage'},
                     {data:'expiry_date'},
                     {data:'created_by_id'},
-                    {data:'updated_at'},
-                    {
-                        data: 'id', render:function(data,type,row,meta) {
-                            let detalle = '<a href=\'/products/show/'+data+'\' class=\'m-1 inline-flex items-center px-2 py-1 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150\' >Detalle</a>';
-                            let deleteButton = '<a href=\'/products/delete/'+data+'\' class=\'m-1 inline-flex items-center px-2 py-1 bg-red-600 border border-gray-300 rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-sm hover:bg-red-800 focus:outline-none focus:ring-2 focus:bg-red-900 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150\' >Eliminar</a>';
-                            return detalle + '    ' + deleteButton;
-                        }
-                    }
+                    {data:'updated_at'}
             ]">
                 <thead>
                     <tr>
+                        <th> ID DB </th>
                         <th>NOMBRE PRODUCTO</th>
                         <th>CODIGO DE BARRAS</th>
                         <th>DESCRIPCION</th>
@@ -117,11 +117,15 @@ export default{
                         <th>FECHA DE CADUCIDAD</th>
                         <th>CREADO POR</th>
                         <th>ULTIMA ACTUALIZACIÓN</th>
-                        <th> </th>
                     </tr>
                 </thead>
             </DataTable>
 
         </div>
     </AppLayout>
+    <Footer 
+        :selectedProducts="rowCollectionSelected.length" 
+        :products="rowCollectionSelected"
+        :product="(rowCollectionSelected.length > 0) ? rowCollectionSelected[0] : null"
+        v-if="rowCollectionSelected.length > 0"/>
 </template>

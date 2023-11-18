@@ -4,10 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DNS1D;
 
 class Product extends Model
 {
     use HasFactory;
+
+    //Add extra attribute
+
+
+    //Make it available in the json response
+    protected $appends = ['bar_code'];
+
     protected $fillable = [
         'name',
         'folio',
@@ -35,5 +43,12 @@ class Product extends Model
     public function editedBy()
     {
         return $this->belongsTo(User::class, 'edited_by_id');
+    }
+
+    //implement the attribute
+    public function getBarCodeAttribute()
+    {
+
+        return DNS1D::getBarcodeHTML($this->folio, 'EAN13');
     }
 }

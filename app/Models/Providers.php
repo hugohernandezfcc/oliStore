@@ -21,6 +21,11 @@ class Provider extends Model
         'store_id',
     ];
 
+    protected $casts = [
+        'created_at'  => 'datetime:Y-m-d H:i',
+        'updated_at' => 'datetime:Y-m-d H:i'
+    ];
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by_id');
