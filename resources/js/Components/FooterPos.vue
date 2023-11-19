@@ -2,16 +2,18 @@
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SecondaryButtonPay from '@/Components/SecondaryButtonPay.vue';
+import axios from 'axios';
 
 export default{
     components:{
-         PrimaryButton, SecondaryButtonPay
+         PrimaryButton, SecondaryButtonPay, axios
     },
     props:{
         selectedProducts: Number,
         sale: Object,
         products: Array,
         total: Number
+        
     },
     methods:{
         destroy(){
@@ -20,7 +22,7 @@ export default{
             }
         },
         pay(){
-            console.log(this.sale);
+            this.$inertia.post(this.route('sales.store', this.sale));
         }
     },
     data(){

@@ -18,8 +18,6 @@ class SalesController extends Controller
     {
         $Sales = Sales::get();
 
-        
-
         return Inertia::render('Sales/Index', [
             'Sales' => $Sales,
             'Sale' => []
@@ -27,7 +25,7 @@ class SalesController extends Controller
     }
     
     public function retrieveProduct(String $folio){
-        return Product::where('folio', '7506195196984')->get();
+        return Product::where('folio', $folio)->get();
     }
 
 
@@ -45,14 +43,27 @@ class SalesController extends Controller
      */
     public function store(Request $request)
     {
-  
-        $request->merge([
+ 
+        $sale = Sales::create([
+            'payment_method' => $request->get('payment_method'),
+            'delivery_method' => $request->get('delivery_method'),
+            'status' => $request->get('status'),
+            'no_products' => $request->get('no_products'),
+            'note' => $request->get('note'),
+            'store' => $request->get('store'),
+            'inbound_amount' => $request->get('inbound_amount'),
+            'outbound_amount' => $request->get('outbound_amount'),
+            'subtotal' => $request->get('total'),
+            'total' => $request->get('total'),
+            'closed' => true,
             'created_by_id' => Auth::id(),
             'edited_by_id' => Auth::id()
         ]);
 
-        Sales::create($request->all());
-        return redirect()->route('products.index');
+        $request->get('payment_method')
+
+
+        return response()->json([$sale]);
     }
 
     /**

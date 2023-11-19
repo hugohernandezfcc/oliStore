@@ -38,10 +38,12 @@ Route::resource('products', App\Http\Controllers\ProductController::class )
 Route::resource('sales', App\Http\Controllers\SalesController::class )
     ->middleware('auth:sanctum');
 
-Route::get(
-    '/sales/retrieveproduct/{folio}', 
-    [App\Http\Controllers\SalesController::class, 
-    'retrieveProduct']
-);
+    Route::get(
+        '/sales/retrieveproduct/{folio}', 
+        [App\Http\Controllers\SalesController::class, 
+        'retrieveProduct']
+    );
+
+    
 
 

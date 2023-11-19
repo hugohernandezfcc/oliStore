@@ -28,7 +28,8 @@ export default{
         PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner
     },
     props:{
-        sale: Object
+        sale: Object,
+        Sales: Array,
         
     },
     data(){
@@ -45,7 +46,7 @@ export default{
                 outbound_amount: '',
                 subtotal: 0,
                 total: 0,
-                closed: '',
+                closed: true,
                 productosRelacionados: []
             },
             realtime: {
@@ -142,7 +143,13 @@ export default{
                                     <td>{{ productsAdded.length }} </td>
                                 </tr>
                             </table>
-                            
+                            <br/>
+                            <b class="grid grid-cols-1 divide-y hidden md:block"> HISTORIAL DE VENTA </b>
+                            <div class="grid grid-cols-1 divide-y hidden md:block" v-for="item in Sales">
+                                <div># Prod: {{ item.no_products }} | $ {{ item.total }} | {{ item.created_at }} </div>
+                            </div>
+
+    
                         </div>
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
