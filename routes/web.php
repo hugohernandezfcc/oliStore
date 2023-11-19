@@ -35,4 +35,13 @@ Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified'
 Route::resource('products', App\Http\Controllers\ProductController::class )
     ->middleware('auth:sanctum');
 
+Route::resource('sales', App\Http\Controllers\SalesController::class )
+    ->middleware('auth:sanctum');
+
+Route::get(
+    '/sales/retrieveproduct/{folio}', 
+    [App\Http\Controllers\SalesController::class, 
+    'retrieveProduct']
+);
+
 

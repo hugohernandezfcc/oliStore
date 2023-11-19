@@ -45,7 +45,7 @@ export default{
 
 
 
-</script>
+</script> 
 
 <template>
     <AppLayout title="Profile">

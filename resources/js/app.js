@@ -7,6 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import DataTablesLib from 'datatables.net'; 
 import DataTable from 'datatables.net-vue3';
+import axios from 'axios'
  
 DataTable.use(DataTablesLib);
 

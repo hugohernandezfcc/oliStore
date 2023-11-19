@@ -48,8 +48,8 @@ const logout = () => {
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                <NavLink :href="route('sales.index')" :active="route().current('sales.index')">
+                                    Ventas
                                 </NavLink>
                                 <NavLink :href="route('products.index')" :active="route().current('products')">
                                     Products
@@ -195,8 +195,8 @@ const logout = () => {
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
+                        <ResponsiveNavLink :href="route('sales.index')" :active="route().current('sales.index')">
+                            Ventas
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('products.index')" :active="route().current('products')">
                             Products

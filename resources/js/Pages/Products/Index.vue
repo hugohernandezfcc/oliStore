@@ -45,6 +45,7 @@ export default{
         this.dt.on( 'deselect', () => this.onRowClick())
         
         console.log(this.rowCollectionSelected.length);
+        console.log(this.products);
     }
 }
 
