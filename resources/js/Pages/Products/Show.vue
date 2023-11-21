@@ -21,10 +21,7 @@ import { HollowDotsSpinner } from 'epic-spinners'
 
 export default{
     components:{
-        AppLayout,
-        InputLabel,
-        TextInput,
-        PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner
+        AppLayout, InputLabel, TextInput, PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner
     },
     props:{
         product: Object
@@ -187,7 +184,6 @@ export default{
                                         search:'Buscar Producto ', zeroRecords:'No hay registros'
                                     }
                                 }"
-                                
                                 :columns="[
                                     {data:'idVenta'},
                                     {data:'payment_method'},
@@ -197,7 +193,7 @@ export default{
                             ]">
                                 <thead>
                                     <tr>
-                                        <th> ID DB </th>
+                                        <th>ID DB </th>
                                         <th>MÉTODO DE PAGO</th>
                                         <th>TIENDA</th>
                                         <th>TOTAL DE ESA COMPRA</th>
