@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sales;
 use App\Models\Product;
+use App\Models\ProductLineItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -16,11 +17,19 @@ class SalesController extends Controller
      */
     public function index()
     {
-        $Sales = Sales::get();
+        $Sales = Sales::whereDay('created_at', now()->day)->get();
+        $summary = new \stdClass();
+        $summary->total = 0;
+        $summary->no_products = 0;
+        for ($i=0; $i < count($Sales) ; $i++) { 
+            $summary->total = $summary->total+ $Sales[$i]->total;
+            $summary->no_products = $summary->no_products + $Sales[$i]->no_products;
+        }
 
         return Inertia::render('Sales/Index', [
             'Sales' => $Sales,
-            'Sale' => []
+            'Sale' => [],
+            'results' => $summary
         ]);
     }
     
@@ -60,10 +69,25 @@ class SalesController extends Controller
             'edited_by_id' => Auth::id()
         ]);
 
-        $request->get('payment_method')
+        $prodLineRelacionados = $request->get('productosRelacionados');
+        $prodLineRelacionadosArray = array();
+        for ($i=0; $i < count($prodLineRelacionados); $i++) { 
+            $ProductLineItem = ProductLineItem::create([
+                'sale_id' => $sale->id,
+                'product_id' => $prodLineRelacionados[$i]['id'],
+                'created_by_id' => Auth::id(),
+                'edited_by_id' => Auth::id()
+            ]);
+            array_push($prodLineRelacionadosArray, $ProductLineItem);
+        }
 
+        try {
+            return redirect()->route('sales.index');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([$th, $request]);
+        }
 
-        return response()->json([$sale]);
     }
 
     /**

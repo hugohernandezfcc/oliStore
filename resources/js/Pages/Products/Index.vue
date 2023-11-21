@@ -61,7 +61,7 @@ export default{
         
         <div class="m-4">
             <h3 class="text-lg text-gray-900"> Listado de productos </h3>
-            <p class="text-sm text-gray">aoscdijasdo </p>
+            <p class="text-sm text-gray">Catalogo de productos registrados en la base de datos </p>
         </div>
         <div class="shadow bg-white md:rounded-md p-4 m-4">
             
@@ -78,6 +78,14 @@ export default{
                 class="cell-border compact stripe hover order-column loading"
                 ref="table" id="datatable"
                 :data="products"
+                :pageLength="20"
+                :rowGroup="{
+                    dataSrc: [4, 3]
+                }" 
+                :columnDefs="{
+            targets: [4, 3],
+            visible: false
+        }" 
                 :options="{
                     responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
                         { 

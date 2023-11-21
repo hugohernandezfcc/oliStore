@@ -30,6 +30,7 @@ export default{
     props:{
         sale: Object,
         Sales: Array,
+        results: Object
         
     },
     data(){
@@ -37,7 +38,7 @@ export default{
         return {
             form: {
                 payment_method: 'cash',
-                delivery_method: 'delivery',
+                delivery_method: 'on-site',
                 status: 'open',
                 no_products: '',
                 note: '',
@@ -89,6 +90,9 @@ export default{
                 this.form.productosRelacionados = this.productsAdded;
                 console.log(this.productsAdded);
             }).catch((error) => {
+                this.processing = false;
+                alert('producto no encontrado');
+                this.status = 'Productos Agregados';
                 console.log(error.res.data);
             });
         },
@@ -108,6 +112,7 @@ export default{
         this.dt = $('#datatable').DataTable();
         this.dt.on( 'select', () => this.onRowClick())
         this.dt.on( 'deselect', () => this.onRowClick())
+        console.log(this.results);
         
     }
 }
@@ -148,7 +153,10 @@ export default{
                             <div class="grid grid-cols-1 divide-y hidden md:block" v-for="item in Sales">
                                 <div># Prod: {{ item.no_products }} | $ {{ item.total }} | {{ item.created_at }} </div>
                             </div>
-
+                            <hr class="my-6"/>
+                            <div>
+                                Total de prod. Vds.: {{ results.no_products }} | TOTAl $ {{ results.total }} MXN
+                            </div>
     
                         </div>
                     </div>
@@ -235,8 +243,8 @@ export default{
                                     <select id="delivery_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
                                         ref="delivery_method"
                                         v-model="form.delivery_method">
-                                        <option value="delivery">A Domicilio</option>
                                         <option value="on-site">En tienda</option>
+                                        <option value="delivery">A Domicilio</option>
                                         <option value="remote">Pago por internet</option>
                                     </select>
                                 </div>

@@ -44,6 +44,12 @@ Route::resource('sales', App\Http\Controllers\SalesController::class )
         'retrieveProduct']
     );
 
+    Route::get(
+        '/products2/readcsv', 
+        [App\Http\Controllers\ProductController::class,  'storeMasive']
+    );
+
     
 
+    
 

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\User;
+use App\Models\ProductLineItem;
+use App\Models\Sales;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -26,6 +30,52 @@ class ProductController extends Controller
         return Inertia::render('Products/Index', [
             'products' => $products,
         ]);
+    }
+
+    public function storeMasive(){
+        $filePath   = storage_path('app/csv7.csv');
+        $file       = fopen($filePath, 'r');
+        $header     = fgetcsv($file);
+        $products   = [];
+
+        while ($row = fgetcsv($file)) {
+            $products[] = array_combine($header, $row);
+        }
+
+        fclose($file);
+        // dd($products);
+
+        $productos = array();
+
+        for ($i=0; $i < count($products); $i++) { 
+             
+
+            $producto = Product::updateOrCreate([
+                'name' => $products[$i]["NOMBRE"],
+                'folio' => $products[$i]["CODIGO DE BARRAS"],
+                'Description' => $products[$i]["DESCRIPCION"] . ' // ' . $products[$i]["MARCA"],
+                'unit_measure' => $products[$i]["UNIDAD DE MEDIDA"],
+                'price_list' => doubleval($products[$i]["PRECIO DE LISTA"]),
+                'price_customer' => doubleval($products[$i]["PRECIO SUGERIDO"]),
+                'profit_percentage' => doubleval($products[$i]["GANANCIA"]),
+                'expiry_date' => Carbon::createFromFormat('d/m/Y', $products[$i]["FECHA DE CADUCIDAD"])->format('Y-m-d'),
+                'created_by_id' => Auth::id(),
+                'edited_by_id' => Auth::id()
+            ]);
+
+            // print_r($producto);
+            array_push($productos, $producto);
+        }
+
+        // dd($products);
+
+
+        
+
+        
+
+
+        return response()->json($productos);
     }
 
     /**
@@ -66,6 +116,23 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        
+
+        $product->ProductLineItems = ProductLineItem::where('product_id', $product->id)->get();
+        $product->createdByUser = User::find($product->created_by_id);
+        $product->editedByUser = User::find($product->edited_by_id);
+        $product->totalVentas = count($product->ProductLineItems);
+        $product->totalPrecioCliente = 0;
+        $product->totalPrecioList = 0;
+        $product->salesList = array();
+
+        for ($i=0; $i < count($product->ProductLineItems); $i++) { 
+            $product->ProductLineItems[$i]->sale = Sales::where('id', $product->ProductLineItems[$i]->sale_id)->get()->toArray();
+            $product->totalPrecioCliente = $product->totalPrecioCliente + floatval($product->price_customer);
+            $product->totalPrecioList = $product->totalPrecioList + floatval($product->price_list);
+        }       
+        
+        
         return Inertia::render('Products/Show', compact('product'));
     }
 
@@ -83,7 +150,13 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'name' => 'required'
+            'name'          => 'required',
+            'Description' => 'required',
+            'unit_measure' => 'required',
+            'price_list' => 'required',
+            'price_customer' => 'required',
+            'profit_percentage' => 'required',
+            'expiry_date' => 'required'
         ]);
         
         $product->update($request->all());

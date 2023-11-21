@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DNS1D;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -45,10 +46,20 @@ class Product extends Model
         return $this->belongsTo(User::class, 'edited_by_id');
     }
 
+    
+    public function ProductLineItems(): HasMany
+    {
+        return $this->hasMany(ProductLineItem::class);
+    }
+
     //implement the attribute
     public function getBarCodeAttribute()
     {
 
-        return DNS1D::getBarcodeHTML($this->folio, 'EAN13');
+        try {
+            return DNS1D::getBarcodeHTML($this->folio, 'EAN13');
+        } catch (\Throwable $th) {
+            return $this->folio;
+        }
     }
 }
