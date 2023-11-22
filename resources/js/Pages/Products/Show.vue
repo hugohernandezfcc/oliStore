@@ -55,9 +55,7 @@ export default{
                 venta.idVenta = 'Producto parte de la venta con Id:' + venta.id;
                 this.salesList.push(venta);
             }
-            
         }
-
     }
 }
 
