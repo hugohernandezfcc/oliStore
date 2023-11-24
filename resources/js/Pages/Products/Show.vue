@@ -81,6 +81,16 @@ export default{
                             <br/>
                             <table>
                                 <tr>
+                                    <td>
+                                        <inertia-link :href="route('products.edit', product.id)">
+                                            <PrimaryButton >
+                                                Editar Producto
+                                            </PrimaryButton>
+                                            
+                                        </inertia-link>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td><b>ID DB :</b></td>
                                     <td>{{product.id}}</td>
                                 </tr>

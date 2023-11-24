@@ -37,7 +37,7 @@ class ProductController extends Controller
      * Store masive records
      */
     public function storeMasive(){
-        $filePath   = storage_path('app/csv9.csv');
+        $filePath   = storage_path('app/csv10.csv');
         $file       = fopen($filePath, 'r');
         $header     = fgetcsv($file);
         $products   = [];
@@ -151,7 +151,7 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
         return Inertia::render('Products/Edit', compact('product'));
     }

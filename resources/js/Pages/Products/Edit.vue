@@ -19,7 +19,14 @@ export default{
         return {
             form: {
                 id: this.product.id,
-                name: this.product.name
+                name: this.product.name,
+                folio: this.product.folio,
+                Description: this.product.Description,
+                unit_measure: this.product.unit_measure,
+                price_list: this.product.price_list,
+                price_customer: this.product.price_customer,
+                profit_percentage: this.product.profit_percentage,
+                expiry_date: this.product.expiry_date
             }
         }
     },
@@ -61,21 +68,110 @@ export default{
                                 <label class="block font-medium text-sm text-gray-700">
                                     Detalle
                                 </label>
-                                <InputLabel for="product_name" value="Nombre del producto" />
-                                <TextInput
-                                    id="product_name"
-                                    ref="product_name"
-                                    v-model="form.name"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                />
+                                <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="name" value="Nombre del producto" />
+                            <TextInput
+                                id="name"
+                                v-model="form.name"
+                                type="text"
+                                class="mt-1 block w-full"
+                                required
+                                autocomplete="name"
+                            />
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="folio" value="Código de barras" />
+                            <TextInput
+                                id="folio"
+                                v-model="form.folio"
+                                type="text"
+                                class="mt-1 block w-full"
+                                required
+                                autocomplete="folio"
+                            />
+                        </div>
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="Description" value="Descripción" />
+                            <textarea
+                                id="Description"
+                                v-model="form.Description"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                required
+                                autocomplete="Description"
+                            >
+
+                            </textarea>
+                            
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="unit_measure" value="Unidad de medida" />
+                            <TextInput
+                                id="unit_measure"
+                                v-model="form.unit_measure"
+                                type="text"
+                                class="mt-1 block w-full"
+                                required
+                                autocomplete="unit_measure"
+                            />
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="price_list" value="Precio de lista" />
+                            <TextInput
+                                id="price_list"
+                                v-model="form.price_list"
+                                type="number"
+                                step="0.01"
+                                class="mt-1 block w-full"
+                                required
+                                autocomplete="price_list"
+                            />
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="price_customer" value="Precio al cliente" />
+                            <TextInput
+                                id="price_customer"
+                                v-model="form.price_customer"
+                                type="number"
+                                step="0.01"
+                                class="mt-1 block w-full"
+                                required
+                                autocomplete="price_customer"
+                            />
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="profit_percentage" value="Porcentaje de ganancía" />
+                            <TextInput
+                                id="profit_percentage"
+                                v-model="form.profit_percentage"
+                                type="number"
+                                step="0.01"
+                                class="mt-1 block w-full"
+                                required
+                                autocomplete="profit_percentage"
+                            />
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="expiry_date" value="Fecha de caducidad" />
+                            <TextInput
+                                id="expiry_date"
+                                v-model="form.expiry_date"
+                                type="date"
+                                class="mt-1 block w-full"
+                                required
+                                autocomplete="expiry_date"
+                            />
+                        </div>
+
                                 <!-- <InputError :message="form.errors.current_password" class="mt-2" /> -->
-                                <PrimaryButton
-                                    class="ms-3"
-                                    
-                                >
-                                    {{ button }}
-                                </PrimaryButton>
+                                <PrimaryButton @click="submit">
+                            Actualizar
+                        </PrimaryButton>
                             </form>
                         </div>
                     </div>

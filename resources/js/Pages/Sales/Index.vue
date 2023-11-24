@@ -54,6 +54,7 @@ export default{
     data(){
 
         return {
+            consultarProducto:'',
             form: {
                 payment_method: 'cash',
                 delivery_method: 'on-site',
@@ -84,6 +85,8 @@ export default{
         }
     },
     methods:{
+        
+
         onEnter(e){
             this.processing = true;
             if (e.keyCode === 13) {
@@ -226,7 +229,15 @@ export default{
                                 </div>
                             </el-collapse-item>
                             <el-collapse-item title="Consultar un producto" name="3">
-                                pendiente
+                                <el-autocomplete
+                                    v-model="consultarProducto"
+                                    :fetch-suggestions="querySearch"
+                                    :trigger-on-focus="false"
+                                    clearable
+                                    class="inline-input w-50"
+                                    placeholder="Please Input"
+                                    @select="handleSelect"
+                                />
                             </el-collapse-item>
                             <el-collapse-item title="Lista de productos a surtir" name="4">
                                 pendiente

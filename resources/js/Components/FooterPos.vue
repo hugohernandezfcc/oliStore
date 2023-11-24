@@ -28,6 +28,9 @@ export default{
             console.log(this.products)
 
             this.$inertia.post(this.route('sales.store', this.sale));
+            setTimeout(() => {
+                location.reload();
+            }, 1200);
         },
         methodThatForcesUpdate() {
         // ...
