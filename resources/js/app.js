@@ -8,7 +8,11 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import DataTablesLib from 'datatables.net'; 
 import DataTable from 'datatables.net-vue3';
 import axios from 'axios'
- 
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+
+
+
 DataTable.use(DataTablesLib);
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -20,6 +24,7 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(ElementPlus)
             .component('DataTable', DataTable)
             .component('inertia-link', Link) 
             .mount(el);

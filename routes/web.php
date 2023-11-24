@@ -32,22 +32,11 @@ Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified'
     })->name('dashboard');
 });
 
-Route::resource('products', App\Http\Controllers\ProductController::class )
-    ->middleware('auth:sanctum');
-
-Route::resource('sales', App\Http\Controllers\SalesController::class )
-    ->middleware('auth:sanctum');
-
-    Route::get(
-        '/sales/retrieveproduct/{folio}', 
-        [App\Http\Controllers\SalesController::class, 
-        'retrieveProduct']
-    );
-
-    Route::get(
-        '/products2/readcsv', 
-        [App\Http\Controllers\ProductController::class,  'storeMasive']
-    );
+Route::resource('products',         App\Http\Controllers\ProductController::class       )->middleware('auth:sanctum');
+Route::resource('sales',            App\Http\Controllers\SalesController::class         )->middleware('auth:sanctum');
+Route::resource('salesproducts',    App\Http\Controllers\SalesProductsController::class )->middleware('auth:sanctum');
+Route::get('/sales/retrieveproduct/{folio}', [App\Http\Controllers\SalesController::class, 'retrieveProduct']);
+Route::get('/products2/readcsv',             [App\Http\Controllers\ProductController::class,  'storeMasive' ]);
 
     
 

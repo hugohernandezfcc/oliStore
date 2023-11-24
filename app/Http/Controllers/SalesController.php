@@ -18,18 +18,29 @@ class SalesController extends Controller
     public function index()
     {
         $Sales = Sales::whereDay('created_at', now()->day)->get();
-        $summary = new \stdClass();
-        $summary->total = 0;
-        $summary->no_products = 0;
+        $summaryToday = new \stdClass();
+        $summaryToday->total = 0;
+        $summaryToday->no_products = 0;
         for ($i=0; $i < count($Sales) ; $i++) { 
-            $summary->total = $summary->total+ $Sales[$i]->total;
-            $summary->no_products = $summary->no_products + $Sales[$i]->no_products;
+            $summaryToday->total = $summaryToday->total+ $Sales[$i]->total;
+            $summaryToday->no_products = $summaryToday->no_products + $Sales[$i]->no_products;
+        }
+        $yesterday = now()->day - 1;
+        $SalesYesterday = Sales::whereDay('created_at', $yesterday)->get();
+        $summaryYesterday = new \stdClass();
+        $summaryYesterday->total = 0;
+        $summaryYesterday->no_products = 0;
+        for ($i=0; $i < count($SalesYesterday) ; $i++) { 
+            $summaryYesterday->total = $summaryYesterday->total+ $SalesYesterday[$i]->total;
+            $summaryYesterday->no_products = $summaryYesterday->no_products + $SalesYesterday[$i]->no_products;
         }
 
         return Inertia::render('Sales/Index', [
             'Sales' => $Sales,
+            'SalesYesterday' => $SalesYesterday,
             'Sale' => [],
-            'results' => $summary
+            'results' => $summaryToday,
+            'resultsYesterday' => $summaryYesterday
         ]);
     }
     

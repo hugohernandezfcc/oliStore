@@ -9,7 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SecondaryButtonPay from '@/Components/SecondaryButtonPay.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 import axios from 'axios';
 
 import $ from 'jquery';
@@ -18,7 +18,10 @@ import "datatables.net-dt/css/jquery.dataTables.min.css"
 import 'datatables.net-responsive-bs5';
 import 'datatables.net-select';
 import FooterPos from '@/Components/FooterPos.vue';
-import { HollowDotsSpinner } from 'epic-spinners'
+
+import { HollowDotsSpinner } from 'epic-spinners';
+
+
 
 export default{
     components:{
@@ -30,9 +33,24 @@ export default{
     props:{
         sale: Object,
         Sales: Array,
-        results: Object
+        results: Object,
+        SalesYesterday: Array,
+        resultsYesterday: Object
         
     },
+    setup() {
+
+    const componentKey = ref(0);
+    
+    function refreshComponent() {
+      componentKey.value += 1;
+    }
+
+    return {
+      componentKey,
+      refreshComponent,
+    };
+  },
     data(){
 
         return {
@@ -56,7 +74,13 @@ export default{
             productsAdded:[],
             rowCollectionSelected: new Array(),
             processing: false,
-            total: 0
+            total: 0,
+            componentKey: 0,
+            accordionItems: [
+        { title: 'Section 1', content: 'Content for Section 1' },
+        { title: 'Section 2', content: 'Content for Section 2' },
+        // Add more accordion items as needed
+      ]
         }
     },
     methods:{
@@ -65,6 +89,7 @@ export default{
             if (e.keyCode === 13) {
                 console.log(e);
                 console.log('Enter was pressed');
+                console.log(this.realtime.value);
                 this.getMeProduct(this.realtime.value);
                 this.realtime.value = '';
             }
@@ -78,6 +103,45 @@ export default{
 
             this.rowCollectionSelected = rowCollectionSelected;
             console.log(this.rowCollectionSelected);
+        },
+        deleteRow(){
+
+            let rowCollectionSelected = new Array();
+            let i = 0;
+            this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
+                rowCollectionSelected.push(recordSelected.folio);
+                i++;
+                console.log(i + '.- ' +recordSelected.folio);
+                
+            } );
+
+            let rowCollectionSelectedKeep = new Array();
+
+            for (let index = 0; index < this.productsAdded.length; index++) {
+                const element = this.productsAdded[index];
+                console.log(index + '.- ' +element.folio);
+                if(!rowCollectionSelected.includes(element.folio)){
+                    rowCollectionSelectedKeep.push(element);
+                }
+            }
+            
+            this.productsAdded = rowCollectionSelectedKeep;
+            this.form.productosRelacionados = [];
+            this.componentKey += 1; 
+            this.form.total    = 0;
+            this.rowCollectionSelected = new Array();
+            this.form.no_products = this.productsAdded.length;
+            for (let o = 0; o < this.productsAdded.length; o++) {
+                const element = this.productsAdded[o];
+                element.price_customer = element.price_customer.replace(' MXN','');
+                element.price_customer = element.price_customer.replace('$ ','');
+                console.log(element);
+                this.form.total = parseFloat(this.form.total) + parseFloat(element.price_customer);
+                this.form.total = this.form.total.toFixed(2);
+                this.form.productosRelacionados.push(element);
+            }
+            console.log(this.form.total);
+            console.log(this.form.productosRelacionados);
         },
 
         getMeProduct(folio){
@@ -135,8 +199,44 @@ export default{
                     
                     <div class="md:col-span-1">
                         <div class="px-4 sm:px0">
-                            <h3 class="text-lg text-gray-900"> Venta de la venta </h3>
-                            <br/>
+
+                            <el-collapse v-model="activeName" accordion class="shadow bg-white md:rounded-md p-4">
+
+                            <el-collapse-item title="Historial de la venta hoy" name="1" >
+
+                                <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in Sales">
+                                    <tr >
+                                        <td># Prod:</td><td><b>{{ item.no_products }}</b> </td> <td> | $ </td><td><b>{{ item.total }}</b> </td> <td> |   </td><td><b>{{ item.created_at }}</b> </td>
+                                    </tr>
+                                </table>
+                                <hr class="my-6"/>
+                                <div>
+                                    Total de prod. Vds.: {{ results.no_products }} | TOTAL $ {{ results.total }} MXN | # Ventas: {{ Sales.length }}
+                                </div>
+                            </el-collapse-item>
+                            <el-collapse-item title="Historial de la venta ayer" name="2">
+                                <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in SalesYesterday">
+                                    <tr >
+                                        <td># Prod:</td><td><b>{{ item.no_products }}</b> </td> <td> | $ </td><td><b>{{ item.total }}</b> </td> <td> |   </td><td><b>{{ item.created_at }}</b> </td>
+                                    </tr>
+                                </table>
+                                <hr class="my-6"/>
+                                <div>
+                                    Total de prod. Vds.: {{ resultsYesterday.no_products }} | TOTAL $ {{ resultsYesterday.total }} MXN | # Ventas: {{ SalesYesterday.length }}
+                                </div>
+                            </el-collapse-item>
+                            <el-collapse-item title="Consultar un producto" name="3">
+                                pendiente
+                            </el-collapse-item>
+                            <el-collapse-item title="Lista de productos a surtir" name="4">
+                                pendiente
+                            </el-collapse-item>
+                            </el-collapse>
+
+
+
+                            
+                            <!-- <br/>
                             <table>
                                 <tr>
                                     <td>
@@ -149,15 +249,9 @@ export default{
                                 </tr>
                             </table>
                             <br/>
-                            <b class="grid grid-cols-1 divide-y hidden md:block"> HISTORIAL DE VENTA </b>
-                            <div class="grid grid-cols-1 divide-y hidden md:block" v-for="item in Sales">
-                                <div># Prod: {{ item.no_products }} | $ {{ item.total }} | {{ item.created_at }} </div>
-                            </div>
-                            <hr class="my-6"/>
-                            <div>
-                                Total de prod. Vds.: {{ results.no_products }} | TOTAl $ {{ results.total }} MXN
-                            </div>
-    
+                            <b class="grid grid-cols-1 divide-y hidden md:block"> HISTORIAL DE VENTA </b> -->
+                            
+                            
                         </div>
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
@@ -228,35 +322,58 @@ export default{
                             <div class="flex flex-row flex-wrap">
                                 <div class="basis-1/3 p-1" >
                                     <InputLabel for="payment_method" value="Método de pago" class="m-1"/>
-                                    <select id="payment_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                                    <el-select id="payment_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
                                         ref="payment_method"
                                         v-model="form.payment_method">
-                                        <option value="cash">Efectivo</option>
-                                        <option value="card">Tarjeta</option>
-                                        <option value="cash">Domicilio Efectivo</option>
-                                        <option value="card">Domicilio Tarjeta</option>
-                                        <option value="other">Otro</option>
-                                    </select>
+                                
+                                        <el-option
+                                            v-for="item in [
+                                                {value:'cash', label:'Efectivo'},
+                                                {value:'card', label:'Tarjeta'},
+                                                {value:'delivery cash', label:'Domicilio Efectivo'},
+                                                {value:'delivery card', label:'Domicilio Tarjeta'},
+                                                {value:'other', label:'Otro'}
+                                            ]"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                        />
+                                    </el-select>
                                 </div>
                                 <div class="basis-1/3 p-1" >
                                     <InputLabel for="delivery_method" value="Método de venta" class="m-1"/>
-                                    <select id="delivery_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                                    <el-select id="delivery_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
                                         ref="delivery_method"
                                         v-model="form.delivery_method">
-                                        <option value="on-site">En tienda</option>
-                                        <option value="delivery">A Domicilio</option>
-                                        <option value="remote">Pago por internet</option>
-                                    </select>
+                                        <el-option
+                                            v-for="item in [
+                                                {value:'on-site', label:'En tienda'},
+                                                {value:'delivery', label:'A Domicilio'},
+                                                {value:'remote', label:'Pago por internet'}
+                                            ]"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                        />
+
+                                    </el-select>
                                 </div>
                                 <div class="basis-1/3 p-1" >
                                     <InputLabel for="status" value="Estado de venta" class="m-1"/>
-                                    <select id="status" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                                    <el-select id="status" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
                                         ref="status"
                                         v-model="form.status">
-                                        <option value="open">Abierto</option>
-                                        <option value="in-progress">En progreso</option>
-                                        <option value="closed">Venta cerrada</option>
-                                    </select>
+                                        <el-option
+                                            v-for="item in [
+                                                {value:'open', label:'Abierto'},
+                                                {value:'in-progress', label:'En progreso'},
+                                                {value:'closed', label:'Venta cerrada'}
+                                            ]"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                        />
+                                    </el-select>
                                 </div>
                             </div>
                             <InputLabel for="note" value="Nota de la venta" />
@@ -303,10 +420,17 @@ export default{
             </div>
         </div>
     </AppLayout>
+
+<Accordion />
+
     <FooterPos 
+        :key="componentKey"
         :selectedProducts="rowCollectionSelected.length" 
         :products="productsAdded"
         :total="form.total"
         :sale="form"
+        @destroy="deleteRow"
         v-if="productsAdded.length > 0"/>
 </template>
+
+

@@ -8,6 +8,7 @@ export default{
     components:{
          PrimaryButton, SecondaryButtonPay, axios
     },
+    emits: ["destroy"],
     props:{
         selectedProducts: Number,
         sale: Object,
@@ -16,13 +17,22 @@ export default{
         
     },
     methods:{
-        destroy(){
+        destroyLocal(){
+            this.methodThatForcesUpdate();
             if(confirm('¿Deseas eliminar '+this.selectedProducts+' productos seleccionados?')){
-                
+                this.$emit("destroy");
             }
         },
         pay(){
+            console.log(this.sale)
+            console.log(this.products)
+
             this.$inertia.post(this.route('sales.store', this.sale));
+        },
+        methodThatForcesUpdate() {
+        // ...
+        this.$forceUpdate();  // Notice we have to use a $ here
+        // ...
         }
     },
     data(){
@@ -52,7 +62,7 @@ export default{
                 </div>
 
                 <div class="lg:basis-1/6 m-1" v-if="selectedProducts > 0">
-                    <PrimaryButton  @click.prevent="destroy">
+                    <PrimaryButton  @click.prevent="destroyLocal">
                         eliminar {{selectedProducts}} productos seleccionados
                     </PrimaryButton>
                 </div>

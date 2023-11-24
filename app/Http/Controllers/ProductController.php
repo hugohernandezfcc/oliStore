@@ -32,8 +32,12 @@ class ProductController extends Controller
         ]);
     }
 
+
+    /**
+     * Store masive records
+     */
     public function storeMasive(){
-        $filePath   = storage_path('app/csv7.csv');
+        $filePath   = storage_path('app/csv9.csv');
         $file       = fopen($filePath, 'r');
         $header     = fgetcsv($file);
         $products   = [];
@@ -48,7 +52,15 @@ class ProductController extends Controller
         $productos = array();
 
         for ($i=0; $i < count($products); $i++) { 
-             
+
+            $valor = 0;
+            $valorFinal = 0;
+             try {
+                $valor = doubleval($products[$i]["GANANCIA"]) - doubleval($products[$i]["PRECIO DE LISTA"]);
+                $valorFinal = ($valor / doubleval($products[$i]["GANANCIA"])) * 100;
+             } catch (\Throwable $th) {
+                $valorFinal = 11;
+             }
 
             $producto = Product::updateOrCreate([
                 'name' => $products[$i]["NOMBRE"],
@@ -56,8 +68,8 @@ class ProductController extends Controller
                 'Description' => $products[$i]["DESCRIPCION"] . ' // ' . $products[$i]["MARCA"],
                 'unit_measure' => $products[$i]["UNIDAD DE MEDIDA"],
                 'price_list' => doubleval($products[$i]["PRECIO DE LISTA"]),
-                'price_customer' => doubleval($products[$i]["PRECIO SUGERIDO"]),
-                'profit_percentage' => doubleval($products[$i]["GANANCIA"]),
+                'price_customer' => doubleval($products[$i]["GANANCIA"]),
+                'profit_percentage' => $valorFinal,
                 'expiry_date' => Carbon::createFromFormat('d/m/Y', $products[$i]["FECHA DE CADUCIDAD"])->format('Y-m-d'),
                 'created_by_id' => Auth::id(),
                 'edited_by_id' => Auth::id()
@@ -175,4 +187,6 @@ class ProductController extends Controller
             return response()->json($th);
         }
     }
+
+
 }
