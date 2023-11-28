@@ -9,11 +9,12 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Footer from '@/Components/Footer.vue';
 import Field from '@/Components/Field.vue';
+import { ElNotification } from 'element-plus';
 
 
 export default{
     components:{
-        AppLayout, PrimaryButton, SecondaryButton, Footer, Field
+        AppLayout, PrimaryButton, SecondaryButton, Footer, Field 
     },
     props:{
         stock: Array
@@ -34,6 +35,9 @@ export default{
             if (this.active++ > 2) 
                 this.active = 0;
         },
+        saveAndNext()  {
+            console.log(this.form);
+        },
 
         back()  {
             if (this.active-- > 2) 
@@ -46,15 +50,26 @@ export default{
         },
         onEnter(e){
             if (e.keyCode === 13) {
-                this.getMeProduct(this.form.name);
+                this.getMeProduct(this.form.folio);
             }
         },
         getMeProduct(folio){
             axios.get('/sales/retrieveproduct/'+folio).then((res) => {
                 console.log(res);
-                
+                this.formResult = res.data[0];
+                ElNotification.success({
+                    title: 'Success',
+                    message: res.data[0].name + ' encontrado',
+                    offset: 100,
+                })
+                this.next();
             }).catch((error) => {
-                console.log(error.res.data);
+
+                ElNotification.warning({
+                    title: folio,
+                    message: 'No fue encontrado',
+                    offset: 100,
+                });
             });
         }
     },
@@ -66,8 +81,16 @@ export default{
             activeSection:1,
             radio1:'1',
             form: {
-                name: ''
-            }
+                name: '',
+                folio: '',
+                Description: '',
+                unit_measure: '',
+                price_list: '',
+                price_customer: '',
+                profit_percentage: '',
+                expiry_date: ''
+            },
+            formResult: null
         }
     },
     mounted(){
@@ -116,18 +139,57 @@ export default{
                         </center>
                         <hr class="my-6"/>
                         <div v-if="radio1 == '1'" >
-                            <Field id="folio" :label="'Código de barras'" v-model="form.name" typeField="text" :required="true" v-on:keyup="onEnter" />
+                            <Field id="folio" :label="'Código de barras'" v-model="form.folio" typeField="text" :required="true" v-on:keyup="onEnter" />
 
                         </div>
                         <div v-if="radio1 == '2'">
-                            ddd
+                            <Field id="folio"               :label="'Código de barras'"         v-model="form.folio"                typeField="text"    :required="true"  />
+                            <Field id="name"                :label="'Nombre del producto'"      v-model="form.name"                 typeField="text"    :required="true"  />
+                            <Field id="Description"         :label="'Descripción'"              v-model="form.Description"          typeField="text"    :required="true"  />
+                            <Field id="unit_measure"        :label="'Unidad de medida'"         v-model="form.unit_measure"         typeField="number"  :required="true"  />
+                            <Field id="price_list"          :label="'Precio de lista'"          v-model="form.price_list"           typeField="number"  :required="true"  />
+                            <Field id="price_customer"      :label="'Precio al cliente'"        v-model="form.price_customer"       typeField="number"  :required="true"  />
+                            <Field id="profit_percentage"   :label="'Porcentaje de ganancía'"   v-model="form.profit_percentage"    typeField="number"  :required="true"  />
+                            <Field id="expiry_date"         :label="'Fecha de caducidad'"       v-model="form.expiry_date"          typeField="date"    :required="true"  />
+
+                            <el-button style="margin-top: 12px" @click="saveAndNext">Crear y siguiente</el-button>
                         </div>
                         <hr class="my-6"/>
-                        <el-button style="margin-top: 12px" @click="next">Siguiente</el-button>
                     </div>
 
-                    <div v-if="active == 1">
-                        sacdasdc1
+                    <div v-if="active == 1" class="md:w-full lg:px-[20%]">
+                        <table >
+                            <tr>
+                                <td><b>PRODUCTO:</b></td>
+                                <td>{{formResult.name}}</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><b>DESCRIPCION:</b></td>
+                                <td>{{formResult.Description}}</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td ><b>Código de barras:  </b></td>
+                                <td class="p-2">
+                                    <div v-html="formResult.bar_code" /> 
+                                    {{formResult.folio}}
+                                </td>
+                                <td> </td>
+                            </tr>
+                        </table>
+                        <div class="flex">
+                            <div class="flex-none w-32 h-14">
+                                <el-button type="danger" circle >-</el-button>
+                            </div>
+                            <div class="flex-initial w-64 ...">
+                                02
+                            </div>
+                            <div class="flex-initial w-32 ...">
+                                <el-button type="success" circle >+</el-button>
+                            </div>
+                        </div>
+
                         <hr class="my-6"/>
                         <el-button style="margin-top: 12px" @click="back">Atras</el-button>
                         <el-button style="margin-top: 12px" @click="next">Siguiente</el-button>
@@ -142,7 +204,7 @@ export default{
 
 
                     
-
+                    
                 </el-collapse-item>
                 <el-collapse-item title="Lista de productos a surtir" name="4">
                     pendiente

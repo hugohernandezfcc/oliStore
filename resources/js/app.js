@@ -12,7 +12,6 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 
 
-
 DataTable.use(DataTablesLib);
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -33,3 +32,4 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
