@@ -36,7 +36,7 @@ const logout = () => {
         <div class="min-h-screen bg-gray-100">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto px-2">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
@@ -54,7 +54,19 @@ const logout = () => {
                                 <NavLink :href="route('products.index')" :active="route().current('products')">
                                     Products
                                 </NavLink>
-                               
+
+                                <NavLink :href="route('stores.index')" :active="route().current('stores')">
+                                    Tiendas
+                                </NavLink>
+
+                                <NavLink :href="route('providers.index')" :active="route().current('providers')">
+                                    Proveedores
+                                </NavLink>
+
+                                <NavLink :href="route('stocks.index')" :active="route().current('stocks')">
+                                    Inventarios
+                                </NavLink>
+                                
                             </div>
                         </div>
 
@@ -201,7 +213,17 @@ const logout = () => {
                         <ResponsiveNavLink :href="route('products.index')" :active="route().current('products')">
                             Products
                         </ResponsiveNavLink>
-                        
+                        <ResponsiveNavLink :href="route('stores.index')" :active="route().current('stores')">
+                            Tiendas
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('providers.index')" :active="route().current('providers')">
+                            Proveedores
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('stocks.index')" :active="route().current('stocks')">
+                            Inventarios
+                        </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -283,7 +305,7 @@ const logout = () => {
 
             <!-- Page Heading -->
             <header v-if="$slots.header" class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto py-6 px-2">
                     <slot name="header" />
                 </div>
             </header>

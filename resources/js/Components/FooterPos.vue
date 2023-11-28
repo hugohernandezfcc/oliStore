@@ -3,6 +3,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SecondaryButtonPay from '@/Components/SecondaryButtonPay.vue';
 import axios from 'axios';
+import { ElNotification } from 'element-plus';
 
 export default{
     components:{
@@ -24,13 +25,27 @@ export default{
             }
         },
         pay(){
+            console.log(this.$parent.form);
             console.log(this.sale)
             console.log(this.products)
-
-            this.$inertia.post(this.route('sales.store', this.sale));
-            setTimeout(() => {
-                location.reload();
-            }, 1200);
+            if(parseFloat(this.$parent.form.inbound_amount) >= this.total){
+                this.$inertia.post(this.route('sales.store', this.sale));
+                ElNotification.success({
+                    title: 'Success',
+                    message: 'Compra guardada',
+                    offset: 100,
+                })
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            }else{
+                ElNotification.warning({
+                    title: 'warning',
+                    message: 'Especifica el dinero recibido',
+                    offset: 100,
+                });
+            }
+            
         },
         methodThatForcesUpdate() {
         // ...

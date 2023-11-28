@@ -25,6 +25,15 @@ class SalesProductsController extends Controller
         ]);
     }
 
+    public function editSales(){
+        $products = Sales::get();
+
+        for ($i=0; $i < count($products); $i++) { 
+            $products[$i]->created_at = Carbon::yesterday();
+            $products[$i]->save(['timestamps' => false]);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */

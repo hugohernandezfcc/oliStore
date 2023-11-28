@@ -1,9 +1,19 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Components/Welcome.vue';
+import { h } from 'vue';
+import { ElNotification } from 'element-plus';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
+
+const open1 = () => {
+  ElNotification({
+    title: 'Title',
+    message: h('i', { style: 'color: teal' }, 'This is a reminder'),
+  })
+}
+
+
 </script>
 
 <template>
@@ -25,7 +35,7 @@ import InputError from '@/Components/InputError.vue';
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <Welcome />
+                    <el-button plain @click="open1"> Closes automatically </el-button>
                 </div>
             </div>
         </div>

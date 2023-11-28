@@ -3,23 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Carbon\Carbon;
+use App\Models\Product;
+use App\Models\User;
+use App\Models\Store;
+use App\Models\Providers;
+use App\Models\ProductLineItem;
+use App\Models\Sales;
 
 class ProvidersController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    public function index(){
+        $tiendas = Providers::get();
+
+        return Inertia::render('Providers/Index', [
+            'providers' => $tiendas,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function create(){
+        return Inertia::render('Providers/Create');
     }
 
     /**

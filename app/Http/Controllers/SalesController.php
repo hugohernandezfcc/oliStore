@@ -35,12 +35,25 @@ class SalesController extends Controller
             $summaryYesterday->no_products = $summaryYesterday->no_products + $SalesYesterday[$i]->no_products;
         }
 
+        
+
+        $products = Product::get(['name',
+        'folio',
+        'Description']);
+        for ($i=0; $i < $products->count(); $i++) { 
+            $products[$i]->price_list   = '$' . $products[$i]->price_list . ' MXN'; 
+            $products[$i]->price_customer   = '$' . $products[$i]->price_customer . ' MXN'; 
+            $products[$i]->profit_percentage    = $products[$i]->profit_percentage . ' %'; 
+        }
+
+        
         return Inertia::render('Sales/Index', [
             'Sales' => $Sales,
             'SalesYesterday' => $SalesYesterday,
             'Sale' => [],
             'results' => $summaryToday,
-            'resultsYesterday' => $summaryYesterday
+            'resultsYesterday' => $summaryYesterday,
+            'productFilters' => $products
         ]);
     }
     

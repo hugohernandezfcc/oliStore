@@ -35,8 +35,8 @@ export default{
         Sales: Array,
         results: Object,
         SalesYesterday: Array,
-        resultsYesterday: Object
-        
+        resultsYesterday: Object,
+        productFilters: Array
     },
     setup() {
 
@@ -78,10 +78,11 @@ export default{
             total: 0,
             componentKey: 0,
             accordionItems: [
-        { title: 'Section 1', content: 'Content for Section 1' },
-        { title: 'Section 2', content: 'Content for Section 2' },
-        // Add more accordion items as needed
-      ]
+                { title: 'Section 1', content: 'Content for Section 1' },
+                { title: 'Section 2', content: 'Content for Section 2' },
+            ],
+            productFiltersLocal: [],
+            resultCss: 'margin-top hidden'
         }
     },
     methods:{
@@ -95,9 +96,26 @@ export default{
                 console.log(this.realtime.value);
                 this.getMeProduct(this.realtime.value);
                 this.realtime.value = '';
+                this.resultCss = 'margin-top hidden';
+                this.processing = false;
+            }else if(this.realtime.value.length > 2){
+                this.resultCss = 'margin-top';
+                this.processing = false;
+            }else if(this.realtime.value.length == 0){
+                this.resultCss = 'margin-top hidden';
+                this.processing = false;
             }
         },
-
+        enterClicking(param){
+            this.processing = true;
+            console.log(param);
+            this.getMeProduct(param);
+            this.realtime.value = '';
+            this.resultCss = 'margin-top hidden';
+            setTimeout(() => {
+                this.processing = false;
+            }, 1200);
+        },
         onRowClick(){
             let rowCollectionSelected = new Array();
             this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
@@ -146,7 +164,6 @@ export default{
             console.log(this.form.total);
             console.log(this.form.productosRelacionados);
         },
-
         getMeProduct(folio){
             axios.get('/sales/retrieveproduct/'+folio).then((res) => {
                 console.log(res);
@@ -172,15 +189,23 @@ export default{
         },
         calculateExchange(){
             this.form.outbound_amount =  parseFloat(this.form.inbound_amount) - parseFloat(this.form.total);
+        },
+        filteredList() {
+            if(this.productFiltersLocal !== undefined)
+                return this.productFiltersLocal.filter((productName) =>
+                    productName.Description.toLowerCase().includes(this.realtime.value.toLowerCase()) || productName.name.toLowerCase().includes(this.realtime.value.toLowerCase())
+                );
         }
-
     },
+    
     mounted(){
         this.dt = $('#datatable').DataTable();
         this.dt.on( 'select', () => this.onRowClick())
         this.dt.on( 'deselect', () => this.onRowClick())
         console.log(this.results);
-        
+        this.productFiltersLocal = this.productFilters;
+
+        console.log(this.productFiltersLocal);
     }
 }
 
@@ -204,65 +229,45 @@ export default{
                         <div class="px-4 sm:px0">
 
                             <el-collapse v-model="activeName" accordion class="shadow bg-white md:rounded-md p-4">
+                                <el-collapse-item title="Historial de la venta hoy" name="1" >
 
-                            <el-collapse-item title="Historial de la venta hoy" name="1" >
-
-                                <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in Sales">
-                                    <tr >
-                                        <td># Prod:</td><td><b>{{ item.no_products }}</b> </td> <td> | $ </td><td><b>{{ item.total }}</b> </td> <td> |   </td><td><b>{{ item.created_at }}</b> </td>
-                                    </tr>
-                                </table>
-                                <hr class="my-6"/>
-                                <div>
-                                    Total de prod. Vds.: {{ results.no_products }} | TOTAL $ {{ results.total }} MXN | # Ventas: {{ Sales.length }}
-                                </div>
-                            </el-collapse-item>
-                            <el-collapse-item title="Historial de la venta ayer" name="2">
-                                <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in SalesYesterday">
-                                    <tr >
-                                        <td># Prod:</td><td><b>{{ item.no_products }}</b> </td> <td> | $ </td><td><b>{{ item.total }}</b> </td> <td> |   </td><td><b>{{ item.created_at }}</b> </td>
-                                    </tr>
-                                </table>
-                                <hr class="my-6"/>
-                                <div>
-                                    Total de prod. Vds.: {{ resultsYesterday.no_products }} | TOTAL $ {{ resultsYesterday.total }} MXN | # Ventas: {{ SalesYesterday.length }}
-                                </div>
-                            </el-collapse-item>
-                            <el-collapse-item title="Consultar un producto" name="3">
-                                <el-autocomplete
-                                    v-model="consultarProducto"
-                                    :fetch-suggestions="querySearch"
-                                    :trigger-on-focus="false"
-                                    clearable
-                                    class="inline-input w-50"
-                                    placeholder="Please Input"
-                                    @select="handleSelect"
-                                />
-                            </el-collapse-item>
-                            <el-collapse-item title="Lista de productos a surtir" name="4">
-                                pendiente
-                            </el-collapse-item>
+                                    <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in Sales">
+                                        <tr >
+                                            <td># Prod:</td><td><b>{{ item.no_products }}</b> </td> <td> | $ </td><td><b>{{ item.total }}</b> </td> <td> |   </td><td><b>{{ item.created_at }}</b> </td>
+                                        </tr>
+                                    </table>
+                                    <hr class="my-6"/>
+                                    <div>
+                                        Total de prod. Vds.: {{ results.no_products }} | TOTAL $ {{ results.total }} MXN | # Ventas: {{ Sales.length }}
+                                    </div>
+                                </el-collapse-item>
+                                <el-collapse-item title="Historial de la venta ayer" name="2">
+                                    <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in SalesYesterday">
+                                        <tr >
+                                            <td># Prod:</td><td><b>{{ item.no_products }}</b> </td> <td> | $ </td><td><b>{{ item.total }}</b> </td> <td> |   </td><td><b>{{ item.created_at }}</b> </td>
+                                        </tr>
+                                    </table>
+                                    <hr class="my-6"/>
+                                    <div>
+                                        Total de prod. Vds.: {{ resultsYesterday.no_products }} | TOTAL $ {{ resultsYesterday.total }} MXN | # Ventas: {{ SalesYesterday.length }}
+                                    </div>
+                                </el-collapse-item>
+                                <el-collapse-item title="Consultar un producto" name="3">
+                                    <el-autocomplete
+                                        v-model="consultarProducto"
+                                        :fetch-suggestions="querySearch"
+                                        :trigger-on-focus="false"
+                                        clearable
+                                        class="inline-input w-50"
+                                        placeholder="Please Input"
+                                        @select="handleSelect"
+                                    />
+                                </el-collapse-item>
+                                <el-collapse-item title="Lista de productos a surtir" name="4">
+                                    pendiente
+                                </el-collapse-item>
                             </el-collapse>
 
-
-
-                            
-                            <!-- <br/>
-                            <table>
-                                <tr>
-                                    <td>
-                                        <b>
-                                            <span v-if="processing">AGREGANDO PRODUCTOS  . . . . </span>
-                                            <span v-else>PRODUCTOS AGREGADOS: </span>
-                                        </b>
-                                    </td>
-                                    <td>{{ productsAdded.length }} </td>
-                                </tr>
-                            </table>
-                            <br/>
-                            <b class="grid grid-cols-1 divide-y hidden md:block"> HISTORIAL DE VENTA </b> -->
-                            
-                            
                         </div>
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
@@ -277,10 +282,39 @@ export default{
                                     class="mt-1 block w-full"
                                     required
                                     autocomplete="name"
-                                    v-on:keyup.enter="onEnter"
+                                    v-on:keyup="onEnter"
                                 />
                             </div>
                             <br/>
+                            <el-descriptions
+                            
+                                :class="`m-1 cursor-pointer ${resultCss}`"
+                                :column="3"
+                                border v-for="productName in filteredList()" :key="productName"
+                                @click.prevent="enterClicking(productName.folio)"
+                            >
+                                <el-descriptions-item>
+                                    <template #label>
+                                        <div class="cell-item">
+                                            {{ productName.name }}
+                                        </div>
+                                    </template>
+                                    {{ productName.folio }}
+                                </el-descriptions-item>
+
+                                <el-descriptions-item>
+                                    <template #label>
+                                        <div class="cell-item">
+                                            Descripción
+                                        </div>
+                                    </template>
+                                    {{ productName.Description }}
+                                </el-descriptions-item>
+
+                            </el-descriptions>
+                            <div class="item error" v-if="input && !filteredList().length">
+                                <p>No results found!</p>
+                            </div>
                             <center>
                                 <hollow-dots-spinner
                                     :animation-duration="1000"
