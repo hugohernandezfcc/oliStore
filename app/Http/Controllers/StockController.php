@@ -12,15 +12,32 @@ use App\Models\Store;
 use App\Models\Providers;
 use App\Models\Stock;
 use App\Models\ProductLineItem;
-use App\Models\Sales;
+use Illuminate\Support\Facades\DB;
 
 class StockController extends Controller
 {
     public function index(){
 
+        $stoks = Stock::get();
+        $products2 = array();
 
+        for ($i=0; $i < count($stoks); $i++) { 
+            array_push($products2, $stoks[$i]->product_id);
+        }
+
+        $products = DB::table('products')
+                    ->whereNotIn('id', $products2)
+                    ->get();
+
+        $products3 = Product::get();
+        
         return Inertia::render('Stock/Index', [
-            'stocks' => Stock::get()
+            'stocks' => $stoks,
+            'stockToCover' => count($products),
+            'stockCovered' => count($stoks),
+            'totalProducts' => count($products3),
+            'porcentajeTotal' => number_format((count($stoks)*100)/count($products3), 1, '.', ''),
+            'porcentajeFaltante' => 100-number_format((count($stoks)*100)/count($products3), 1, '.', '')
         ]);
     }
 
@@ -49,6 +66,17 @@ class StockController extends Controller
 
         return response()->json($Stock);
     }
+
+    public function storeProduct(Request $request)  {
+        $request->merge([
+            'created_by_id' => Auth::id(),
+            'edited_by_id' => Auth::id()
+        ]);
+
+        $product = Product::create($request->all());
+        return response()->json($product);
+    }
+
 
     /**
      * Display the specified resource.

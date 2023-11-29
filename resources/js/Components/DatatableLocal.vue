@@ -19,10 +19,10 @@
 
     export default {
         components:{
-            AppLayout, InputLabel, TextInput, PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner
+             InputLabel, TextInput, PrimaryButton, SecondaryButton, SecondaryButtonPay 
         },
         props:{
-            data: Array,
+            // data: Array,
             columns: Array,
             search: String,
             zeroRecords: String,
@@ -76,8 +76,8 @@
             }"
             :columns="columns">
             <thead>
-                <tr v-for="column in columns">
-                    <th>{{ column.label }}</th>
+                <tr >
+                    <th v-for="column in columns">{{ column.label }}</th>
                 </tr>
             </thead>
         </DataTable>

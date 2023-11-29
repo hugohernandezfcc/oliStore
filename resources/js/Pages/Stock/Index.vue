@@ -6,6 +6,8 @@ import "datatables.net-dt/css/jquery.dataTables.min.css"
 import 'datatables.net-responsive-bs5';
 import 'datatables.net-select';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import DatatableLocal from '@/Components/DatatableLocal.vue';
+
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Footer from '@/Components/Footer.vue';
 import Field from '@/Components/Field.vue';
@@ -14,12 +16,15 @@ import { ElLoading } from 'element-plus';
 
 export default{
     components:{
-        AppLayout, PrimaryButton, SecondaryButton, Footer, Field 
+        AppLayout, PrimaryButton, SecondaryButton, Footer, Field, DatatableLocal 
     },
     props:{
-        stock: Array
-        
-
+        stocks: Array,
+        stockToCover: Number,
+        stockCovered: Number,
+        totalProducts: Number,
+        porcentajeTotal: Number,
+        porcentajeFaltante: Number
     },
     methods:{
         onRowClick(){
@@ -62,9 +67,39 @@ export default{
                     message: 'No fue encontrado',
                     offset: 100,
                 });
+                this.radio1 = '2';
             });
 
 
+        },
+        saveProductAndNext(){
+
+            let loading = ElLoading.service({
+                lock: true,
+                text: 'Guardndo registro...',
+                background: 'rgba(0, 0, 0, 0.7)',
+                customClass: 'text-red-600' 
+            })
+
+            axios.post('/storeProduct', this.form).then((res) => {
+                console.log(res.data);
+                this.formResult = res.data;
+                ElNotification.success({
+                    title: 'Success',
+                    message: 'Registro guardado',
+                    offset: 100,
+                })
+                this.next();
+                loading.close()
+
+            }).catch((error) => {
+                loading.close()
+                ElNotification.warning({
+                    title: folio,
+                    message: 'No fue posible guardar',
+                    offset: 100,
+                });
+            });
         },
 
         back()  {
@@ -123,7 +158,7 @@ export default{
             rowCollectionSelected: new Array(),
             dt: null,
             active:0,
-            activeSection:1,
+            activeSection:'4',
             radio1:'1',
             form: {
                 name: '',
@@ -136,13 +171,12 @@ export default{
                 expiry_date: ''
             },
             formResult: null,
-            counterProducts: 0
+            counterProducts: 0,
+            pTotal: this.porcentajeTotal,
+            pFaltante: this.porcentajeFaltante
         }
     },
     mounted(){
-        this.dt = $('#datatable').DataTable();
-        this.dt.on( 'select', () => this.onRowClick())
-        this.dt.on( 'deselect', () => this.onRowClick())
         
         console.log(this.rowCollectionSelected.length);
         console.log(this.stores);
@@ -150,7 +184,25 @@ export default{
 }
 
 </script>
-
+<style scoped>
+.percentage-value {
+  display: block;
+  margin-top: 10px;
+  font-size: 28px;
+}
+.percentage-label {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+}
+.demo-progress .el-progress--line {
+  margin-bottom: 15px;
+  width: 350px;
+}
+.demo-progress .el-progress--circle {
+  margin-right: 15px;
+}
+</style>
 <template>
     <AppLayout title="Stock">
         <template #header>
@@ -160,15 +212,43 @@ export default{
         </template>
         
         <div class="m-4">
-            <h3 class="text-lg text-gray-900"> Listado de tiendas </h3>
-            <p class="text-sm text-gray">Aquí podrás ver las tiendas registradas con sus detalles</p>
+            <h3 class="text-lg text-gray-900"> Listado de inventarios </h3>
+            <p class="text-sm text-gray">Aquí podrás ver la lista de invenatio</p>
+        </div>
+        
+
+        <div class="flex">
+            <div class="flex-none w-38 p-1 ...">
+                <el-progress type="dashboard" :percentage="pFaltante" color="#f56c6c">
+                    <template #default="{ pFaltante }">
+                        <span class="percentage-value"># {{stockToCover}}</span>
+                        <span class="percentage-label">Prods. faltantes</span>
+                    </template>
+                </el-progress>
+            </div>
+            <div class="flex-none w-38 p-1">
+                <el-progress type="dashboard" :percentage="porcentajeTotal">
+                    <template #default="{ porcentajeTotal }">
+                        <span class="percentage-value">{{pTotal}} %</span>
+                        <span class="percentage-label">Invetario cubierto</span>
+                    </template>
+                </el-progress>
+            </div>
+            <div class="flex-none w-38 p-1 ...">
+                <el-progress type="dashboard" :percentage="porcentajeTotal" color="#5cb87a">
+                    <template #default="{ porcentajeTotal }">
+                        <span class="percentage-value"># {{stockCovered}}</span>
+                        <span class="percentage-label">Productos cubiertos</span>
+                    </template>
+                </el-progress>
+            </div>
         </div>
 
         <div class="shadow bg-white md:rounded-md p-4 m-4">
             
             <el-collapse v-model="activeSection" accordion class="shadow bg-white md:rounded-md p-4">
                 
-                <el-collapse-item title="Historial de la venta ayer" name="2">
+                <el-collapse-item title="INVENTARIAR PRODUCTO" name="2">
 
                     <el-steps :active="active" finish-status="success"  align-center>
                         <el-step title="Paso 1" description="Encuentra / Registra un producto"/>
@@ -192,13 +272,13 @@ export default{
                             <Field id="folio"               :label="'Código de barras'"         v-model="form.folio"                typeField="text"    :required="true"  />
                             <Field id="name"                :label="'Nombre del producto'"      v-model="form.name"                 typeField="text"    :required="true"  />
                             <Field id="Description"         :label="'Descripción'"              v-model="form.Description"          typeField="text"    :required="true"  />
-                            <Field id="unit_measure"        :label="'Unidad de medida'"         v-model="form.unit_measure"         typeField="number"  :required="true"  />
+                            <Field id="unit_measure"        :label="'Unidad de medida'"         v-model="form.unit_measure"         typeField="text"  :required="true"  />
                             <Field id="price_list"          :label="'Precio de lista'"          v-model="form.price_list"           typeField="number"  :required="true"  />
                             <Field id="price_customer"      :label="'Precio al cliente'"        v-model="form.price_customer"       typeField="number"  :required="true"  />
                             <Field id="profit_percentage"   :label="'Porcentaje de ganancía'"   v-model="form.profit_percentage"    typeField="number"  :required="true"  />
                             <Field id="expiry_date"         :label="'Fecha de caducidad'"       v-model="form.expiry_date"          typeField="date"    :required="true"  />
 
-                            <el-button style="margin-top: 12px" @click="saveAndNext">Crear y siguiente</el-button>
+                            <el-button style="margin-top: 12px" @click="saveProductAndNext">Crear y siguiente</el-button>
                         </div>
                         <hr class="my-6"/>
                     </div>
@@ -272,11 +352,26 @@ export default{
                     
                     
                 </el-collapse-item>
-                <el-collapse-item title="Lista de productos a surtir" name="4">
-                    pendiente
+                <el-collapse-item title="INVENTARIO ACTUAL" name="4">
+                    
+                    
+                    <DatatableLocal 
+                    :columns="[
+                        { data: 'quantity', label:'CANTIDAD'},
+                        { data: 'name', label:'NOMBRE PRODUCTO'},
+                        { data: 'folio', label:'FOLIO'},
+                        {data:'id', label:' ID '},
+                        { data: 'description', label:'DESCRIPCIÓN'}
+                    ]"
+                    :search="'Buscar en inventario'"
+                    :zeroRecords="'No hay inventario'"
+                    :records="stocks"
+
+                    />
+
                 </el-collapse-item>
             </el-collapse>
-
+            
         </div>
     </AppLayout>
 </template>
