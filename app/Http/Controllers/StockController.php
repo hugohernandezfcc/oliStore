@@ -47,9 +47,6 @@ class StockController extends Controller
             'edited_by_id' => Auth::id()
         ]);
 
-
-        $Stock = Stock::create($request->all());
-
         return response()->json($Stock);
     }
 
