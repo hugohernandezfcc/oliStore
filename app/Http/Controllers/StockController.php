@@ -45,7 +45,6 @@ class StockController extends Controller
             'product_id' => $request->get('id'),
             'created_by_id' => Auth::id(),
             'edited_by_id' => Auth::id()
-
         ]);
 
 

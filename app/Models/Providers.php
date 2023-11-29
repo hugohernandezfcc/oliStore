@@ -18,7 +18,7 @@ class Providers extends Model
         'visit_day',
         'created_by_id',
         'edited_by_id',
-        'store_id',
+        'store_id'
     ];
 
     protected $casts = [
