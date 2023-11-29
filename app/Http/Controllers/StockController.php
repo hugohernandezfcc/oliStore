@@ -25,7 +25,7 @@ class StockController extends Controller
     }
 
     public function create(){
-        // return Inertia::render('Providers/Create');
+        return Inertia::render('Stock/Create');
     }
 
     /**
@@ -33,7 +33,25 @@ class StockController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $Stock = Stock::create([
+            'name' => $request->get('name'),
+            'folio' => $request->get('folio'),
+            'description' => $request->get('Description'),
+            'quantity' => intval($request->get('counterProducts')),
+            'investment' => intval($request->get('counterProducts'))*floatval($request->get('price_list')),
+            'profit' => (intval($request->get('counterProducts'))*floatval($request->get('price_list')))*0.30,
+            'provider_id' => 2,
+            'store_id' => 3,
+            'product_id' => $request->get('id'),
+            'created_by_id' => Auth::id(),
+            'edited_by_id' => Auth::id()
+
+        ]);
+
+
+        $Stock = Stock::create($request->all());
+
+        return response()->json($Stock);
     }
 
     /**

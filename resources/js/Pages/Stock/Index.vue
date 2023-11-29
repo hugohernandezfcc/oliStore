@@ -10,7 +10,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Footer from '@/Components/Footer.vue';
 import Field from '@/Components/Field.vue';
 import { ElNotification } from 'element-plus';
-
+import { ElLoading } from 'element-plus';
 
 export default{
     components:{
@@ -35,13 +35,50 @@ export default{
             if (this.active++ > 2) 
                 this.active = 0;
         },
-        saveAndNext()  {
-            console.log(this.form);
+        saveAndNext() {
+            this.formResult.counterProducts = this.counterProducts;
+            let loading = ElLoading.service({
+                lock: true,
+                text: 'Guardndo registro...',
+                background: 'rgba(0, 0, 0, 0.7)',
+                customClass: 'text-red-600' 
+            })
+            
+            axios.post(route('stocks.store'), this.formResult).then((res) => {
+                console.log(res.data);
+                ElNotification.success({
+                    title: 'Success',
+                    message: 'Registro guardado',
+                    offset: 100,
+                })
+                this.next();
+                this.next();
+                loading.close()
+                this.form.folio = '';
+            }).catch((error) => {
+                loading.close()
+                ElNotification.warning({
+                    title: folio,
+                    message: 'No fue encontrado',
+                    offset: 100,
+                });
+            });
+
+
         },
 
         back()  {
             if (this.active-- > 2) 
                 this.active = 0;
+        },
+
+        agregarProductos()  {
+            this.counterProducts++;
+        },
+
+        reducirProductos()  {
+            if(this.counterProducts >= 1)
+                this.counterProducts--;
         },
 
         changeOption(e){
@@ -54,7 +91,14 @@ export default{
             }
         },
         getMeProduct(folio){
+            let loading = ElLoading.service({
+                lock: true,
+                text: 'Loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+                customClass: 'text-red-600' 
+            })
             axios.get('/sales/retrieveproduct/'+folio).then((res) => {
+                
                 console.log(res);
                 this.formResult = res.data[0];
                 ElNotification.success({
@@ -63,8 +107,9 @@ export default{
                     offset: 100,
                 })
                 this.next();
+                loading.close()
             }).catch((error) => {
-
+                loading.close()
                 ElNotification.warning({
                     title: folio,
                     message: 'No fue encontrado',
@@ -90,7 +135,8 @@ export default{
                 profit_percentage: '',
                 expiry_date: ''
             },
-            formResult: null
+            formResult: null,
+            counterProducts: 0
         }
     },
     mounted(){
@@ -126,7 +172,7 @@ export default{
 
                     <el-steps :active="active" finish-status="success"  align-center>
                         <el-step title="Paso 1" description="Encuentra / Registra un producto"/>
-                        <el-step title="Paso 2" description="Agrega el número de piesas disponibles"/>
+                        <el-step title="Paso 2" description="Agrega el número de piezas disponibles"/>
                         <el-step title="Paso 3" description="Confirma el resultado" />
                     </el-steps>
                     <hr class="my-6"/>
@@ -180,13 +226,13 @@ export default{
                         </table>
                         <div class="flex">
                             <div class="flex-none w-32 h-14">
-                                <el-button type="danger" circle >-</el-button>
+                                <el-button type="danger" circle @click="reducirProductos">-</el-button>
                             </div>
                             <div class="flex-initial w-64 ...">
-                                02
+                                <span class="text-3xl">{{ counterProducts }}</span>
                             </div>
                             <div class="flex-initial w-32 ...">
-                                <el-button type="success" circle >+</el-button>
+                                <el-button type="success" circle @click="agregarProductos">+</el-button>
                             </div>
                         </div>
 
@@ -195,11 +241,31 @@ export default{
                         <el-button style="margin-top: 12px" @click="next">Siguiente</el-button>
                     </div>
 
-                    <div v-if="active == 2">
-                        sacdasdc2
+                    <div v-if="active == 2" class="md:w-full lg:px-[20%]">
+                        <table >
+                            <tr>
+                                <td><b>PRODUCTO:</b></td>
+                                <td>{{formResult.name}}</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td><b>DESCRIPCION:</b></td>
+                                <td>{{formResult.Description}}</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td ><b>Código de barras:  </b></td>
+                                <td class="p-2">
+                                    <div v-html="formResult.bar_code" /> 
+                                    {{formResult.folio}}
+                                </td>
+                                <td> </td>
+                            </tr>
+                        </table>
+                        <span class="text-3xl"># {{ counterProducts }} productos</span>
                         <hr class="my-6"/>
                         <el-button style="margin-top: 12px" @click="back">Atras</el-button>
-                        <el-button style="margin-top: 12px" @click="next">Continuar con otro Producto</el-button>
+                        <el-button style="margin-top: 12px" @click="saveAndNext" type="success">Guardar y continuar</el-button>
                     </div>
 
 

@@ -37,9 +37,7 @@ class SalesController extends Controller
 
         
 
-        $products = Product::get(['name',
-        'folio',
-        'Description']);
+        $products = Product::get(['name', 'folio', 'Description']);
         for ($i=0; $i < $products->count(); $i++) { 
             $products[$i]->price_list   = '$' . $products[$i]->price_list . ' MXN'; 
             $products[$i]->price_customer   = '$' . $products[$i]->price_customer . ' MXN'; 

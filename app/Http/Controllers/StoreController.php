@@ -13,7 +13,6 @@ use App\Models\ProductLineItem;
 use App\Models\Sales;
 use App\Models\Provider;
 use App\Models\Stock;
-
 class StoreController extends Controller
 {
     public function index(){

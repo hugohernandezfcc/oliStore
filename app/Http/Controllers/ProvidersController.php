@@ -32,7 +32,12 @@ class ProvidersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->merge([
+            'created_by_id' => Auth::id(),
+            'edited_by_id' => Auth::id()
+        ]);
+        Providers::create($request->all());
+        return Inertia::render('Providers/Index');
     }
 
     /**
