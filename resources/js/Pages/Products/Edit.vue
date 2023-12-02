@@ -26,7 +26,8 @@ export default{
                 price_list: this.product.price_list,
                 price_customer: this.product.price_customer,
                 profit_percentage: this.product.profit_percentage,
-                expiry_date: this.product.expiry_date
+                expiry_date: this.product.expiry_date,
+                take_portion: this.product.take_portion
             }
         }
     },
@@ -166,6 +167,15 @@ export default{
                                 required
                                 autocomplete="expiry_date"
                             />
+                        </div>
+                        <div class="col-span-6 sm:col-span-4">
+                            <el-switch
+                                v-model="form.take_portion"
+                                class="mb-2"
+                                active-text="Se vende a granel"
+                                inactive-text=" "
+                            />
+                            
                         </div>
 
                                 <!-- <InputError :message="form.errors.current_password" class="mt-2" /> -->

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Faker\Factory;
 
 class ProductController extends Controller
 {
@@ -31,9 +32,6 @@ class ProductController extends Controller
             'products' => $products,
         ]);
     }
-
-
-    
 
     /**
      * Store masive records
@@ -106,22 +104,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'Description' => 'required',
-            'unit_measure' => 'required',
-            'price_list' => 'required',
-            'price_customer' => 'required',
-            'profit_percentage' => 'required',
-            'expiry_date' => 'required'
-        ]);
-        
-        $request->merge([
-            'created_by_id' => Auth::id(),
-            'edited_by_id' => Auth::id()
-        ]);
+        $producto = $request->all();
 
-        Product::create($request->all());
+        if(!isset($producto['folio'])){
+            $faker = Factory::create();
+            $producto['folio'] = $faker->ean13();
+        }
+        
+        $producto['created_by_id'] = Auth::id();
+        $producto['edited_by_id'] = Auth::id();
+
+        Product::create($producto);
         return redirect()->route('products.index');
     }
 

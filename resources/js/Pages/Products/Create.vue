@@ -29,7 +29,8 @@ export default{
                 price_list: '',
                 price_customer: '',
                 profit_percentage: '',
-                expiry_date: ''
+                expiry_date: '',
+                take_portion: false
             }
         }
     },
@@ -74,7 +75,7 @@ export default{
                                 v-model="form.name"
                                 type="text"
                                 class="mt-1 block w-full"
-                                required
+                                
                                 autocomplete="name"
                             />
                         </div>
@@ -86,7 +87,7 @@ export default{
                                 v-model="form.folio"
                                 type="text"
                                 class="mt-1 block w-full"
-                                required
+                                
                                 autocomplete="folio"
                             />
                         </div>
@@ -96,7 +97,7 @@ export default{
                                 id="Description"
                                 v-model="form.Description"
                                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                required
+                                
                                 autocomplete="Description"
                             >
 
@@ -111,7 +112,7 @@ export default{
                                 v-model="form.unit_measure"
                                 type="text"
                                 class="mt-1 block w-full"
-                                required
+                                
                                 autocomplete="unit_measure"
                             />
                         </div>
@@ -124,7 +125,7 @@ export default{
                                 type="number"
                                 step="0.01"
                                 class="mt-1 block w-full"
-                                required
+                                
                                 autocomplete="price_list"
                             />
                         </div>
@@ -137,7 +138,7 @@ export default{
                                 type="number"
                                 step="0.01"
                                 class="mt-1 block w-full"
-                                required
+                                
                                 autocomplete="price_customer"
                             />
                         </div>
@@ -150,7 +151,7 @@ export default{
                                 type="number"
                                 step="0.01"
                                 class="mt-1 block w-full"
-                                required
+                                
                                 autocomplete="profit_percentage"
                             />
                         </div>
@@ -162,9 +163,18 @@ export default{
                                 v-model="form.expiry_date"
                                 type="date"
                                 class="mt-1 block w-full"
-                                required
+                                
                                 autocomplete="expiry_date"
                             />
+                        </div>
+                        <div class="col-span-6 sm:col-span-4">
+                            <el-switch
+                                v-model="form.take_portion"
+                                class="mb-2"
+                                active-text="Se vende a granel"
+                                inactive-text=" "
+                            />
+                            
                         </div>
 
                     </template>

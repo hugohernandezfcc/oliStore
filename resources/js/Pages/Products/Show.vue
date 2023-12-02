@@ -134,6 +134,13 @@ export default{
                                     <td><b>ULTIMA ACTUALIZACIÓN:</b></td>
                                     <td>{{product.editedByUser.name}}</td>
                                 </tr>
+
+                                <tr>
+                                    <td><b>SE VENDE A GRANEL:</b></td>
+                                    <td v-if="product.take_portion">Si, se vende</td>
+                                    <td v-else="product.take_portion">No, se vende por unidad</td>
+                                </tr>
+
                                 <tr>
                                     <td ><b>Código de barras:  </b></td>
                                     <td class="p-2">

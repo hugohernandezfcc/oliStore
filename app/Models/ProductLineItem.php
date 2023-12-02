@@ -13,7 +13,11 @@ class ProductLineItem extends Model
         'sale_id',
         'product_id',
         'created_by_id',
-        'edited_by_id'
+        'edited_by_id',
+        'take_portion',
+        'unit_measure',
+        'quantity',
+        'final_price'
     ];
 
     protected $casts = [

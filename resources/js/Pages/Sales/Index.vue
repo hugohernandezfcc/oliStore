@@ -167,6 +167,9 @@ export default{
         getMeProduct(folio){
             axios.get('/sales/retrieveproduct/'+folio).then((res) => {
                 console.log(res);
+
+
+
                 this.productsAdded.push(this.prepareRecords(res.data[0]));
                 this.status = 'Productos Agregados';
                 this.processing = false;
@@ -182,6 +185,19 @@ export default{
         },
         prepareRecords(record){
             let element = record;
+            let heavy = 0;
+            if(element.take_portion){
+                heavy = prompt("¿Cuanto pesó en la bascula?")
+                console.log(heavy);
+                console.log(typeof heavy);
+                element.price_customer = (element.price_customer/1000)*parseFloat(heavy);
+                element.Description = heavy + ' GRAMOS DE ' + element.name;
+                element.unit_measure = 'GRAMOS';
+                element.quantity = parseFloat(heavy);
+            }
+            element.final_price = element.price_customer;
+
+
             this.form.total = parseFloat(this.form.total) + parseFloat(element.price_customer);
             this.form.total = this.form.total.toFixed(2);
             record.price_customer = '$ '+ record.price_customer + ' MXN';
@@ -431,7 +447,7 @@ export default{
                             />
                             <div class="flex flex-row flex-wrap">
                                 <div class="basis-1/2 p-1" >
-                                    <InputLabel for="inbound_amount" value="Dinero recibido >> $ MXN" />
+                                    <InputLabel for="inbound_amount" value="Dinero recibido >> $" />
                                     <TextInput
                                         id="inbound_amount"
                                         ref="inbound_amount"
@@ -443,7 +459,7 @@ export default{
                                     />
                                 </div>
                                 <div class="basis-1/2 p-1" >
-                                    <InputLabel for="outbound_amount" value="Cambio al cliente << $ MXN" />
+                                    <InputLabel for="outbound_amount" value="Cambio al cliente << $" />
                                     <TextInput
                                         id="outbound_amount"
                                         ref="outbound_amount"

@@ -90,6 +90,10 @@ class SalesController extends Controller
             'created_by_id' => Auth::id(),
             'edited_by_id' => Auth::id()
         ]);
+        
+        
+        
+        
 
         $prodLineRelacionados = $request->get('productosRelacionados');
         $prodLineRelacionadosArray = array();
@@ -97,6 +101,10 @@ class SalesController extends Controller
             $ProductLineItem = ProductLineItem::create([
                 'sale_id' => $sale->id,
                 'product_id' => $prodLineRelacionados[$i]['id'],
+                'take_portion' => $prodLineRelacionados[$i]['take_portion'],
+                'unit_measure' => $prodLineRelacionados[$i]['unit_measure'],
+                'quantity' => (isset($prodLineRelacionados[$i]['quantity'])) ? $prodLineRelacionados[$i]['quantity'] : 1,
+                'final_price' => $prodLineRelacionados[$i]['final_price'],
                 'created_by_id' => Auth::id(),
                 'edited_by_id' => Auth::id()
             ]);

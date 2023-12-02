@@ -16,6 +16,10 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/faker', function () {
+    $faker = Faker\Factory::create();
+    echo $faker->ean13();
+});
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -25,8 +29,6 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-
-
 
 
 Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
