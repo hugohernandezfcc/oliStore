@@ -28,7 +28,8 @@ class Product extends Model
         'expiry_date',
         'created_by_id',
         'edited_by_id',
-        'take_portion'
+        'take_portion',
+        'express_creation'
     ];
     
     protected $casts = [

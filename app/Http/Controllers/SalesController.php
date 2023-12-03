@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Faker\Factory;
 
 class SalesController extends Controller
 {
@@ -68,6 +69,29 @@ class SalesController extends Controller
     {
         //
     }
+
+    /**
+     * Store a newly created resource in products table.
+     */
+    public function storeProductFromPos(Request $request)
+    {
+ 
+        $producto = $request->all();
+
+        if(strlen($producto['folio']) == 0){
+            $faker = Factory::create();
+            $producto['folio'] = $faker->ean13();
+        }
+        $producto['name'] = strtoupper($producto['name']);
+        $producto['unit_measure'] = strtoupper($producto['unit_measure']);
+        $producto['created_by_id'] = Auth::id();
+        $producto['edited_by_id'] = Auth::id();
+        $producto['expiry_date'] = Carbon::today();
+
+        $toReturn = Product::create($producto);
+        return response()->json($toReturn);
+    }
+
 
     /**
      * Store a newly created resource in storage.

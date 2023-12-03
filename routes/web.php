@@ -47,7 +47,8 @@ Route::resource('stocks',           App\Http\Controllers\StockController::class 
 Route::get('/sales/retrieveproduct/{folio}', [App\Http\Controllers\SalesController::class, 'retrieveProduct']);
 Route::get('/products2/readcsv',             [App\Http\Controllers\ProductController::class,  'storeMasive' ]);
 Route::get('/passtoyesterday',               [App\Http\Controllers\SalesProductsController::class,  'editSales' ]);
-Route::post('/storeProduct',                  [App\Http\Controllers\StockController::class,  'storeProduct' ]);
+Route::post('/storeProduct',                 [App\Http\Controllers\StockController::class,  'storeProduct' ]);
+Route::post('/storeProductFromPos',          [App\Http\Controllers\SalesController::class,  'storeProductFromPos' ]);
 
     
 
