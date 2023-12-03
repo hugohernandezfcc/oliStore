@@ -92,7 +92,7 @@ export default{
             finallyAddRecordDescription : '',
             labelSalesValues: 'Especifica el monto en PESOS   -  $ MXN',
             expressProductCreation: false,
-            expressProductCreationTitle: '',
+            expressProductCreationTitle: 'CREACIÓN EXPRESS DE PRODUCTO',
             formNewRecords:{
                 name: '',
                 folio: '',
