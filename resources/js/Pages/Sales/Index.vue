@@ -20,7 +20,7 @@ import 'datatables.net-select';
 import FooterPos from '@/Components/FooterPos.vue';
 import round10 from 'round10';
 import { HollowDotsSpinner } from 'epic-spinners';
-
+import DatatableLocal from '@/Components/DatatableLocal.vue';
 
 
 export default{
@@ -28,14 +28,13 @@ export default{
         AppLayout,
         InputLabel,
         TextInput,
-        PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner, Field
+        PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner, Field,DatatableLocal
     },
     props:{
+        ventas: Array,
         sale: Object,
         Sales: Array,
         results: Object,
-        SalesYesterday: Array,
-        resultsYesterday: Object,
         productFilters: Array
     },
     setup() {
@@ -352,7 +351,7 @@ export default{
         this.dt.on( 'deselect', () => this.onRowClick())
         console.log(this.results);
         this.productFiltersLocal = this.productFilters;
-
+        console.log(this.ventas);
         console.log(this.productFiltersLocal);
     }
 }
@@ -365,9 +364,34 @@ export default{
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                OliStore
-            </h2>
+            <el-collapse  accordion class="shadow bg-white md:rounded-md p-4">
+                <el-collapse-item title="Ventas | punto de venta" name="1" >
+                    <DatatableLocal 
+                    id="saleslocaltable"
+                    :columns="[
+                        {
+                            data:null, render:function(data,type,row,meta) {
+                                return `${meta.row+1}`
+                            }
+                        },
+                        { data: 'no_products', label:'CANTIDAD PRODUCTOS', render:function(data,type,row,meta) {
+                                return `${row.no_products} Productos en esta compra`
+                            }
+                        },
+                        { data: 'total', label:'NOMBRE PRODUCTO', render:function(data,type,row,meta) {
+                                return `$ ${row.total} MXN`
+                            }
+                        },
+                        { data: 'created_at', label:'FECHA DE CREACIÓN'},
+                        { data: 'created_by_id', label:'Vendido por'},
+                        { data: 'id', label:'ID VENTA'}
+                    ]"
+                    :search="'Buscar venta '"
+                    :zeroRecords="'No hay ventas'"
+                    :records="ventas"
+                    />
+                </el-collapse-item>
+            </el-collapse>
         </template>
 
 
@@ -447,17 +471,7 @@ export default{
                                         Total de prod. Vds.: {{ results.no_products }} | TOTAL $ {{ results.total }} MXN | # Ventas: {{ Sales.length }}
                                     </div>
                                 </el-collapse-item>
-                                <el-collapse-item title="Historial de la venta ayer" name="2">
-                                    <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in SalesYesterday">
-                                        <tr >
-                                            <td># Prod:</td><td><b>{{ item.no_products }}</b> </td> <td> | $ </td><td><b>{{ item.total }}</b> </td> <td> |   </td><td><b>{{ item.created_at }}</b> </td>
-                                        </tr>
-                                    </table>
-                                    <hr class="my-6"/>
-                                    <div>
-                                        Total de prod. Vds.: {{ resultsYesterday.no_products }} | TOTAL $ {{ resultsYesterday.total }} MXN | # Ventas: {{ SalesYesterday.length }}
-                                    </div>
-                                </el-collapse-item>
+                                
                                 <el-collapse-item title="Consultar un producto" name="3">
                                     <el-autocomplete
                                         v-model="consultarProducto"

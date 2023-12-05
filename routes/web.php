@@ -51,6 +51,5 @@ Route::post('/storeProduct',                 [App\Http\Controllers\StockControll
 Route::post('/storeProductFromPos',          [App\Http\Controllers\SalesController::class,  'storeProductFromPos' ]);
 
     
-
-
+Route::get('sales/show/{id}',            [App\Http\Controllers\SalesController::class, 'showById'])->middleware('auth:sanctum');
 

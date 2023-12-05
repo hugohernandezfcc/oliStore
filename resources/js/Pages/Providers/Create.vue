@@ -42,6 +42,8 @@ export default{
     methods:{
         submit(){
             this.$inertia.post(this.route('providers.store'), this.form);
+
+           
         }
     },
     mounted() {
@@ -71,7 +73,7 @@ export default{
                         Aquí puedes registrar un proveedor
                     </template>
                     <template #form>
-                        <div class="col-span-8 sm:col-span-6">
+                        <div class="col-span-8 sm:col-span-6" >
                             <Field id="representative"      :label="'Representante de ventas'"  v-model="form.representative"       typeField="text"    :required="true"  />
                         </div>
                         <div class="col-span-8 sm:col-span-6">

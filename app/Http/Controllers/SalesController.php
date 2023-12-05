@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sales;
 use App\Models\Product;
+use App\Models\User;
 use App\Models\ProductLineItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,17 +27,6 @@ class SalesController extends Controller
             $summaryToday->total = $summaryToday->total+ $Sales[$i]->total;
             $summaryToday->no_products = $summaryToday->no_products + $Sales[$i]->no_products;
         }
-        $yesterday = now()->day - 1;
-        $SalesYesterday = Sales::whereDay('created_at', $yesterday)->get();
-        $summaryYesterday = new \stdClass();
-        $summaryYesterday->total = 0;
-        $summaryYesterday->no_products = 0;
-        for ($i=0; $i < count($SalesYesterday) ; $i++) { 
-            $summaryYesterday->total = $summaryYesterday->total+ $SalesYesterday[$i]->total;
-            $summaryYesterday->no_products = $summaryYesterday->no_products + $SalesYesterday[$i]->no_products;
-        }
-
-        
 
         $products = Product::get(['name', 'folio', 'Description']);
         for ($i=0; $i < $products->count(); $i++) { 
@@ -47,11 +37,10 @@ class SalesController extends Controller
 
         
         return Inertia::render('Sales/Index', [
+            'ventas' => Sales::get(),
             'Sales' => $Sales,
-            'SalesYesterday' => $SalesYesterday,
             'Sale' => [],
             'results' => $summaryToday,
-            'resultsYesterday' => $summaryYesterday,
             'productFilters' => $products
         ]);
     }
@@ -147,9 +136,29 @@ class SalesController extends Controller
     /**
      * Display the specified resource.
      */
+    public function showById($id)
+    {
+        $sale = Sales::find($id);
+
+        $sale->ProductLineItems = ProductLineItem::where('sale_id', $id)->get();
+        $sale->createdByUser = User::find($sale->created_by_id);
+        $sale->editedByUser = User::find($sale->edited_by_id);
+
+        return Inertia::render('Sales/Show', compact('sale'));
+    }
+
+    /**
+     * Display the specified resource.
+     */
     public function show(Sales $sales)
     {
-        //
+        $sale = Sales::find($sales->id);
+
+        $sale->ProductLineItems = ProductLineItem::where('sale_id', $sales->id)->get();
+        $sale->createdByUser = User::find($sale->created_by_id);
+        $sale->editedByUser = User::find($sale->edited_by_id);
+
+        return Inertia::render('Sales/Show', compact('sale'));
     }
 
     /**

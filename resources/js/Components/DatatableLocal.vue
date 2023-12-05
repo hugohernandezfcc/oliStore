@@ -22,7 +22,7 @@
              InputLabel, TextInput, PrimaryButton, SecondaryButton, SecondaryButtonPay 
         },
         props:{
-            // data: Array,
+            id:String,
             columns: Array,
             search: String,
             zeroRecords: String,
@@ -47,7 +47,7 @@
         },
         mounted(){
             console.log(this.product);
-            this.dt = $('#datatable').DataTable();
+            this.dt = $('#'+this.id).DataTable();
             this.dt.on( 'select', () => this.onRowClick())
             this.dt.on( 'deselect', () => this.onRowClick())
         }
@@ -57,7 +57,7 @@
     <div>
         <DataTable 
             class="cell-border compact stripe hover order-column loading"
-            ref="table" id="datatable"
+            ref="table" :id="id"
             :data="records"
             :options="{
                 responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[

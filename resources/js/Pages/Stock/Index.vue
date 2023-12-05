@@ -356,6 +356,7 @@ export default{
                     
                     
                     <DatatableLocal 
+                    id="stocktable"
                     :columns="[
                         { data: 'quantity', label:'CANTIDAD'},
                         { data: 'name', label:'NOMBRE PRODUCTO'},
