@@ -144,6 +144,11 @@ class SalesController extends Controller
         $sale->createdByUser = User::find($sale->created_by_id);
         $sale->editedByUser = User::find($sale->edited_by_id);
 
+        for ($i=0; $i < count($sale->ProductLineItems); $i++) { 
+            $sale->ProductLineItems[$i]->product = Product::find($sale->ProductLineItems[$i]->product_id);
+            
+        }
+
         return Inertia::render('Sales/Show', compact('sale'));
     }
 
@@ -155,8 +160,16 @@ class SalesController extends Controller
         $sale = Sales::find($sales->id);
 
         $sale->ProductLineItems = ProductLineItem::where('sale_id', $sales->id)->get();
-        $sale->createdByUser = User::find($sale->created_by_id);
-        $sale->editedByUser = User::find($sale->edited_by_id);
+        $sale->createdByUser    = User::find($sale->created_by_id);
+        $sale->editedByUser     = User::find($sale->edited_by_id);
+
+        $sale->ProductLineItems = ProductLineItem::where('sale_id', $sales->id)->get();
+
+        for ($i=0; $i < count($sale->ProductLineItems); $i++) { 
+            $sale->ProductLineItems[$i]->product = Product::where('id', $sale->ProductLineItems[$i]->product_id)->get()->toArray();
+            
+        }
+
 
         return Inertia::render('Sales/Show', compact('sale'));
     }

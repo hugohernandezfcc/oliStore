@@ -30,7 +30,7 @@ export default{
     },
     data(){
         return {
-
+            
         }
     },
     methods:{
@@ -38,6 +38,8 @@ export default{
     },
     mounted(){
         console.log(this.sale);
+        console.log(this.sale.ProductLineItems);
+
     }
 }
 
@@ -100,20 +102,20 @@ export default{
                                 </tr>
                                 <tr>
                                     <td><b>MONTO ENTRANTE:</b></td>
-                                    <td>{{sale.inbound_amount}} %</td>
+                                    <td>$ {{sale.inbound_amount}} MXN</td>
                                 </tr>
                                 <tr>
                                     <td><b>CAMBIO AL CLIENTE:</b></td>
-                                    <td>{{sale.outbound_amount}}</td>
+                                    <td>$ {{sale.outbound_amount}} MXN</td>
                                 </tr>
 
                                 <tr>
                                     <td><b>TOTAL:</b></td>
-                                    <td>{{sale.total}}</td>
+                                    <td>$ {{sale.total}} MXN</td>
                                 </tr>
 
                                 <tr>
-                                    <td><b>CREADO POR:</b></td>
+                                    <td><b>VENDIDO POR:</b></td>
                                     <td>{{sale.createdByUser.name}}</td>
                                 </tr>
                                 <tr>
@@ -126,7 +128,7 @@ export default{
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
                         <div class="shadow bg-white md:rounded-md p-4">
-                            <h2>product.name  product.Description</h2>
+                            <h2><b>TIENDA:</b> {{ sale.store }} // <b>CAJERO:</b> {{sale.createdByUser.name}}</h2>
                             <hr class="my-6"/>
 
                 
@@ -140,15 +142,17 @@ export default{
                                         return `${meta.row+1}`
                                     }
                                 },
-                                {data:'id'},
-                                {data:'sale_id'},
-                                {data:'product_id'},
-                                {data:'created_by_id'},
-                                {data:'edited_by_id'},
-                                {data:'take_portion'},
-                                {data:'unit_measure'},
-                                {data:'quantity'},
-                                {data:'final_price'}
+                                {data:'id', label:' ID '},
+                                {data:'product.Description', label:'DESCRIPCION PRODUCTO'},
+                                {data:'product.price_customer', label:'PRECIO CLIENTE', render:function(data,type,row,meta) {
+                                        return `$ ${data} MXN`
+                                    }
+                                },
+                                {data:'product.price_list', label:'PRECIO DE LISTA', render:function(data,type,row,meta) {
+                                        return `$ ${data} MXN`
+                                    }
+                                }
+
                             ]"
                             :search="'Buscar venta '"
                             :zeroRecords="'No hay ventas'"
@@ -158,7 +162,7 @@ export default{
 
                             
                             <hr class="my-6"/>
-                            <inertia-link :href="route('products.index')">
+                            <inertia-link :href="route('sales.index')">
                                 Regresar
                             </inertia-link>
                         </div>

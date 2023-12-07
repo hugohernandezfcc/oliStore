@@ -366,7 +366,7 @@ export default{
         <template #header>
             <el-collapse  accordion class="shadow bg-white md:rounded-md p-4">
                 <el-collapse-item title="Ventas | punto de venta" name="1" >
-                    <DatatableLocal 
+                    <DatatableLocal
                     id="saleslocaltable"
                     :columns="[
                         {
@@ -383,8 +383,11 @@ export default{
                             }
                         },
                         { data: 'created_at', label:'FECHA DE CREACIÓN'},
-                        { data: 'created_by_id', label:'Vendido por'},
-                        { data: 'id', label:'ID VENTA'}
+                        { data: 'created_by_id', label:'VENDIDO POR'},
+                        { data: 'id', label:'ID VENTA', render:function(data,type,row,meta) {
+                                return `<a href='/sales/show/${data}'> VER DETALLE </a> `;
+                            }
+                        }
                     ]"
                     :search="'Buscar venta '"
                     :zeroRecords="'No hay ventas'"
