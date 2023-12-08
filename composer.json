@@ -14,7 +14,8 @@
         "laravel/tinker": "^2.8",
         "milon/barcode": "^10.0",
         "nesbot/carbon": "^2.71",
-        "tightenco/ziggy": "^1.0"
+        "tightenco/ziggy": "^1.0",
+        "fakerphp/faker": "^1.23"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
