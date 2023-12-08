@@ -66,7 +66,7 @@ class SalesController extends Controller
     {
  
         $producto = $request->all();
-
+ 
         if(strlen($producto['folio']) == 0){
             $faker = Factory::create();
             $producto['folio'] = $faker->ean13();
