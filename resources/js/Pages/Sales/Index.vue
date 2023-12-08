@@ -248,7 +248,11 @@ export default{
             
             console.log(this.formNewRecords);
             
-            axios.post('/storeProductFromPos/', this.formNewRecords ).then((res) => {
+            axios.post('/storeProductFromPos/', this.formNewRecords, {
+                headers: {
+                    scheme: 'https'
+                }
+            }).then((res) => {
 
                 console.log(res.data);
 
