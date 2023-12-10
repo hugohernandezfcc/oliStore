@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Faker\Factory;
+use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
 {
@@ -42,6 +43,106 @@ class SalesController extends Controller
             'Sale' => [],
             'results' => $summaryToday,
             'productFilters' => $products
+        ]);
+    }
+
+    public function salesToday(){
+
+        $sales = Sales::whereDate('created_at', Carbon::today())->get();
+        $products = Product::get(['name', 'id', 'folio', 'Description', 'price_list','price_customer','profit_percentage']);
+        $toSearchInProducts = array();
+
+        
+        
+        for ($i=0; $i < count($sales); $i++) { 
+            $datetime = Carbon::parse($sales[$i]->created_at, 'CST')->addHour(-6);
+            
+            $sales[$i]->fcreacion = $datetime->day .'/'. $datetime->month.'/'.$datetime->year. ' - ' . $datetime->hour+6 . ':' . $datetime->minute; 
+            array_push($toSearchInProducts, $sales[$i]->id);
+        }
+
+        $toDefineProductsById = null;
+        for ($i=0; $i < count($products); $i++) { 
+            $toDefineProductsById[$products[$i]->id] = $products[$i];
+        }
+
+        $plis = DB::table('product_line_items')
+                            ->whereIn('sale_id', $toSearchInProducts)
+                            ->get();
+
+        for ($o=0; $o < count($plis); $o++) { 
+            $plis[$o]->product = $toDefineProductsById[$plis[$o]->product_id];
+        }
+
+        $toReturn = array();
+
+        for ($i=0; $i < count($sales); $i++) { 
+            $soldProducts = array();
+            $toReturn[$sales[$i]->id] = $sales[$i];
+
+            for ($o=0; $o < count($plis); $o++) { 
+                if($sales[$i]->id == $plis[$o]->sale_id){
+                    array_push($soldProducts, $plis[$o]);
+                }
+            }
+            $toReturn[$sales[$i]->id]->soldProducts = $soldProducts;
+            $toReturn[$sales[$i]->id]->numberSoldProducts = count($soldProducts);
+        }
+
+        return Inertia::render('Sales/Today', [
+            'ventas' => $toReturn,
+            'ventasTotales' => count($toReturn),
+
+        ]);
+    }
+
+    public function salesYesterday(){
+
+        $sales = Sales::whereDate('created_at', Carbon::yesterday())->get();
+        $products = Product::get(['name', 'id', 'folio', 'Description', 'price_list','price_customer','profit_percentage']);
+        $toSearchInProducts = array();
+
+        
+        
+        for ($i=0; $i < count($sales); $i++) { 
+            $datetime = Carbon::parse($sales[$i]->created_at, 'CST')->addHour(-6);
+            
+            $sales[$i]->fcreacion = $datetime->day .'/'. $datetime->month.'/'.$datetime->year. ' - ' . $datetime->hour+6 . ':' . $datetime->minute; 
+            array_push($toSearchInProducts, $sales[$i]->id);
+        }
+
+        $toDefineProductsById = null;
+        for ($i=0; $i < count($products); $i++) { 
+            $toDefineProductsById[$products[$i]->id] = $products[$i];
+        }
+
+        $plis = DB::table('product_line_items')
+                            ->whereIn('sale_id', $toSearchInProducts)
+                            ->get();
+
+        for ($o=0; $o < count($plis); $o++) { 
+            $plis[$o]->product = $toDefineProductsById[$plis[$o]->product_id];
+        }
+
+        $toReturn = array();
+
+        for ($i=0; $i < count($sales); $i++) { 
+            $soldProducts = array();
+            $toReturn[$sales[$i]->id] = $sales[$i];
+
+            for ($o=0; $o < count($plis); $o++) { 
+                if($sales[$i]->id == $plis[$o]->sale_id){
+                    array_push($soldProducts, $plis[$o]);
+                }
+            }
+            $toReturn[$sales[$i]->id]->soldProducts = $soldProducts;
+            $toReturn[$sales[$i]->id]->numberSoldProducts = count($soldProducts);
+        }
+
+        return Inertia::render('Sales/Yesterday', [
+            'ventas' => $toReturn,
+            'ventasTotales' => count($toReturn),
+
         ]);
     }
     
@@ -153,21 +254,21 @@ class SalesController extends Controller
      */
     public function show(Sales $sales)
     {
-        $sale = Sales::find($sales->id);
+        // $sale = Sales::find($sales->id);
 
-        $sale->ProductLineItems = ProductLineItem::where('sale_id', $sales->id)->get();
-        $sale->createdByUser    = User::find($sale->created_by_id);
-        $sale->editedByUser     = User::find($sale->edited_by_id);
+        // $sale->ProductLineItems = ProductLineItem::where('sale_id', $sale->id)->get();
+        // $sale->createdByUser    = User::find($sale->created_by_id);
+        // $sale->editedByUser     = User::find($sale->edited_by_id);
 
-        $sale->ProductLineItems = ProductLineItem::where('sale_id', $sales->id)->get();
+        // $sale->ProductLineItems = ProductLineItem::where('sale_id', $sale->id)->get();
 
-        for ($i=0; $i < count($sale->ProductLineItems); $i++) { 
-            $sale->ProductLineItems[$i]->product = Product::where('id', $sale->ProductLineItems[$i]->product_id)->get()->toArray();
+        // for ($i=0; $i < count($sale->ProductLineItems); $i++) { 
+        //     $sale->ProductLineItems[$i]->product = Product::where('id', $sale->ProductLineItems[$i]->product_id)->get()->toArray();
             
-        }
+        // }
 
 
-        return Inertia::render('Sales/Show', compact('sale'));
+        // return Inertia::render('Sales/Show', compact('sale'));
     }
 
     /**

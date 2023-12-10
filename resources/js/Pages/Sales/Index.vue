@@ -18,7 +18,6 @@ import "datatables.net-dt/css/jquery.dataTables.min.css"
 import 'datatables.net-responsive-bs5';
 import 'datatables.net-select';
 import FooterPos from '@/Components/FooterPos.vue';
-import round10 from 'round10';
 import { HollowDotsSpinner } from 'epic-spinners';
 import DatatableLocal from '@/Components/DatatableLocal.vue';
 
@@ -28,7 +27,7 @@ export default{
         AppLayout,
         InputLabel,
         TextInput,
-        PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner, Field,DatatableLocal
+        PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner, Field, DatatableLocal
     },
     props:{
         ventas: Array,
@@ -49,7 +48,7 @@ export default{
       componentKey,
       refreshComponent,
     };
-  },
+    },
     data(){
 
         return {
@@ -349,7 +348,6 @@ export default{
         }
         
     },
-    
     mounted(){
         this.dt = $('#datatable').DataTable();
         this.dt.on( 'select', () => this.onRowClick())
