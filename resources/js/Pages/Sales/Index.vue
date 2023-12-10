@@ -83,6 +83,7 @@ export default{
             productFiltersLocal: [],
             resultCss: 'margin-top hidden',
             dialogFormVisible: false,
+            dialogMultipleProducts: false,
             modal: {
                 salesIn : 'money',
                 salesValues : '',
@@ -401,7 +402,7 @@ export default{
             </el-collapse>
         </template>
 
-
+        <!-- Modal a granel -->
         <el-dialog v-model="dialogFormVisible" :title="finallyAddRecordDescription">
             <div class="md:w-full lg:px-[20%]">
                 <InputLabel for="salesIn" value="Venta en " class="m-1"/>
@@ -429,8 +430,9 @@ export default{
             </span>
             </template>
         </el-dialog>
-
-
+        <!--/ Modal a granel -->
+        
+        <!-- Modal Productos express -->
         <el-dialog v-model="expressProductCreation" :title="expressProductCreationTitle">
             
             <Field id="name"            :label="'NOMBRE PRODUCTO'"  v-model="formNewRecords.name"               typeField="text"/>
@@ -455,8 +457,33 @@ export default{
             </span>
             </template>
         </el-dialog>
+        <!--/ Modal Productos express -->
 
+        <!-- Modal Multiplicar producto -->
+        <el-dialog v-model="dialogMultipleProducts" :title="'Multiplicar producto' ">
+            <div class="md:w-full lg:px-[20%]">
+                
 
+                <el-space fill>
+                    <h3>Especifica el número de piezas de  {{rowCollectionSelected[0].name}}</h3>
+                    <el-input-number v-model="num" :min="1" :max="10" @change="handleChange" />
+                </el-space>
+            </div><br/>
+            
+            <template #footer>
+            <span class="dialog-footer w-full flex flex-wrap-reverse">
+                <div class="m-1 flex-auto">
+                    <el-button class="w-full" @click="dialogMultipleProducts = false">Cancelar</el-button>
+                </div>
+                <div class="m-1 flex-auto">
+                    <el-button class="w-full" type="danger" @click="finallyAdd">
+                        Multiplicar producto 
+                    </el-button>
+                </div>
+            </span>
+            </template>
+        </el-dialog>
+        <!--/ Modal Multiplicar producto -->
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -531,6 +558,15 @@ export default{
                                 <el-descriptions-item>
                                     <template #label>
                                         <div class="cell-item">
+                                            Precio
+                                        </div>
+                                    </template>
+                                    {{ productName.price_customer }}
+                                </el-descriptions-item>
+
+                                <el-descriptions-item>
+                                    <template #label>
+                                        <div class="cell-item">
                                             Descripción
                                         </div>
                                     </template>
@@ -577,7 +613,7 @@ export default{
                                     {data:'Description'},
                                     {data:'price_customer'},
                                     {data:'expiry_date'}
-                            ]">
+                                ]">
                                 <thead>
                                     <tr>
                                         <th> ID DB </th>
@@ -588,6 +624,9 @@ export default{
                                     </tr>
                                 </thead>
                             </DataTable>
+
+                            <el-button type="info" v-if="rowCollectionSelected.length == 1" @click="dialogMultipleProducts = true">+ Multiplicar producto</el-button>
+
 
                             <hr class="my-6"/>
                             <div class="flex flex-row flex-wrap">

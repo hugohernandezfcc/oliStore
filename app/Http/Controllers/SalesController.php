@@ -28,10 +28,10 @@ class SalesController extends Controller
             $summaryToday->no_products = $summaryToday->no_products + $Sales[$i]->no_products;
         }
 
-        $products = Product::get(['name', 'folio', 'Description']);
+        $products = Product::get(['name', 'folio', 'Description', 'price_list','price_customer','profit_percentage']);
         for ($i=0; $i < $products->count(); $i++) { 
             $products[$i]->price_list   = '$' . $products[$i]->price_list . ' MXN'; 
-            $products[$i]->price_customer   = '$' . $products[$i]->price_customer . ' MXN'; 
+            $products[$i]->price_customer   = '$' . $products[$i]->price_customer ; 
             $products[$i]->profit_percentage    = $products[$i]->profit_percentage . ' %'; 
         }
 
@@ -124,12 +124,8 @@ class SalesController extends Controller
             array_push($prodLineRelacionadosArray, $ProductLineItem);
         }
 
-        try {
-            return redirect()->route('sales.index');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return response()->json([$th, $request]);
-        }
+
+        return response()->json([$sale, $prodLineRelacionadosArray]);
 
     }
 

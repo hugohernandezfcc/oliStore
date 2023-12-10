@@ -29,15 +29,26 @@ export default{
             console.log(this.sale)
             console.log(this.products)
             if(parseFloat(this.$parent.form.inbound_amount) >= this.total){
-                this.$inertia.post(this.route('sales.store', this.sale));
-                ElNotification.success({
-                    title: 'Success',
-                    message: 'Compra guardada',
-                    offset: 100,
-                })
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
+                
+                axios.post(this.route('sales.store'), this.sale, {
+                    headers: {
+                        scheme: 'https'
+                    }
+                }).then((res) => {
+                    ElNotification.success({
+                        title: 'Success',
+                        message: 'Compra guardada',
+                        offset: 100,
+                    })
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                    
+
+                }).catch((error) => {
+                    console.log(error);
+                });
+                
             }else{
                 ElNotification.warning({
                     title: 'warning',
@@ -48,9 +59,9 @@ export default{
             
         },
         methodThatForcesUpdate() {
-        // ...
-        this.$forceUpdate();  // Notice we have to use a $ here
-        // ...
+            // ...
+            this.$forceUpdate();  // Notice we have to use a $ here
+            // ...
         }
     },
     data(){
