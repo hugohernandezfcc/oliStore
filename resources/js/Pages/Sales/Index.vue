@@ -87,6 +87,7 @@ export default{
                 salesIn : 'money',
                 salesValues : '',
             },
+            multiplicador: 0,
             finallyAddRecord:null,
             finallyAddRecordDescription : '',
             labelSalesValues: 'Especifica el monto en PESOS   -  $ MXN',
@@ -107,6 +108,24 @@ export default{
     },
     methods:{
         clearEverything(){
+            console.log('me estoy ejecutando...');
+            this.resultCss = 'margin-top hidden';
+            this.processing = false;
+            this.productsAdded = [];
+            this.realtime.value = '';
+            this.form.payment_method = 'cash';
+            this.form.delivery_method = 'on-site';
+            this.form.status = 'open';
+            this.form.no_products = '';
+            this.form.note = '';
+            this.form.store = 'Oli Store 1';
+            this.form.inbound_amount = '';
+            this.form.outbound_amount = '';
+            this.form.subtotal = 0;
+            this.form.total = 0;
+            this.form.closed = true;
+            this.form.productosRelacionados = [];
+
 
         },
         onEnter(e){
@@ -348,6 +367,20 @@ export default{
             if(this.productFiltersLocal !== undefined)
                 return this.productFiltersLocal.filter((productName) => productName.Description.toLowerCase().includes(this.realtime.value.toLowerCase()) || productName.name.toLowerCase().includes(this.realtime.value.toLowerCase()));
                 // productName.Description.toLowerCase().includes(this.realtime.value.toLowerCase()) || productName.name.toLowerCase().includes(this.realtime.value.toLowerCase())
+        },
+        handleChangeMultiplicador(){
+            console.log(this.multiplicador);
+            console.log(this.rowCollectionSelected[0].final_price);
+
+            this.rowCollectionSelected[0].price_customer = parseFloat(this.rowCollectionSelected[0].final_price);
+            let localRowCollectionSelected = this.rowCollectionSelected;
+
+            for (let i = 0; i < this.multiplicador; i++) {
+                localRowCollectionSelected.push(this.rowCollectionSelected[0]);
+            }
+
+            this.rowCollectionSelected = localRowCollectionSelected;
+            console.log(this.rowCollectionSelected);
         }
         
     },
@@ -468,7 +501,7 @@ export default{
 
                 <el-space fill>
                     <h3>Especifica el número de piezas de  {{rowCollectionSelected[0].name}}</h3>
-                    <el-input-number v-model="num" :min="1" :max="10" @change="handleChange" />
+                    <el-input-number v-model="multiplicador" :min="1" :max="10"  />
                 </el-space>
             </div><br/>
             
@@ -478,7 +511,7 @@ export default{
                     <el-button class="w-full" @click="dialogMultipleProducts = false">Cancelar</el-button>
                 </div>
                 <div class="m-1 flex-auto">
-                    <el-button class="w-full" type="danger" @click="finallyAdd">
+                    <el-button class="w-full" type="danger" @click="handleChangeMultiplicador">
                         Multiplicar producto 
                     </el-button>
                 </div>
@@ -649,7 +682,7 @@ export default{
                                     ]">
                                     <thead>
                                         <tr>
-                                            <th> ID DB </th>
+                                            <th>ID DB </th>
                                             <th>NOMBRE PRODUCTO</th>
                                             <th>DESCRIPCION</th>
                                             <th>PRECIO CLIENTE</th>
@@ -658,7 +691,7 @@ export default{
                                     </thead>
                                 </DataTable>
                             </div>
-                            <el-button type="info" v-if="rowCollectionSelected.length == 1" @click="dialogMultipleProducts = true">+ Multiplicar producto</el-button>
+                            <el-button class="mt-3 mb-3" type="info" v-if="rowCollectionSelected.length == 1" @click="dialogMultipleProducts = true">+ Multiplicar producto</el-button>
                             <br/>
                             <div class="bg-white">
                                 <el-collapse  accordion class="shadow  md:rounded-md p-4 border-black border-spacing-3">
@@ -740,10 +773,6 @@ export default{
             </div>
         </div>
     </AppLayout>
-
-
-
-
 
     <FooterPos 
         :key="componentKey"
