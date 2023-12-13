@@ -106,7 +106,9 @@ export default{
         }
     },
     methods:{
-        
+        clearEverything(){
+
+        },
         onEnter(e){
             this.processing = true;
             if (e.keyCode === 13) {
@@ -341,10 +343,11 @@ export default{
             console.log(this.finallyAddRecordDescription);
         },
         filteredList() {
+
+
             if(this.productFiltersLocal !== undefined)
-                return this.productFiltersLocal.filter((productName) =>
-                    productName.Description.toLowerCase().includes(this.realtime.value.toLowerCase()) || productName.name.toLowerCase().includes(this.realtime.value.toLowerCase())
-                );
+                return this.productFiltersLocal.filter((productName) => productName.Description.toLowerCase().includes(this.realtime.value.toLowerCase()) || productName.name.toLowerCase().includes(this.realtime.value.toLowerCase()));
+                // productName.Description.toLowerCase().includes(this.realtime.value.toLowerCase()) || productName.name.toLowerCase().includes(this.realtime.value.toLowerCase())
         }
         
     },
@@ -356,6 +359,7 @@ export default{
         this.productFiltersLocal = this.productFilters;
         console.log(this.ventas);
         console.log(this.productFiltersLocal);
+       
     }
 }
 
@@ -485,6 +489,7 @@ export default{
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                
                 <div class="md:grid md:grid-cols-3 md:gap-6">
                     
                     <div class="md:col-span-1">
@@ -522,7 +527,37 @@ export default{
                         </div>
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
-                        <div class="shadow bg-white md:rounded-md p-4">
+
+                        <div class="flex flex-row flex-wrap bg-slate-200 md:rounded-md p-4">
+                            <div class="basis-1/2 p-1" >
+                                <InputLabel for="inbound_amount" value="Dinero recibido >> $" />
+                                <TextInput
+                                    id="inbound_amount"
+                                    ref="inbound_amount"
+                                    v-model="form.inbound_amount"
+                                    type="number"
+                                    step="0.01"
+                                    class="mt-1 block w-full"
+                                    v-on:keyup="calculateExchange"
+                                />
+                            </div>
+                            <div class="basis-1/2 p-1" >
+                                <InputLabel for="outbound_amount" value="Cambio al cliente << $" />
+                                <TextInput
+                                    id="outbound_amount"
+                                    ref="outbound_amount"
+                                    v-model="form.outbound_amount"
+                                    type="number"
+                                    step="0.01"
+                                    class="mt-1 block w-full"
+                                    disabled="true"
+                                />
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="shadow bg-slate-200 md:rounded-md p-4">
+
+                            
                             <div class="col-span-6 sm:col-span-4">
                                 <InputLabel for="products" value="Agregar productos" />
                                 <TextInput
@@ -533,10 +568,10 @@ export default{
                                     class="mt-1 block w-full"
                                     required
                                     autocomplete="name"
-                                    v-on:keyup="onEnter"
+                                    v-on:keyup="onEnter" autofocus
                                 />
                             </div>
-                            <br/>
+                            
                             <el-descriptions
                             
                                 :class="`m-1 cursor-pointer ${resultCss}`"
@@ -583,142 +618,119 @@ export default{
                                     color="red" v-if="processing"
                                     />
                             </center>
-                            <hr class="my-6"/>
-
-                            <DataTable 
-                                class="cell-border compact stripe hover order-column loading"
-                                ref="table" id="datatable"
-                                :data="productsAdded"
-                                :options="{
-                                    responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
-                                        { 
-                                            extend: 'selectAll', 
-                                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                                        },
-                                        { 
-                                            extend: 'print',
-                                            text: 'Print selected rows', 
-                                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
+                            <br/>
+                            <div class="bg-white p-1">
+                                <DataTable 
+                                    class="cell-border compact stripe hover order-column loading"
+                                    ref="table" id="datatable"
+                                    :data="productsAdded"
+                                    :options="{
+                                        responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
+                                            { 
+                                                extend: 'selectAll', 
+                                                className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
+                                            },
+                                            { 
+                                                extend: 'print',
+                                                text: 'Print selected rows', 
+                                                className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
+                                            }
+                                        ], language:{
+                                            search:'Buscar Producto ', zeroRecords:'No hay registros'
                                         }
-                                    ], language:{
-                                        search:'Buscar Producto ', zeroRecords:'No hay registros'
-                                    }
-                                }"
-                                
-                                :columns="[
-                                    {data:'id'},
-                                    {data:'name'},
-                                    {data:'Description'},
-                                    {data:'price_customer'},
-                                    {data:'expiry_date'}
-                                ]">
-                                <thead>
-                                    <tr>
-                                        <th> ID DB </th>
-                                        <th>NOMBRE PRODUCTO</th>
-                                        <th>DESCRIPCION</th>
-                                        <th>PRECIO CLIENTE</th>
-                                        <th>FECHA DE CADUCIDAD</th>
-                                    </tr>
-                                </thead>
-                            </DataTable>
-
+                                    }"
+                                    
+                                    :columns="[
+                                        {data:'id'},
+                                        {data:'name'},
+                                        {data:'Description'},
+                                        {data:'price_customer'},
+                                        {data:'expiry_date'}
+                                    ]">
+                                    <thead>
+                                        <tr>
+                                            <th> ID DB </th>
+                                            <th>NOMBRE PRODUCTO</th>
+                                            <th>DESCRIPCION</th>
+                                            <th>PRECIO CLIENTE</th>
+                                            <th>FECHA DE CADUCIDAD</th>
+                                        </tr>
+                                    </thead>
+                                </DataTable>
+                            </div>
                             <el-button type="info" v-if="rowCollectionSelected.length == 1" @click="dialogMultipleProducts = true">+ Multiplicar producto</el-button>
+                            <br/>
+                            <div class="bg-white">
+                                <el-collapse  accordion class="shadow  md:rounded-md p-4 border-black border-spacing-3">
+                                    <el-collapse-item title="Campos adicionales" name="1" >
+                                        <div class="flex flex-row flex-wrap">
+                                            <div class="basis-1/3 p-1" >
+                                                <InputLabel for="payment_method" value="Método de pago" class="m-1"/>
+                                                <el-select id="payment_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                                                    ref="payment_method"
+                                                    v-model="form.payment_method">
+                                            
+                                                    <el-option
+                                                        v-for="item in [
+                                                            {value:'cash', label:'Efectivo'},
+                                                            {value:'card', label:'Tarjeta'},
+                                                            {value:'delivery cash', label:'Domicilio Efectivo'},
+                                                            {value:'delivery card', label:'Domicilio Tarjeta'},
+                                                            {value:'other', label:'Otro'}
+                                                        ]"
+                                                        :key="item.value"
+                                                        :label="item.label"
+                                                        :value="item.value"
+                                                    />
+                                                </el-select>
+                                            </div>
+                                            <div class="basis-1/3 p-1" >
+                                                <InputLabel for="delivery_method" value="Método de venta" class="m-1"/>
+                                                <el-select id="delivery_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                                                    ref="delivery_method"
+                                                    v-model="form.delivery_method">
+                                                    <el-option
+                                                        v-for="item in [
+                                                            {value:'on-site', label:'En tienda'},
+                                                            {value:'delivery', label:'A Domicilio'},
+                                                            {value:'remote', label:'Pago por internet'}
+                                                        ]"
+                                                        :key="item.value"
+                                                        :label="item.label"
+                                                        :value="item.value"
+                                                    />
 
-
-                            <hr class="my-6"/>
-                            <div class="flex flex-row flex-wrap">
-                                <div class="basis-1/3 p-1" >
-                                    <InputLabel for="payment_method" value="Método de pago" class="m-1"/>
-                                    <el-select id="payment_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
-                                        ref="payment_method"
-                                        v-model="form.payment_method">
-                                
-                                        <el-option
-                                            v-for="item in [
-                                                {value:'cash', label:'Efectivo'},
-                                                {value:'card', label:'Tarjeta'},
-                                                {value:'delivery cash', label:'Domicilio Efectivo'},
-                                                {value:'delivery card', label:'Domicilio Tarjeta'},
-                                                {value:'other', label:'Otro'}
-                                            ]"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value"
+                                                </el-select>
+                                            </div>
+                                            <div class="basis-1/3 p-1" >
+                                                <InputLabel for="status" value="Estado de venta" class="m-1"/>
+                                                <el-select id="status" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                                                    ref="status"
+                                                    v-model="form.status">
+                                                    <el-option
+                                                        v-for="item in [
+                                                            {value:'open', label:'Abierto'},
+                                                            {value:'in-progress', label:'En progreso'},
+                                                            {value:'closed', label:'Venta cerrada'}
+                                                        ]"
+                                                        :key="item.value"
+                                                        :label="item.label"
+                                                        :value="item.value"
+                                                    />
+                                                </el-select>
+                                            </div>
+                                        </div>
+                                        <InputLabel for="note" value="Nota de la venta" />
+                                        <TextInput
+                                            id="note"
+                                            ref="note"
+                                            v-model="form.note"
+                                            type="text"
+                                            class="mt-1 block w-full"
                                         />
-                                    </el-select>
-                                </div>
-                                <div class="basis-1/3 p-1" >
-                                    <InputLabel for="delivery_method" value="Método de venta" class="m-1"/>
-                                    <el-select id="delivery_method" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
-                                        ref="delivery_method"
-                                        v-model="form.delivery_method">
-                                        <el-option
-                                            v-for="item in [
-                                                {value:'on-site', label:'En tienda'},
-                                                {value:'delivery', label:'A Domicilio'},
-                                                {value:'remote', label:'Pago por internet'}
-                                            ]"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value"
-                                        />
-
-                                    </el-select>
-                                </div>
-                                <div class="basis-1/3 p-1" >
-                                    <InputLabel for="status" value="Estado de venta" class="m-1"/>
-                                    <el-select id="status" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
-                                        ref="status"
-                                        v-model="form.status">
-                                        <el-option
-                                            v-for="item in [
-                                                {value:'open', label:'Abierto'},
-                                                {value:'in-progress', label:'En progreso'},
-                                                {value:'closed', label:'Venta cerrada'}
-                                            ]"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value"
-                                        />
-                                    </el-select>
-                                </div>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </div>
-                            <InputLabel for="note" value="Nota de la venta" />
-                            <TextInput
-                                id="note"
-                                ref="note"
-                                v-model="form.note"
-                                type="text"
-                                class="mt-1 block w-full"
-                            />
-                            <div class="flex flex-row flex-wrap">
-                                <div class="basis-1/2 p-1" >
-                                    <InputLabel for="inbound_amount" value="Dinero recibido >> $" />
-                                    <TextInput
-                                        id="inbound_amount"
-                                        ref="inbound_amount"
-                                        v-model="form.inbound_amount"
-                                        type="number"
-                                        step="0.01"
-                                        class="mt-1 block w-full"
-                                        v-on:keyup="calculateExchange"
-                                    />
-                                </div>
-                                <div class="basis-1/2 p-1" >
-                                    <InputLabel for="outbound_amount" value="Cambio al cliente << $" />
-                                    <TextInput
-                                        id="outbound_amount"
-                                        ref="outbound_amount"
-                                        v-model="form.outbound_amount"
-                                        type="number"
-                                        step="0.01"
-                                        class="mt-1 block w-full"
-                                        disabled="true"
-                                    />
-                                </div>
-                            </div>
-
                         </div>
                         <br/>
                         <br/>
@@ -740,6 +752,7 @@ export default{
         :total="form.total"
         :sale="form"
         @destroy="deleteRow"
+        @clearEverything="clearEverything"
         v-if="productsAdded.length > 0"/>
 </template>
 

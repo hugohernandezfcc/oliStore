@@ -9,7 +9,7 @@ export default{
     components:{
          PrimaryButton, SecondaryButtonPay, axios
     },
-    emits: ["destroy"],
+    emits: ["destroy", "clearEverything"],
     props:{
         selectedProducts: Number,
         sale: Object,
@@ -40,10 +40,10 @@ export default{
                         message: 'Compra guardada',
                         offset: 100,
                     })
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                    
+                    // setTimeout(() => {
+                    //     location.reload();
+                    // }, 2000);
+                    this.$emit("clearEverything");
 
                 }).catch((error) => {
                     console.log(error);
