@@ -79,7 +79,7 @@ export default{
 
             <!-- <div class="flex flex-wrap-reverse"> -->
                 <div class="lg:basis-2/6 m-1">
-                    <h1 class="text-lg  text-green-500">$ {{ total }} MXN -  Total</h1>
+                    <h1 class="underline text-green-600 text-2xl decoration-double">$ {{ total }} MXN -  Total</h1>
                 </div>
                 <div class="lg:basis-2/6 m-1" v-if="total > 0">
 

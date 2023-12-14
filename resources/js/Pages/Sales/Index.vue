@@ -533,9 +533,17 @@ export default{
 
                                     <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in Sales">
                                         <tr >
-                                            <td># Prod:</td><td><b>{{ item.no_products }}</b> </td> <td> | $ </td><td><b>{{ item.total }}</b> </td> <td> |   </td><td><b>{{ item.created_at }}</b> </td>
+                                            <td class="w-[50px]"># Prod:</td>
+                                            <td class="w-[30px]"><b>{{ item.no_products }}</b> </td> 
+                                            <td class="w-[30px]"> | $ </td>
+                                            <td class="w-[30px]"><b>{{ item.total }}</b> </td> 
+                                            <td class="w-[30px]"> |   </td>
+                                            <td class="w-[120px]"><b>{{ item.created_at }}</b> </td>
+                                            <td class="w-[10px]"><a class="underline text-blue-600 " :href="'/sales/show/'+item.id"> <b>Ver</b> </a> </td>
                                         </tr>
                                     </table>
+
+
                                     <hr class="my-6"/>
                                     <div>
                                         Total de prod. Vds.: {{ results.no_products }} | TOTAL $ {{ results.total }} MXN | # Ventas: {{ Sales.length }}
@@ -570,7 +578,7 @@ export default{
                                     v-model="form.inbound_amount"
                                     type="number"
                                     step="0.01"
-                                    class="mt-1 block w-full"
+                                    class="mt-1 block w-full text-xl text-green-700"
                                     v-on:keyup="calculateExchange"
                                 />
                             </div>
@@ -582,7 +590,7 @@ export default{
                                     v-model="form.outbound_amount"
                                     type="number"
                                     step="0.01"
-                                    class="mt-1 block w-full"
+                                    class="mt-1 block w-full text-xl text-rose-600  "
                                     disabled="true"
                                 />
                             </div>
@@ -598,7 +606,7 @@ export default{
                                     ref="products"
                                     v-model="realtime.value"
                                     type="text"
-                                    class="mt-1 block w-full"
+                                    class="mt-1 block w-full text-2xl text-green-950"
                                     required
                                     autocomplete="name"
                                     v-on:keyup="onEnter" autofocus
