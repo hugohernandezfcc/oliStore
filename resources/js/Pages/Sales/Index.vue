@@ -103,7 +103,8 @@ export default{
                 profit_percentage: '',
                 take_portion: false,
                 express_creation: true
-            }
+            },
+            localSales:[]
         }
     },
     methods:{
@@ -392,6 +393,7 @@ export default{
         this.productFiltersLocal = this.productFilters;
         console.log(this.ventas);
         console.log(this.productFiltersLocal);
+        this.localSales = this.Sales;
        
     }
 }
@@ -531,7 +533,7 @@ export default{
                             <el-collapse  accordion class="shadow bg-white md:rounded-md p-4">
                                 <el-collapse-item title="Historial de la venta hoy" name="1" >
 
-                                    <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in Sales">
+                                    <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in localSales">
                                         <tr >
                                             <td class="w-[50px]"># Prod:</td>
                                             <td class="w-[30px]"><b>{{ item.no_products }}</b> </td> 
