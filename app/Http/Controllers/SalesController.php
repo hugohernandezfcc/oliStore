@@ -29,7 +29,7 @@ class SalesController extends Controller
             $summaryToday->no_products = $summaryToday->no_products + $Sales[$i]->no_products;
         }
 
-        $products = Product::whereNotNull('Description')->get(['name', 'folio', 'Description', 'price_list','price_customer','profit_percentage']);
+        $products = Product::whereNotNull('Description')->where('visible_product', true)->get(['name', 'folio', 'Description', 'price_list','price_customer','profit_percentage']);
         for ($i=0; $i < $products->count(); $i++) { 
             $products[$i]->price_list   = '$' . $products[$i]->price_list . ' MXN'; 
             $products[$i]->price_customer   = '$' . $products[$i]->price_customer ; 
@@ -75,11 +75,12 @@ class SalesController extends Controller
         }
 
         $toReturn = array();
-
+        $productCounts = 0;
+        $salesCounts = 0;
         for ($i=0; $i < count($sales); $i++) { 
             $soldProducts = array();
             $toReturn[$sales[$i]->id] = $sales[$i];
-
+            $salesCounts = $salesCounts + $sales[$i]->total;
             for ($o=0; $o < count($plis); $o++) { 
                 if($sales[$i]->id == $plis[$o]->sale_id){
                     array_push($soldProducts, $plis[$o]);
@@ -87,12 +88,15 @@ class SalesController extends Controller
             }
             $toReturn[$sales[$i]->id]->soldProducts = $soldProducts;
             $toReturn[$sales[$i]->id]->numberSoldProducts = count($soldProducts);
+            $productCounts = $productCounts + count($soldProducts);
         }
 
         return Inertia::render('Sales/Today', [
             'ventas' => $toReturn,
             'ventasTotales' => count($toReturn),
-
+            'salesCount' => count($sales),
+            'productCounts' => $productCounts,
+            'total' => $salesCounts
         ]);
     }
 
@@ -125,11 +129,12 @@ class SalesController extends Controller
         }
 
         $toReturn = array();
-
+        $productCounts = 0;
+        $salesCounts = 0;
         for ($i=0; $i < count($sales); $i++) { 
             $soldProducts = array();
             $toReturn[$sales[$i]->id] = $sales[$i];
-
+            $salesCounts = $salesCounts + $sales[$i]->total;
             for ($o=0; $o < count($plis); $o++) { 
                 if($sales[$i]->id == $plis[$o]->sale_id){
                     array_push($soldProducts, $plis[$o]);
@@ -137,12 +142,15 @@ class SalesController extends Controller
             }
             $toReturn[$sales[$i]->id]->soldProducts = $soldProducts;
             $toReturn[$sales[$i]->id]->numberSoldProducts = count($soldProducts);
+            $productCounts = $productCounts + count($soldProducts);
         }
 
         return Inertia::render('Sales/Yesterday', [
             'ventas' => $toReturn,
             'ventasTotales' => count($toReturn),
-
+            'salesCount' => count($sales),
+            'productCounts' => $productCounts,
+            'total' => $salesCounts
         ]);
     }
     

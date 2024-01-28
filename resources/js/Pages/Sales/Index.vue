@@ -430,7 +430,7 @@ export default{
                                 return `<a href='/sales/show/${data}'> VER DETALLE </a> `;
                             }
                         }
-                    ]"
+                    ]" 
                     :search="'Buscar venta '"
                     :zeroRecords="'No hay ventas'"
                     :records="ventas"

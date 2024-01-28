@@ -13,7 +13,7 @@ const open1 = () => {
   })
 }
 
-
+window.location.replace("/sales");
 </script>
 
 <template>

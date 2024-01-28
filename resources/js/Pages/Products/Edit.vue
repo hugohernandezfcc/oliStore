@@ -27,7 +27,8 @@ export default{
                 price_customer: this.product.price_customer,
                 profit_percentage: this.product.profit_percentage,
                 expiry_date: this.product.expiry_date,
-                take_portion: this.product.take_portion
+                take_portion: this.product.take_portion,
+                visible_product:this.product.visible_product
             }
         }
     },
@@ -173,6 +174,15 @@ export default{
                                 v-model="form.take_portion"
                                 class="mb-2"
                                 active-text="Se vende a granel"
+                                inactive-text=" "
+                            />
+                            
+                        </div>
+                        <div class="col-span-6 sm:col-span-4">
+                            <el-switch
+                                v-model="form.visible_product"
+                                class="mb-2"
+                                active-text="No mostrar"
                                 inactive-text=" "
                             />
                             

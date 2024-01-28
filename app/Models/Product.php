@@ -29,7 +29,8 @@ class Product extends Model
         'created_by_id',
         'edited_by_id',
         'take_portion',
-        'express_creation'
+        'express_creation',
+        'visible_product'
     ];
     
     protected $casts = [

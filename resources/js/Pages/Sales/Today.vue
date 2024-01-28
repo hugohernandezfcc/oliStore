@@ -19,15 +19,19 @@ import FooterPos from '@/Components/FooterPos.vue';
 
 import { HollowDotsSpinner } from 'epic-spinners';
 import DatatableLocal from '@/Components/DatatableLocal.vue';
-
+import { useTransition } from '@vueuse/core';
 
 export default{
     components:{
         AppLayout, InputLabel, TextInput, PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner, Field,DatatableLocal
     },
+    
     props:{
         ventas: Array,
-        ventasTotales: Number
+        ventasTotales: Number,
+        salesCount: Number,
+        productCounts: Number,
+        total: Number
     },
     data(){
         return {
@@ -35,11 +39,14 @@ export default{
         }
     },
     methods:{
+        
+    },
+    created() {
 
     },
     mounted(){
-        console.log(this.ventas);
 
+        console.log(this.ventas);
 
     }
 }
@@ -50,7 +57,7 @@ export default{
     <AppLayout title="Dashboard">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                OliStore > Ventas de hoy
+                OliStore > Ventas de hoy > 
             </h2>
         </template>
 
@@ -73,23 +80,36 @@ export default{
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
                         <div class="shadow bg-white md:rounded-md p-4">
-                            <h2><b>TIENDA:</b> Oli Store 1</h2>
-                            
-                            <div v-for="venta in ventas">
-                                <table class="border border-slate-500 w-full">
-                                    <tr class="border border-slate-500 ">
-                                        <td colspan="3">Id Venta: {{ venta.id }} | # Productos: {{ venta.no_products }} | Fecha/hora de venta: {{ venta.fcreacion }} | <b>TOTAL: ${{venta.total}} MXN</b></td>
-                                    </tr>
-                                    <tr  v-for="(sp, spKey) in venta.soldProducts">
-                                        <td class="border border-slate-500 "># {{spKey + 1}}</td>
-                                        <td class="border border-slate-500 ">{{ sp.product.Description }}</td>
-                                        <td class="border border-slate-500 ">$ {{ sp.final_price }} MXN</td>
-                                    </tr>
-                                </table>
-                                <hr class="my-6"/>
-                            </div>
-                            
+                            <h2><b>TIENDA:</b> OliStore 1</h2>
+                            <el-row>
+                                
+                                <el-col :span="6">
+                                    <el-statistic title="Número de ventas" :value="`# ${salesCount}` " />
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-statistic title="Número de productos vendidos" :value="`# ${productCounts}`" />
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-statistic title="Total $ MXN" :value="`$ ${total}`" />
+                                </el-col>
+                                
+                            </el-row>
 
+                            <div v-for="venta in ventas">
+                                <el-collapse v-model="activeNames" @change="handleChange">
+                                <el-collapse-item :title="`# Productos: ${venta.no_products} / TOTAL: $ ${venta.total} MXN`" name="1">
+                                    Id Venta: {{venta.id}} <br/>
+                                    Fecha/hora de venta: {{venta.fcreacion}}
+                                    <table>
+                                        <tr  v-for="(sp, spKey) in venta.soldProducts">
+                                            <td class="border border-slate-500 "># {{spKey + 1}}</td>
+                                            <td class="border border-slate-500 ">{{ sp.product.Description }}</td>
+                                            <td class="border border-slate-500 ">$ {{ sp.final_price }} MXN</td>
+                                        </tr>
+                                    </table>
+                                </el-collapse-item>
+                                </el-collapse>
+                            </div>
 
                             <inertia-link :href="route('sales.index')">
                                 Regresar
