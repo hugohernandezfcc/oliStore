@@ -79,14 +79,6 @@ class ProductController extends Controller
             array_push($productos, $producto);
         }
 
-        // dd($products);
-
-
-        
-
-        
-
-
         return response()->json($productos);
     }
 
@@ -95,8 +87,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Products/Create');
         
+        return Inertia::render('Products/Create');
     }
 
     /**
@@ -110,7 +102,11 @@ class ProductController extends Controller
             $faker = Factory::create();
             $producto['folio'] = $faker->ean13();
         }
+        $valor = doubleval($producto["price_customer"]) - doubleval($producto["price_list"]);
+        $valorFinal = ($valor / doubleval($producto["price_customer"])) * 100;
+
         
+        $producto['profit_percentage'] = $valorFinal;
         $producto['created_by_id'] = Auth::id();
         $producto['edited_by_id'] = Auth::id();
 
