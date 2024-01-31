@@ -152,17 +152,26 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+
+        
         $request->validate([
             'name'          => 'required',
             'Description' => 'required',
             'unit_measure' => 'required',
             'price_list' => 'required',
             'price_customer' => 'required',
-            'profit_percentage' => 'required',
             'expiry_date' => 'required'
         ]);
         
-        $product->update($request->all());
+        $producto = $request->all();
+        $valor = doubleval($producto["price_customer"]) - doubleval($producto["price_list"]);
+        $valorFinal = ($valor / doubleval($producto["price_customer"])) * 100;
+
+        
+        $producto['profit_percentage'] = $valorFinal;
+
+
+        $product->update($producto);
         return redirect()->route('products.index');
     }
 

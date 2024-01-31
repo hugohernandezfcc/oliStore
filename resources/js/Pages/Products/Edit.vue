@@ -145,19 +145,7 @@ export default{
                             />
                         </div>
 
-                        <div class="col-span-6 sm:col-span-4">
-                            <InputLabel for="profit_percentage" value="Porcentaje de ganancía" />
-                            <TextInput
-                                id="profit_percentage"
-                                v-model="form.profit_percentage"
-                                type="number"
-                                step="0.01"
-                                class="mt-1 block w-full"
-                                required
-                                autocomplete="profit_percentage"
-                            />
-                        </div>
-
+                       
                         <div class="col-span-6 sm:col-span-4">
                             <InputLabel for="expiry_date" value="Fecha de caducidad" />
                             <TextInput
