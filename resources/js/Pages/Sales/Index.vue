@@ -9,6 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SecondaryButtonPay from '@/Components/SecondaryButtonPay.vue';
 import TextInput from '@/Components/TextInput.vue';
+import wizardForm from '@/Components/TicketForm.vue';
 import { ref, getCurrentInstance } from 'vue';
 import axios from 'axios';
 import Field from '@/Components/Field.vue';
@@ -27,7 +28,14 @@ export default{
         AppLayout,
         InputLabel,
         TextInput,
-        PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner, Field, DatatableLocal
+        PrimaryButton, 
+        SecondaryButton, 
+        FooterPos, 
+        SecondaryButtonPay, 
+        HollowDotsSpinner, 
+        Field, 
+        DatatableLocal, 
+        wizardForm
     },
     props:{
         ventas: Array,
@@ -52,6 +60,7 @@ export default{
     data(){
 
         return {
+            
             consultarProducto:'',
             form: {
                 payment_method: 'cash',
@@ -108,6 +117,7 @@ export default{
         }
     },
     methods:{
+        
         clearEverything(){
             console.log('me estoy ejecutando...');
             this.resultCss = 'margin-top hidden';
@@ -208,7 +218,8 @@ export default{
             console.log(this.form.productosRelacionados);
         },
         getMeProduct(folio){
-
+            this.form.inbound_amount = null;
+            this.form.outbound_amount = null;
             axios.get('/sales/retrieveproduct/'+folio).then((res) => {
                 console.log(res);
 
@@ -531,39 +542,14 @@ export default{
                         <div class="px-4 sm:px0">
 
                             <el-collapse  accordion class="shadow bg-white md:rounded-md p-4">
-                                <el-collapse-item title="Historial de la venta hoy" name="1" >
-
-                                    <table class="grid grid-cols-1 divide-y hidden md:block m-1" v-for="item in localSales">
-                                        <tr >
-                                            <td class="w-[50px]"># Prod:</td>
-                                            <td class="w-[30px]"><b>{{ item.no_products }}</b> </td> 
-                                            <td class="w-[30px]"> | $ </td>
-                                            <td class="w-[30px]"><b>{{ item.total }}</b> </td> 
-                                            <td class="w-[30px]"> |   </td>
-                                            <td class="w-[120px]"><b>{{ item.created_at }}</b> </td>
-                                            <td class="w-[10px]"><a class="underline text-blue-600 " :href="'/sales/show/'+item.id"> <b>Ver</b> </a> </td>
-                                        </tr>
-                                    </table>
-
-
-                                    <hr class="my-6"/>
-                                    <div>
-                                        Total de prod. Vds.: {{ results.no_products }} | TOTAL $ {{ results.total }} MXN | # Ventas: {{ Sales.length }}
-                                    </div>
+                                <el-collapse-item title="Registrar ticket" name="1" >
+                                    <wizardForm :TypeForm="'ticketForm'"/>
                                 </el-collapse-item>
-                                
-                                <el-collapse-item title="Consultar un producto" name="3">
-                                    <el-autocomplete
-                                        v-model="consultarProducto"
-                                        :trigger-on-focus="false"
-                                        clearable
-                                        class="inline-input w-50"
-                                        placeholder="Please Input"
-                                        @select="handleSelect"
-                                    />
+                                <el-collapse-item title="Consultar un producto" name="2">
+                                    <wizardForm :TypeForm="'productQuery'"/>
                                 </el-collapse-item>
-                                <el-collapse-item title="Lista de productos a surtir" name="4">
-                                    pendiente
+                                <el-collapse-item title="Lista de productos a surtir" name="3">
+                                    <wizardForm :TypeForm="'requestStock'"/>
                                 </el-collapse-item>
                             </el-collapse>
 
