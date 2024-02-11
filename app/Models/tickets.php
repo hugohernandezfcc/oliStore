@@ -10,6 +10,7 @@ class tickets extends Model
     use HasFactory;
 
     protected $fillable = [
+        'noTicket',
         'who_issued_ticket',
         'provider',
         'total',

@@ -45,13 +45,18 @@ Route::resource('providers',        App\Http\Controllers\ProvidersController::cl
 Route::resource('stocks',           App\Http\Controllers\StockController::class         )->middleware('auth:sanctum');
 
 Route::get('/sales/retrieveproduct/{folio}', [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
-Route::get('/sales/today/results',                   [App\Http\Controllers\SalesController::class,  'salesToday'])->middleware('auth:sanctum')->name('sales.today');;
-Route::get('/sales/yesterday/results',                   [App\Http\Controllers\SalesController::class,  'salesYesterday'])->middleware('auth:sanctum')->name('sales.yesterday');;
+Route::get('/sales/today/results',                   [App\Http\Controllers\SalesController::class,  'salesToday'])->middleware('auth:sanctum')->name('sales.today');
+Route::get('/sales/yesterday/results',                   [App\Http\Controllers\SalesController::class,  'salesYesterday'])->middleware('auth:sanctum')->name('sales.yesterday');
 Route::post('/storeProduct',                 [App\Http\Controllers\StockController::class,          'storeProduct' ]);
+Route::post('/storeticket',                 [App\Http\Controllers\TicketsController::class,          'store' ]);
 Route::post('/storeProductFromPos',          [App\Http\Controllers\SalesController::class,          'storeProductFromPos' ]);
 Route::get('sales/show/{id}',                [App\Http\Controllers\SalesController::class, 'showById'])->middleware('auth:sanctum');
 
 Route::get('/products2/readcsv',             [App\Http\Controllers\ProductController::class,        'storeMasive' ]);
 Route::get('/passtoyesterday',               [App\Http\Controllers\SalesProductsController::class,  'editSales' ]);
+
+Route::post('/dashboard', 
+            [App\Http\Controllers\DashboardController::class,          
+            'index'])->name('dashboard.results');;
 
 

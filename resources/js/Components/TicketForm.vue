@@ -7,10 +7,11 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Field from '@/Components/Field.vue';
 import { ElNotification } from 'element-plus';
 import { ElLoading } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 
   export default{
       components:{
-        PrimaryButton, SecondaryButton,  Field
+        PrimaryButton, SecondaryButton,  Field, ElMessageBox
       },
       props:{
           TypeForm: String
@@ -58,31 +59,73 @@ import { ElLoading } from 'element-plus';
                 value: 'Jose Antonio',
                 label: 'Jose Antonio',
             },
-            ]            
+            ],
+            cantContinue : false            
         }
       },
-      methods:{
-        saveTicket() {
-            this.activeTicket = 0;
-        },
-          nextTicket() {
-
-              if (this.activeTicket++ > 2) 
+        methods:{
+            saveTicket() {
                 this.activeTicket = 0;
-          },
-          nextProduct() {
-              if (this.activeProduct++ > 2) 
-                this.activeProduct = 0;
-          },
-          nextStock() {
-              if (this.activeStock++ > 2) 
-                this.activeStock = 0;
-          },
-          onEnter(e){
-            if (e.keyCode === 13) {
-                this.addItemToList();
+
+                axios.post('/storeticket', this.form, {
+                    headers: {
+                        scheme: 'https'
+                    }
+                }).then((res) => {
+
+                    console.log(res.data);
+                    
+                    this.form.noTicket = '';
+                    this.form.dateTimeIssued = '';
+                    this.form.whoIssuedTicket = '';
+                    this.form.provider = '';
+                    this.form.total = '';
+                    this.form.quantityItems = []
+                
+                   
+                }).catch((error) => {
+                    console.log(error);
+                });
+
+            },
+            nextTicket() {
+
+                for(var k in this.form){
+                    console.log(this.form[k].length);
+                    if(this.form[k].length == 0 && k != 'quantityItems' && this.activeTicket == 0){
+                        this.cantContinue = true;
+                    }
+                }
+
+               
+                
+                if(!this.cantContinue){
+                    if (this.activeTicket++ > 2) 
+                        this.activeTicket = 0;
+                }else{
+                    ElMessageBox.confirm('Debes llenar todos los campos')
+                    .then(() => {
+                        console.log('se ha notificado que faltan cambios')
+                    }).catch(() => {
+                    // catch error
+                    })
+                }
+                
+
+            },
+            nextProduct() {
+                if (this.activeProduct++ > 2) 
+                    this.activeProduct = 0;
+            },
+            nextStock() {
+                if (this.activeStock++ > 2) 
+                    this.activeStock = 0;
+            },
+            onEnter(e){
+                if (e.keyCode === 13) {
+                    this.addItemToList();
             }
-          },
+        },
           addItemToList(){
             this.totalProducts = Number(this.totalProducts)+Number(this.quantities.quantity);
             this.form.quantityItems.push({
@@ -130,15 +173,18 @@ import { ElLoading } from 'element-plus';
 </script>
 
 <template>
-    <div v-if="TypeForm == 'ticketForm'">
 
+  
+
+    <div v-if="TypeForm == 'ticketForm'">
         <el-steps :active="activeTicket" finish-status="success" >
-        <el-step title="Ticket" />
-        <el-step title="Stock" />
-        <el-step title="Guardar" />
+            <el-step title="Ticket" />
+            <el-step title="Stock" />
+            <el-step title="Guardar" />
         </el-steps>
         <hr class="my-6"/>
-        
+
+        <br/>
         <!-- #1 FORM -->
         <div v-if="activeTicket == 0" align-center>
             Ticket No.<br/>
