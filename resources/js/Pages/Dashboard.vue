@@ -10,7 +10,7 @@
                         v-model="startDate"
                         type="date"
                         placeholder="Pick a day"
-                        :shortcuts="shortcuts"
+
                     />
                 </div>
                 <div class="w-full md:w-1/3 p-2">
@@ -20,7 +20,7 @@
                         type="date"
                         placeholder="Pick a day"
                         :disabled-date="disabledDate"
-                        :shortcuts="shortcuts"
+
                     />
                 </div>
                 <div class="w-full md:w-1/3 p-2"><br/>
@@ -201,28 +201,7 @@ export default {
                 footerValue: ''
             },
             
-            shortcuts:[
-                {
-                    text: 'Hoy',
-                    value: new Date(),
-                },
-                {
-                    text: 'Ayer',
-                    value: () => {
-                    const date = new Date()
-                    date.setTime(date.getTime() - 3600 * 1000 * 24)
-                    return date
-                    },
-                },
-                {
-                    text: '< Semana',
-                    value: () => {
-                    const date = new Date()
-                    date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-                    return date
-                    },
-                }
-            ]
+            
         }
     },
     methods:{

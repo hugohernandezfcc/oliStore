@@ -113,16 +113,16 @@ class DashboardController extends Controller
 
     public function getProductsSoldDashboard(){
         //estoy preparando aquí el número de productos por ventas
-        for ($i=0; $i < count($this->sales); $i++) {
-            $soldProducts = array();
-            for ($o=0; $o < count($this->plis); $o++) { 
-                if($this->sales[$i]->id == $this->plis[$o]->sale_id){
-                    array_push($soldProducts, $this->plis[$o]);
-                }
-            }
-            $this->productCounts = $this->productCounts + count($soldProducts);
-        }
-        return number_format($this->productCounts, 2, ',', '.');
+        // for ($i=0; $i < count($this->sales); $i++) {
+        //     $soldProducts = array();
+        //     for ($o=0; $o < count($this->plis); $o++) { 
+        //         if($this->sales[$i]->id == $this->plis[$o]->sale_id){
+        //             array_push($soldProducts, $this->plis[$o]);
+        //         }
+        //     }
+        //     $this->productCounts = $this->productCounts + count($soldProducts);
+        // }
+        return number_format(count($this->plis), 2, ',', '.');
     }
 
     public function getSalesTotal(){
