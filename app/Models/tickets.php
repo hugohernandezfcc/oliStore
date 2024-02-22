@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class tickets extends Model
 {
@@ -29,6 +30,10 @@ class tickets extends Model
         return $this->belongsTo(User::class, 'edited_by_id');
     }
 
+    public function ticketItems(): HasMany
+    {
+        return $this->hasMany(ticketItems::class);
+    }
 }
 
 

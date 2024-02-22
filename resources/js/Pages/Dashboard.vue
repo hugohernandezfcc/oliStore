@@ -229,8 +229,10 @@ export default {
                 endDate: this.endDate.toLocaleDateString('en-US')
             }).then((res) => {
                 console.log(res.data);
-                this.card1.mount = res.data.salesToday.mound;
-                this.card2.mount = res.data.productsToday.mound;
+                this.card1.mount = res.data.salesToday.mount;
+                this.card2.mount = res.data.productsToday.mount;
+                this.card3.mount = res.data.ticketsRecorded.mount;
+                this.card4.mount = res.data.pasiveData.mount;
                 this.loading.close()
             }).catch((error) => {
                 console.log(error);
@@ -258,9 +260,13 @@ export default {
         });
         this.rewriteTitle();
         axios.post(route('dashboard.results')).then((res) => {
+            console.log('>>>>>>>');
             console.log(res);
-            this.card1.mount = res.data.salesToday.mound;
-            this.card2.mount = res.data.productsToday.mound;
+            this.card1.mount = res.data.salesToday.mount;
+            this.card2.mount = res.data.productsToday.mount;
+            this.card3.mount = res.data.ticketsRecorded.mount;
+            this.card4.mount = res.data.pasiveData.mount;
+
             this.graphicBar.y =  res.data.graphicBar.values;
             this.graphicBar.x =  res.data.graphicBar.keys;
             this.graphicPoligono.y =  res.data.ChartPoligono.values;

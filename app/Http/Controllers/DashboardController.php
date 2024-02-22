@@ -54,6 +54,8 @@ class DashboardController extends Controller
     ];
     public $finalResult = [];
     public $finalResultWeek = [];
+    public $tickets = [];
+    public $pasiveData = 0;
     /**
      * Display a listing of the resource.
      */
@@ -69,24 +71,25 @@ class DashboardController extends Controller
         $this->prepareProductsSoldDashboard();
         $this->prepareSalesByMonth();
         $this->prepareSalesByWeek();
-        
+        $this->prepareTickets();
+
         return response()->json(
             [   
                 'typeView' => $this->typeView,
                 'salesToday' => [
-                    'mound' => '$'. $this->getSalesTotal() . ' MXN',
+                    'mount' => '$'. $this->getSalesTotal() . ' MXN',
                     'percentage' => 685
                 ],
                 'productsToday' => [
-                    'mound' => '# '. $this->getProductsSoldDashboard(),
+                    'mount' => '# '. $this->getProductsSoldDashboard(),
                     'percentage' => 685
                 ],
                 'ticketsRecorded' => [
-                    'mound' => 4563,
-                    'percentage' => 685
+                    'mount' => count($this->tickets),
+                    'percentage' => $this->tickets
                 ],
                 'pasiveData' => [
-                    'mound' => 4563,
+                    'mount' => '$'.$this->pasiveData . ' MXN',
                     'percentage' => 685
                 ],
 
@@ -101,6 +104,22 @@ class DashboardController extends Controller
                 ],
             ]
         );
+    }
+
+    public function prepareTickets(){
+        $tickets = DB::table('tickets')
+                    ->leftJoin('ticket_items', 'tickets.id', '=', 'ticket_items.ticket_id')
+                    ->whereBetween('date_time_issued', $this->dates['range'])
+                    ->select('tickets.*', 'ticket_items.*')->get();
+        for ($i=0; $i < count($tickets) ; $i++) { 
+            array_push($this->tickets, $tickets[$i]->total);
+            
+        }
+        $this->pasiveData = number_format(array_sum($this->tickets), 2, '.', ',');
+
+       return $this->tickets;
+
+        // $this->tickets = tickets::whereBetween('date_time_issued', $this->dates['range'])->get();
     }
 
     public function prepareSalesByMonth(){
@@ -213,7 +232,7 @@ class DashboardController extends Controller
         //     }
         //     $this->productCounts = $this->productCounts + count($soldProducts);
         // }
-        return number_format(count($this->plis), 2, ',', '.');
+        return number_format(count($this->plis), 0, ',');
     }
 
     public function getSalesTotal(){

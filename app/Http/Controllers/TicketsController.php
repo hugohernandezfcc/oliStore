@@ -80,8 +80,13 @@ class TicketsController extends Controller
         for ($i=0; $i < count($rows); $i++) { 
             $tItem = new ticketItems;
             
-            $tItem->product_id = $plisKey[$rows[$i]['producto']]->id;
-            $tItem->product_name = $plisKey[$rows[$i]['producto']]->name;  
+            try {
+                $tItem->product_id = $plisKey[$rows[$i]['producto']]->id;
+                $tItem->product_name = $plisKey[$rows[$i]['producto']]->name;
+            } catch (\Throwable $th) {
+                debug($th);
+            }  
+
             $tItem->created_by_id = Auth::id();  
             $tItem->edited_by_id = Auth::id();  
             $tItem->store_id = 3;  
