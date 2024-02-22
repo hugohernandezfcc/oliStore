@@ -62,11 +62,12 @@
                                         <span>Ventas por mes</span>
                                     </div>
                                 </template>
-                                <BarChart   :labels="[ 'January', 'February', 'March' ]" 
+                                <BarChart  :key="componentKey" :labels="graphicBar.x" 
                                             :datasets="[ 
-                                                { 
+                                                {
+                                                    label: 'Acumulado de ventas por mes', 
                                                     backgroundColor: 'red',
-                                                    data: [40, 20, 12] 
+                                                    data: graphicBar.y
                                                 } 
                                             ]"/>
 
@@ -79,12 +80,12 @@
                                         <span>Ventas de la semana</span>
                                     </div>
                                 </template>
-                                <ChartPoligono  :labels="['January', 'February', 'March', 'April', 'May', 'June', 'July']" 
+                                <ChartPoligono  :key="componentKey" :labels="graphicPoligono.x" 
                                                 :datasets="[
                                                     {
-                                                    label: 'Data One',
+                                                    label: 'Acumulado por día',
                                                     backgroundColor: 'red',
-                                                    data: [40, 39, 10, 40, 39, 80, 40]
+                                                    data: graphicPoligono.y
                                                     }
                                                 ]"/>
                                 <template #footer>Footer content</template>
@@ -200,11 +201,21 @@ export default {
                 footer: '',
                 footerValue: ''
             },
-            
-            
+            graphicBar:{
+                x: [],
+                y: []
+            },
+            graphicPoligono:{
+                x: [],
+                y: []
+            },
+            componentKey: 0
         }
     },
     methods:{
+        refreshChildComponent() {
+          this.componentKey++;
+        },
         query(){
             this.loading = ElLoading.service({
                 lock: true,
@@ -238,7 +249,7 @@ export default {
             this.card4.title = `Gastos de ${rangeString}`;
         }
     },
-    mounted(){
+    beforeMount(){
         this.loading = ElLoading.service({
             lock: true,
             text: 'Calculando datos',
@@ -250,6 +261,12 @@ export default {
             console.log(res);
             this.card1.mount = res.data.salesToday.mound;
             this.card2.mount = res.data.productsToday.mound;
+            this.graphicBar.y =  res.data.graphicBar.values;
+            this.graphicBar.x =  res.data.graphicBar.keys;
+            this.graphicPoligono.y =  res.data.ChartPoligono.values;
+            this.graphicPoligono.x =  res.data.ChartPoligono.keys;
+            this.refreshChildComponent();
+
             this.loading.close()
         }).catch((error) => {
             console.log(error);

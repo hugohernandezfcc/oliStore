@@ -1,5 +1,5 @@
 <template>
-    {{ hola }}
+
     <Bar
       id="my-chart-id"
       :options="chartOptions"

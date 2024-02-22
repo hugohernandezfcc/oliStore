@@ -29,6 +29,31 @@ class DashboardController extends Controller
     public $products;
     public $plis;
     public $productCounts = 0;
+    public $meses = [
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre'
+    ];
+    public $dias = [
+        'Lunes',
+        'Martes',
+        'Miercoles',
+        'Jueves',
+        'Viernes',
+        'Sabado',
+        'Domingo'
+    ];
+    public $finalResult = [];
+    public $finalResultWeek = [];
     /**
      * Display a listing of the resource.
      */
@@ -42,6 +67,8 @@ class DashboardController extends Controller
          */
         $this->prepareSalesForDashboard();
         $this->prepareProductsSoldDashboard();
+        $this->prepareSalesByMonth();
+        $this->prepareSalesByWeek();
         
         return response()->json(
             [   
@@ -62,9 +89,70 @@ class DashboardController extends Controller
                     'mound' => 4563,
                     'percentage' => 685
                 ],
+
+                'graphicBar' => [
+                    'keys' => array_keys($this->finalResult),
+                    'values' => array_values($this->finalResult)
+                ],
+
+                'ChartPoligono' => [
+                    'keys' => array_keys($this->finalResultWeek),
+                    'values' => array_values($this->finalResultWeek)
+                ],
             ]
         );
     }
+
+    public function prepareSalesByMonth(){
+        $today = Carbon::now();
+
+        $sales = DB::table('product_line_items')
+            ->whereBetween('created_at', [
+                Carbon::create($today->year, 1, 1, 0, 0, 0),
+                Carbon::create($today->year, $today->month, $today->day, 0, 0, 0)
+            ])->get();
+
+        $graphicBar = [
+            array(), array(), array(), array(), array(), array(), array(), array(), array(), array(), array(), array()
+        ];
+
+        for ($i=0; $i < count($sales); $i++) {  
+            $source = new Carbon($sales[$i]->created_at);       
+            array_push($graphicBar[$source->month - 1], $sales[$i]->final_price);
+        }
+        
+        for ($i=0; $i < count($graphicBar); $i++) { 
+            $this->finalResult[$this->meses[$i]] = array_sum($graphicBar[$i]);
+        }
+        
+    }
+
+
+
+
+    public function prepareSalesByWeek() {
+        $now = Carbon::now();
+    
+        // Retrieve sales data for the current week
+        $sales = DB::table('product_line_items')
+                    ->whereBetween('created_at', [$now->startOfWeek()->toDateString(), $now->endOfWeek()->toDateString()])
+                    ->get(['created_at', 'final_price']); // Fetch only necessary fields
+    
+        // Initialize the array to hold summed prices for each day of the week
+        $sumsByDayOfWeek = array_fill(0, 7, 0);
+    
+        // Sum the final prices for each day of the week
+        foreach ($sales as $sale) {
+            $dayOfWeek = Carbon::parse($sale->created_at)->dayOfWeekIso - 1;
+            $sumsByDayOfWeek[$dayOfWeek] += $sale->final_price;
+        }
+        
+        // Prepare the final result with day names
+        // $dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        $this->finalResultWeek = array_combine($this->dias, $sumsByDayOfWeek);
+        debug($this->finalResultWeek); 
+    }
+
     /**
      * @return 2 dates based on the request of index method to define the results.
      */
@@ -106,6 +194,9 @@ class DashboardController extends Controller
         $this->plis = DB::table('product_line_items')
                             ->whereIn('sale_id', $this->toSearchInProducts)
                             ->get();
+
+
+        
         for ($o=0; $o < count($this->plis); $o++) { 
             $this->plis[$o]->product = $toDefineProductsById[$this->plis[$o]->product_id];
         }
