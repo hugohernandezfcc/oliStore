@@ -106,6 +106,7 @@ import { ElMessageBox } from 'element-plus';
                     ElMessageBox.confirm('Debes llenar todos los campos')
                     .then(() => {
                         console.log('se ha notificado que faltan cambios')
+                        this.cantContinue = false;
                     }).catch(() => {
                     // catch error
                     })
@@ -116,6 +117,9 @@ import { ElMessageBox } from 'element-plus';
             nextProduct() {
                 if (this.activeProduct++ > 2) 
                     this.activeProduct = 0;
+            },
+            backToTicket() {
+                this.activeTicket = 0;
             },
             nextStock() {
                 if (this.activeStock++ > 2) 
@@ -309,6 +313,7 @@ import { ElMessageBox } from 'element-plus';
         </div>
         <!--/ #1 FORM -->
     
+        <el-button style="margin-top: 12px" @click="backToTicket" v-if="activeTicket == 1">Atras</el-button>
         <el-button style="margin-top: 12px" @click="nextTicket" v-if="activeTicket != 2">Siguiente</el-button>
         <el-button type="danger" style="margin-top: 12px" @click="saveTicket" v-if="activeTicket == 2">Guardar Ticket</el-button>
     </div>
