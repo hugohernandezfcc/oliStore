@@ -84,7 +84,7 @@ class TicketsController extends Controller
                 $tItem->product_id = $plisKey[$rows[$i]['producto']]->id;
                 $tItem->product_name = $plisKey[$rows[$i]['producto']]->name;
             } catch (\Throwable $th) {
-                debug($th);
+
             }  
 
             $tItem->created_by_id = Auth::id();  
