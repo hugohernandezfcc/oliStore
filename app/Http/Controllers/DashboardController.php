@@ -169,7 +169,7 @@ class DashboardController extends Controller
         // Prepare the final result with day names
         // $dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         $this->finalResultWeek = array_combine($this->dias, $sumsByDayOfWeek);
-        debug($this->finalResultWeek); 
+        // debug($this->finalResultWeek); 
     }
 
     /**
