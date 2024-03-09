@@ -38,6 +38,7 @@ Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified'
 });
 
 Route::resource('products',         App\Http\Controllers\ProductController::class       )->middleware('auth:sanctum');
+Route::resource('tickets',          App\Http\Controllers\TicketsController::class       )->middleware('auth:sanctum');
 Route::resource('sales',            App\Http\Controllers\SalesController::class         )->middleware('auth:sanctum');
 Route::resource('salesproducts',    App\Http\Controllers\SalesProductsController::class )->middleware('auth:sanctum');
 Route::resource('stores',           App\Http\Controllers\StoreController::class         )->middleware('auth:sanctum');

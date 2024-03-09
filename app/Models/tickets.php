@@ -32,7 +32,7 @@ class tickets extends Model
 
     public function ticketItems(): HasMany
     {
-        return $this->hasMany(ticketItems::class);
+        return $this->hasMany(ticketItems::class, 'ticket_id');
     }
 }
 

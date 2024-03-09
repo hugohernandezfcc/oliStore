@@ -25,7 +25,41 @@ class TicketsController extends Controller
      */
     public function index()
     {
-        //
+        $tickets = tickets::with('createdBy', 'ticketItems')->orderBy('created_at', 'desc')->get();
+
+        $toSum = array();
+        $toSum1 = array();
+        foreach ($tickets as $ticket) {
+            array_push($toSum, $ticket->total);
+            $ticket->createdByName = $ticket->createdBy->name; 
+            $ticket->total = '$'.$ticket->total.' MXN';
+            $ticket->createddate = Carbon::parse($ticket->created_at, 'CST')->addHour(-6)->format('d-m-Y H:i');
+            $ticket->date_time_issued = Carbon::parse($ticket->date_time_issued, 'CST')->addHour(-6)->format('d-m-Y H:i');
+            $ticket->noProducts = ($ticket->ticketItems == null) ? 0 : count($ticket->ticketItems);
+            if($ticket->noProducts > 0){
+                for ($i=0; $i < count($ticket->ticketItems); $i++) { 
+
+                    try {
+
+                        
+
+                        $ticket->ticketItems[$i]->unitCost = '$ '.strval(number_format(floatval($ticket->ticketItems[$i]->cost_customer) / floatval($ticket->ticketItems[$i]->quantity), 2, '.', ',')) . ' MXN';
+                        $ticket->ticketItems[$i]->cost_customer = '$ '.strval($ticket->ticketItems[$i]->cost_customer) . ' MXN';
+                    } catch (\Throwable $th) {
+
+                        $ticket->ticketItems[$i]->unitCost = 0;
+                    }
+
+                }
+            }
+        }
+
+        
+
+        return Inertia::render('Tickets/Index', [
+            'tickets' => $tickets,
+            'total_investment' => number_format(array_sum($toSum), 2, '.', ',')
+        ]);
     }
 
     /**
