@@ -192,19 +192,19 @@ import { ElMessageBox } from 'element-plus';
         <!-- #1 FORM -->
         <div v-if="activeTicket == 0" align-center>
             Ticket No.<br/>
-            <el-input v-model="form.noTicket" placeholder="001210222" style="width: 220px"/><br/>
+            <el-input v-model="form.noTicket" placeholder="001210222"  class="w-full shadow-2xl"/><br/><br/>
             Fecha/hora que fue surtido<br/>
             <el-date-picker
                 v-model="form.dateTimeIssued"
                 type="datetime"
                 placeholder="Select date and time"
-            /><br/>
+                :style="{ width: '100%' }"
+            /><br/><br/>
             ¿Quien surtió el ticket?<br/>
             <el-select
                 v-model="form.whoIssuedTicket"
                 placeholder="Select"
-
-                style="width: 220px"
+                class="w-full shadow-2xl"
             >
                 <el-option
                 v-for="item in options"
@@ -212,11 +212,11 @@ import { ElMessageBox } from 'element-plus';
                 :label="item.label"
                 :value="item.value"
                 />
-            </el-select><br/>
+            </el-select><br/><br/>
             Proveedor<br/>
-            <el-input v-model="form.provider" placeholder="Zorro, coca, tortillas.." style="width: 220px"/><br/>
+            <el-input v-model="form.provider" placeholder="Zorro, coca, tortillas.." class="w-full shadow-2xl"/><br/><br/>
             $ Total MXN<br/>
-            <el-input v-model="form.total" placeholder="$ 20 MXN" style="width: 220px"/>
+            <el-input v-model="form.total" placeholder="$ 20 MXN" class="w-full shadow-2xl"/>
         </div>
         
 

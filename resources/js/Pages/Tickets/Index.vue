@@ -8,30 +8,31 @@ import 'datatables.net-select';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Footer from '@/Components/Footer.vue';
-
+import wizardForm from '@/Components/TicketForm.vue';
 
 
 export default{
     components:{
-        AppLayout, PrimaryButton, SecondaryButton, Footer
+        AppLayout, PrimaryButton, SecondaryButton, Footer, wizardForm
     },
     props:{
         tickets: Array,
         total_investment: Number
-
     },
     methods:{
-        
+        show(id) {
+            alert(id);
+        }
     },
     data(){
         return {
             rowCollectionSelected: new Array(),
             search:'',
-            
+            dialogVisible: false
         }
     },
     mounted(){
-       
+        
     },
     computed: {
         filterTableData() {
@@ -57,15 +58,24 @@ export default{
             <h3 class="text-lg text-gray-900"> Listado de Tickets </h3>
             <p class="text-sm text-gray">Catalogo de Tickets Registrados en la base de datos </p>
         </div>
+
+        <!-- MODAL -->
+            <el-dialog v-model="dialogVisible" title="Documentar ticket" width="500" draggable>
+                
+                <wizardForm :TypeForm="'ticketForm'"/>
+
+            </el-dialog>
+        <!-- MODAL -->
+
         <div class="shadow bg-white md:rounded-md p-4 m-4">
             
             <el-row :gutter="20">
                 <el-col :span="16">
-                    <inertia-link :href="route('tickets.create')" class="m-1"> 
-                        <PrimaryButton >
-                            Documentar Ticket
-                        </PrimaryButton>
-                    </inertia-link> 
+
+                    <PrimaryButton @click="dialogVisible = true">
+                        Documentar Ticket
+                    </PrimaryButton>
+
                 </el-col>
                 <el-col :span="8">
                     <el-input v-model="search"  placeholder="Type to search" class="shadow-2xl"/>
@@ -110,13 +120,13 @@ export default{
 
                 <el-table-column align="right" fixed="right" width="120">
                     <template #default="scope">
-                        
-                        <el-button
-                        size="small"
-                        color="#dc2626"
-                        @click="handleDelete(scope.$index, scope.row)"
-                        >Ver detalle</el-button
-                        >
+                        <inertia-link :href="route('tickets.show', scope.row.id)" >
+                            <el-button
+                            size="small"
+                            color="#dc2626"
+                            >Ver detalle</el-button
+                            >
+                        </inertia-link>
                     </template>
                 </el-table-column>
 

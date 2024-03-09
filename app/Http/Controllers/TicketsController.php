@@ -14,9 +14,7 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Support\Facades\DB;
-
-
-
+use PhpParser\Node\Stmt\Echo_;
 
 class TicketsController extends Controller
 {
@@ -139,9 +137,58 @@ class TicketsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(tickets $tickets)
+    public function show($id)
     {
-        //
+        $ticket = tickets::where('id', $id)->with('createdBy', 'ticketItems')->orderBy('created_at', 'desc')->first();
+        $start = new Carbon($ticket->created_at);
+        $end = Carbon::now();
+        $ticket->created_at2 = Carbon::parse($ticket->created_at, 'CST')->addHour(-6)->format('d-m-Y H:i');
+        $ticket->updated_at2 = Carbon::parse($ticket->updated_at, 'CST')->addHour(-6)->format('d-m-Y H:i');
+        $ticket->date_time_issued = Carbon::parse($ticket->date_time_issued, 'CST')->addHour(-6)->format('d-m-Y H:i');
+        
+
+        $pushProducts = array();
+        $quantitytotal = array();
+        for ($i=0; $i < count($ticket->ticketItems); $i++) {
+
+
+            if($ticket->ticketItems[$i]->product_id != null)
+                array_push($pushProducts,$ticket->ticketItems[$i]->product_id);
+
+            try {
+
+                    
+
+                $ticket->ticketItems[$i]->unitCost = '$ '.strval(number_format(floatval($ticket->ticketItems[$i]->cost_customer) / floatval($ticket->ticketItems[$i]->quantity), 2, '.', ',')) . ' MXN';
+                $ticket->ticketItems[$i]->cost_customer = '$ '.strval($ticket->ticketItems[$i]->cost_customer) . ' MXN';
+            } catch (\Throwable $th) {
+
+                $ticket->ticketItems[$i]->unitCost = 0;
+            }
+
+            array_push($quantitytotal, intval($ticket->ticketItems[$i]->quantity));
+            $ticket->ticketItems[$i]->editQuantity = floatval($ticket->ticketItems[$i]->quantity);
+            $ticket->ticketItems[$i]->editvendidas = floatval($ticket->ticketItems[$i]->quantity);
+            $ticket->ticketItems[$i]->vendidas = 0;
+        }
+        $ticket->quantitytotal = array_sum($quantitytotal);
+        $ticket->noProducts = ($ticket->ticketItems == null) ? 0 : count($ticket->ticketItems);
+
+
+
+   
+        return Inertia::render('Tickets/Show', [
+            'ticket'    => $ticket,
+            'products'  => $ticket->ticketItems,
+            'sales'     => DB::table('product_line_items')
+                            ->join('sales', 'product_line_items.sale_id', '=', 'sales.id')
+                            ->join('products', 'product_line_items.product_id', '=', 'products.id')
+                            ->whereBetween('product_line_items.created_at', [$start, $end])
+                            ->whereIn('product_id', $pushProducts)
+                            ->select('sales.*', 'product_line_items.*', 'products.*') 
+                            ->get(),
+            'salesDates'=> [Carbon::parse($start, 'CST')->addHour(-6)->format('d-m-Y'), Carbon::parse($end, 'CST')->addHour(-6)->format('d-m-Y')]
+        ]);
     }
 
     /**

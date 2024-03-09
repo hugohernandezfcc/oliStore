@@ -8,14 +8,6 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SecondaryButtonPay from '@/Components/SecondaryButtonPay.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { ref } from 'vue';
-import axios from 'axios';
-
-import $ from 'jquery';
-import "datatables.net-responsive-dt/css/responsive.dataTables.min.css"
-import "datatables.net-dt/css/jquery.dataTables.min.css"
-import 'datatables.net-responsive-bs5';
-import 'datatables.net-select';
 import FooterPos from '@/Components/FooterPos.vue';
 import { HollowDotsSpinner } from 'epic-spinners'
 
@@ -24,38 +16,55 @@ export default{
         AppLayout, InputLabel, TextInput, PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner
     },
     props:{
-        product: Object
-
+        ticket: Object,
+        products: Array,
+        sales: Array,
+        salesDates: Array,
     },
     data(){
         return {
-            salesList: []
+            relatedProducts: [],
+            search: '',
+            search2: '',
+            search3: '',
+            restantes: [],
         }
     },
     methods:{
-    onRowClick(){
-                let rowCollectionSelected = new Array();
-                this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
-                    rowCollectionSelected.push(recordSelected);
-                } );
-
-                this.rowCollectionSelected = rowCollectionSelected;
-                console.log(this.rowCollectionSelected);
-            },
+        
     },
     mounted(){
-        console.log(this.product);
-        this.dt = $('#datatable').DataTable();
-        this.dt.on( 'select', () => this.onRowClick())
-        this.dt.on( 'deselect', () => this.onRowClick())
-        for (let index = 0; index < this.product.ProductLineItems.length; index++) {
-            const element = this.product.ProductLineItems[index];
-            for (let i = 0; i < element.sale.length; i++) {
-                const venta = element.sale[i];
-                venta.idVenta = 'Producto parte de la venta con Id:' + venta.id;
-                this.salesList.push(venta);
+        console.log(this.ticket);
+        
+        console.log(this.sales);
+        console.log(this.salesDates);
+
+        for (let index = 0; index < this.products.length; index++) {
+
+            for (let i = 0; i < this.sales.length; i++) {
+                if(this.products[index].product_id == this.sales[i].product_id){
+                    this.products[index].editQuantity = this.products[index].editQuantity - 1;
+                }
+                
             }
+            this.products[index].vendidas = this.products[index].editvendidas - this.products[index].editQuantity;
         }
+        console.log(this.products);
+
+    },
+    computed: {
+        filterTableData() {
+            return this.products.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        },
+        filterTableData2() {
+            return this.sales.filter(
+                (data) =>
+                !this.search2 || JSON.stringify(data).toLowerCase().includes(this.search2.toLowerCase() )
+            );
+        },
     }
 }
 
@@ -77,76 +86,71 @@ export default{
                     
                     <div class="md:col-span-1">
                         <div class="px-4 sm:px0">
-                            <h3 class="text-lg text-gray-900"> Detalle de un producto </h3>
+                            <h3 class="text-lg text-gray-900"> Detalle del ticket </h3>
                             <br/>
                             <table>
                                 <tr>
                                     <td>
-                                        <inertia-link :href="route('products.edit', product.id)">
+                                        <inertia-link :href="route('tickets.edit', ticket.id)">
                                             <PrimaryButton >
-                                                Editar Producto
+                                                Editar Ticket
                                             </PrimaryButton>
-                                            
                                         </inertia-link>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><b>ID DB :</b></td>
-                                    <td>{{product.id}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>NOMBRE PRODUCTO:</b></td>
-                                    <td>{{product.name}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>CODIGO DE BARRAS:</b></td>
-                                    <td>{{product.folio}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>DESCRIPCION:</b></td>
-                                    <td>{{product.Description}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>UNIDAD DE MEDIDA:</b></td>
-                                    <td>{{product.unit_measure}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>PRECIO DE LISTA:</b></td>
-                                    <td>$ {{product.price_list}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>PRECIO CLIENTE:</b></td>
-                                    <td>$ {{product.price_customer}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>PORCENTAJE (GANANCIA):</b></td>
-                                    <td>{{product.profit_percentage}} %</td>
-                                </tr>
-                                <tr>
-                                    <td><b>FECHA DE CADUCIDAD:</b></td>
-                                    <td>{{product.expiry_date}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>CREADO POR:</b></td>
-                                    <td>{{product.createdByUser.name}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>ULTIMA ACTUALIZACIÓN:</b></td>
-                                    <td>{{product.editedByUser.name}}</td>
+                                    <td>{{ticket.id}}</td>
                                 </tr>
 
                                 <tr>
-                                    <td><b>SE VENDE A GRANEL:</b></td>
-                                    <td v-if="product.take_portion">Si, se vende</td>
-                                    <td v-else="product.take_portion">No, se vende por unidad</td>
+                                    <td><b>No. Ticket :</b></td>
+                                    <td>{{ticket.noTicket}}</td>
+                                </tr>
+
+                                
+                                <tr>
+                                    <td><b>Creado por :</b></td>
+                                    <td>{{ticket.created_by.name}}</td>
+                                </tr>
+                                
+                                <tr class="bg-green-100">
+                                    <td><b>Provedor :</b></td>
+                                    <td>{{ticket.provider}}</td>
+                                </tr>
+
+                                <tr class="bg-green-100">
+                                    <td><b>Total :</b></td>
+                                    <td>$ {{ticket.total}} MXN</td>
                                 </tr>
 
                                 <tr>
-                                    <td ><b>Código de barras:  </b></td>
-                                    <td class="p-2">
-                                        <div v-html="product.bar_code" /> 
-                                        {{product.folio}}
-                                    </td>
+                                    <td><b>Fecha de surtido :</b></td>
+                                    <td>{{ticket.date_time_issued}}</td>
+                                </tr>
+
+                                <tr >
+                                    <td><b>Surtido por :</b></td>
+                                    <td>{{ticket.who_issued_ticket}}</td>
+                                </tr>
+
+                                <tr class="bg-green-100">
+                                    <td><b>Total de tipo de productos :</b></td>
+                                    <td># {{ticket.noProducts}}</td>
+                                </tr>
+                                <tr class="bg-green-200">
+                                    <td><b>Total de productos :</b></td>
+                                    <td># {{ticket.quantitytotal}}</td>
+                                </tr>
+
+                                <tr >
+                                    <td><b>Fecha de creación :</b></td>
+                                    <td>{{ticket.created_at2}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><b>Ultima actualización :</b></td>
+                                    <td>{{ticket.updated_at2}}</td>
                                 </tr>
                             </table>
                             
@@ -154,70 +158,66 @@ export default{
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
                         <div class="shadow bg-white md:rounded-md p-4">
-                            <h2>{{product.name}} // {{product.Description}}</h2>
+                            <h1 class="bg-red-600 text-zinc-50 text-lg"> Ticket {{ticket.id}} // Provedor {{ ticket.provider }} // Se surtio el {{ ticket.date_time_issued }}</h1>
                             <hr class="my-6"/>
 
                             <table>
                                 <tr>
                                     <td><b>Total de ventas:</b></td>
-                                    <td>{{product.totalVentas}}</td>
+                                    <td>{{sales.length}}</td>
                                 </tr>
                             </table>
 
                             <table>
                                 <tr>
-                                    <td><b>Total precio Cliente:</b></td>
-                                    <td>$ {{product.totalPrecioCliente}} MXN</td>
+                                    <td><b>Total faltantes por vender:</b></td>
+                                    <td>{{ticket.quantitytotal - sales.length}}</td>
                                 </tr>
                             </table>
 
 
-                            <table>
-                                <tr>
-                                    <td><b>Total precio Lista:</b></td>
-                                    <td>$ {{product.totalPrecioList}} MXN</td>
-                                </tr>
-                            </table>
-                            <hr class="my-6"/>
+                            
+                            <el-divider content-position="center">
+                                {{ticket.quantitytotal}} Productos del ticket
+                            </el-divider>
 
-                            <DataTable 
-                                class="cell-border compact stripe hover order-column loading"
-                                ref="table" id="datatable"
-                                :data="salesList"
-                                :options="{
-                                    responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
-                                        { 
-                                            extend: 'selectAll', 
-                                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                                        },
-                                        { 
-                                            extend: 'print',
-                                            text: 'Print selected rows', 
-                                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                                        }
-                                    ], language:{
-                                        search:'Buscar Producto ', zeroRecords:'No hay registros'
-                                    }
-                                }"
-                                :columns="[
-                                    {data:'idVenta'},
-                                    {data:'payment_method'},
-                                    {data:'store'},
-                                    {data:'total'},
-                                    {data:'created_at'}
-                            ]">
-                                <thead>
-                                    <tr>
-                                        <th>ID DB </th>
-                                        <th>MÉTODO DE PAGO</th>
-                                        <th>TIENDA</th>
-                                        <th>TOTAL DE ESA COMPRA</th>
-                                        <th>FECHA DE CREACION</th>
-                                    </tr>
-                                </thead>
-                            </DataTable>
+                            <el-input v-model="search"  placeholder="Type to search" class="shadow-2xl"/>
+                            <el-table :data="filterTableData" class="shadow-lg" stripe style="height: 300px;" >
+
+                                <el-table-column prop="product_name" label="Producto" width="150" />
+                                <el-table-column prop="quantity" label="Total Piezas" width="100" />
+                                <el-table-column prop="vendidas" label="Piezas vendidas" width="130" />
+                                <el-table-column prop="editQuantity" label="Piezas restantes" width="130" />
+                                <el-table-column prop="unitCost" label="Precio unitario" width="125" />
+                                <el-table-column prop="cost_customer" label="Precio subtotal" width="125" />
+                            </el-table>
+
+                            <el-divider content-position="center">
+                                {{sales.length}} Ventar realizadas 
+                            </el-divider>
+
+                            <el-input v-model="search2"  placeholder="Type to search" class="shadow-2xl"/>
+                            <el-table :data="filterTableData2" class="shadow-lg" stripe style="height: 300px;" >
+                                <el-table-column prop="id" label="Id" width="150" />
+                                <el-table-column prop="name" label="Producto" width="150" />
+                                <el-table-column label="Precio lista" width="150" >
+                                    <template #default="i">
+                                        $ {{ i.row.price_list }} MXN 
+                                    </template>
+                                </el-table-column>
+
+                                <el-table-column label="Precio unitario" width="150" >
+                                    <template #default="i">
+                                        $ {{ i.row.price_customer }} MXN 
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="folio" label="Producto" width="150" />
+
+
+                            </el-table>
+
                             <hr class="my-6"/>
-                            <inertia-link :href="route('products.index')">
+                            <inertia-link :href="route('tickets.index')">
                                 Regresar
                             </inertia-link>
                         </div>
