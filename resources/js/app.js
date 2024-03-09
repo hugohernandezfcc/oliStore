@@ -10,7 +10,7 @@ import DataTable from 'datatables.net-vue3';
 import axios from 'axios'
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
-
+import { Search, Edit } from '@element-plus/icons-vue';
 
 DataTable.use(DataTablesLib);
 
@@ -25,6 +25,8 @@ createInertiaApp({
             .use(ZiggyVue)
             .use(ElementPlus)
             .component('DataTable', DataTable)
+            .component('search', Search)
+            .component('edit', Edit)
             .component('inertia-link', Link) 
             .mount(el);
     },

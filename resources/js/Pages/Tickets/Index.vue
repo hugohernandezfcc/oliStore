@@ -59,24 +59,34 @@ export default{
         </div>
         <div class="shadow bg-white md:rounded-md p-4 m-4">
             
-            <inertia-link :href="route('tickets.create')" class="m-1"> 
-                <PrimaryButton >
-                    Documentar Ticket
-                </PrimaryButton>
-            </inertia-link> 
-            
-
+            <el-row :gutter="20">
+                <el-col :span="16">
+                    <inertia-link :href="route('tickets.create')" class="m-1"> 
+                        <PrimaryButton >
+                            Documentar Ticket
+                        </PrimaryButton>
+                    </inertia-link> 
+                </el-col>
+                <el-col :span="8">
+                    <el-input v-model="search"  placeholder="Type to search" class="shadow-2xl"/>
+                </el-col>
+            </el-row>
             <br/>
-            <el-table :data="filterTableData" stripe style="width: 100%; height: 500px;" >
-
+            <el-table :data="filterTableData" class="shadow-lg" stripe style="width: 100%; height: 500px;" >
+                
+                    
+                
                 <el-table-column type="expand" >
                     <template #default="props" >
-                        <div class="m-6 bg-slate-200">
-                            Id de ticket: {{ props.row.id }}<br/>
-                            No. Ticket: {{ props.row.noTicket }}
-                            <br/><br/>
-
-                            <el-table :data="props.row.ticket_items" :border="true" >
+                        <div class="m-6 ">
+                            <div class="h-14 bg-gradient-to-r from-white to-red-600">
+                                <b>Id de ticket:</b> {{ props.row.id }}<br/>
+                                <b>No. Ticket:</b> {{ props.row.noTicket }}
+                                <br/>
+                            </div>
+                            <br/>
+                            
+                            <el-table :data="props.row.ticket_items" :border="true" class="shadow-2xl" >
                                 <el-table-column label="Nombre del producto" prop="product_name" width="200"/>
                                 <el-table-column label="Cantidad" prop="quantity" width="200"/>
                                 <el-table-column label="Costo en ticket" prop="cost_customer" width="200"/>
@@ -98,20 +108,12 @@ export default{
                 <el-table-column prop="noProducts" label="No. Productos" width="150" />
                 <el-table-column prop="id" label="Id" width="150" />
 
-                <el-table-column align="right" fixed="right" width="200">
-                    <template #header>
-                        <el-input v-model="search" size="small" placeholder="Type to search" />
-                    </template>
+                <el-table-column align="right" fixed="right" width="120">
                     <template #default="scope">
+                        
                         <el-button
                         size="small"
-                        type="danger"
-                        @click="handleDelete(scope.$index, scope.row)"
-                        >Editar</el-button
-                        >
-                        <el-button
-                        size="small"
-                        type="danger"
+                        color="#dc2626"
                         @click="handleDelete(scope.$index, scope.row)"
                         >Ver detalle</el-button
                         >
