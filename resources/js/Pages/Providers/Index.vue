@@ -17,7 +17,6 @@ export default{
     },
     props:{
         providers: Array
-
     },
     methods:{
         onRowClick(){
@@ -35,16 +34,21 @@ export default{
         return {
             rowCollectionSelected: new Array(),
             dt: null,
-            
+            search:'',
         }
     },
     mounted(){
-        this.dt = $('#datatable').DataTable();
-        this.dt.on( 'select', () => this.onRowClick())
-        this.dt.on( 'deselect', () => this.onRowClick())
         
-        console.log(this.rowCollectionSelected.length);
-        console.log(this.providers);
+    },
+    computed: {
+        filterTableData() {
+            return this.providers.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        },
+        
+
     }
 }
 
@@ -69,48 +73,30 @@ export default{
                     Crear Proveedor 
                 </PrimaryButton>
             </inertia-link> 
+            <br/>
+            <br/>
             
-
-            <br/>
-            <br/>
-            <DataTable 
-                class="cell-border compact stripe hover order-column loading"
-                ref="table" id="datatable"
-                :data="providers"
-                :options="{
-                    responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
-                        { 
-                            extend: 'selectAll', 
-                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                        },
-                        { 
-                            extend: 'print',
-                            text: 'Print selected rows', 
-                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                        }
-                    ], language:{
-                        search:'Buscar Producto ', zeroRecords:'No hay registros'
-                    }
-                }"
-                
-                :columns="[
-                    {data:'id'},
-                    {data:'representative'},
-                    {data:'email'},
-                    {data:'whatsapp'},
-                    {data:'created_at'}
-            ]">
-                <thead>
-                    <tr>
-                        <th>ID DB </th>
-                        <th>REPRESENTANTE</th>
-                        <th>CORREO ELECTRÓNICO</th>
-                        <th>WHATSAPP</th>
-                        <th>CREACIÓN</th>
-                    </tr>
-                </thead>
-            </DataTable>
-
+            <el-table :data="filterTableData" class="shadow-lg" stripe style="width: 100%; height: 500px;" >
+                <el-table-column prop="company" label="Compañia" width="250" />
+                <el-table-column prop="representative" label="Representante" width="270" />
+                <el-table-column prop="description" label="Descripción" width="180" />
+                <el-table-column prop="email" label="E-mail" width="180" />
+                <el-table-column prop="whatsapp" label="Whatsapp" width="180" />
+                <el-table-column prop="visit_day" label="Día de visita" width="200" />
+                <el-table-column prop="created_at" label="Fecha de creación" width="180" />
+                <el-table-column prop="id" label="Provedor" width="100" />
+                <el-table-column align="right" fixed="right" width="120">
+                    <template #default="scope">
+                        <inertia-link :href="route('providers.show', scope.row.id)" >
+                            <el-button
+                            size="small"
+                            color="#dc2626"
+                            >Ver detalle</el-button
+                            >
+                        </inertia-link>
+                    </template>
+                </el-table-column>
+            </el-table>
         </div>
     </AppLayout>
     

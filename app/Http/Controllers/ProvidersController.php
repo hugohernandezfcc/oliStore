@@ -12,6 +12,7 @@ use App\Models\Store;
 use App\Models\Providers;
 use App\Models\ProductLineItem;
 use App\Models\Sales;
+use App\Models\tickets;
 
 class ProvidersController extends Controller
 {
@@ -45,9 +46,15 @@ class ProvidersController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
+        $provider = Providers::where('id', $id)->with('createdBy', 'editedBy', 'store')->first();
+        $tickets = tickets::where('provider_id', null)->where('provider', 'LIKE', '%'.$provider->company.'%')->orderBy('created_at', 'desc')->get();
 
+        return Inertia::render('Providers/Show', [
+            'provider'    => $provider,
+            'tickets'    => $tickets
+        ]);
+    }
+    
     /**
      * Show the form for editing the specified resource.
      */

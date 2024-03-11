@@ -56,7 +56,8 @@ class TicketsController extends Controller
 
         return Inertia::render('Tickets/Index', [
             'tickets' => $tickets,
-            'total_investment' => number_format(array_sum($toSum), 2, '.', ',')
+            'total_investment' => number_format(array_sum($toSum), 2, '.', ','),
+            'totalTickets' => count($tickets)
         ]);
     }
 
@@ -77,7 +78,7 @@ class TicketsController extends Controller
         $ticketCount = tickets::where('noTicket', $request->get('noTicket'))->get();
 
         if(count($ticketCount) == 0){
-            $datetime = Carbon::parse($request->get('dateTimeIssued'), 'CST')->addHour(-6);
+            $datetime = Carbon::parse($request->get('dateTimeIssued'), 'CST');
             $sale = tickets::create([
                 'noTicket'          => $request->get('noTicket'),
                 'who_issued_ticket' => $request->get('whoIssuedTicket'),

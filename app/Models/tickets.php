@@ -14,6 +14,7 @@ class tickets extends Model
         'noTicket',
         'who_issued_ticket',
         'provider',
+        'provider_id',
         'total',
         'date_time_issued',
         'created_by_id',

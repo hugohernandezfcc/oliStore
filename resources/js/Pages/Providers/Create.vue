@@ -42,7 +42,9 @@ export default{
     methods:{
         submit(){
             this.$inertia.post(this.route('providers.store'), this.form);
-
+            setTimeout(() => {
+                window.location.href = '/providers';
+            }, 500);
            
         }
     },
@@ -104,9 +106,7 @@ export default{
 
                     </template>
                     <template #actions>
-                        <ActionMessage :on="true" class="me-3">
-                            Saved.
-                        </ActionMessage>
+                        
             <!-- :class="{ 'opacity-25': form.processing }" :disabled="form.processing" -->
                         <PrimaryButton @click="submit">
                             Crear proveedor

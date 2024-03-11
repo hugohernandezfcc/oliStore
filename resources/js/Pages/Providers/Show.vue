@@ -24,7 +24,8 @@ export default{
         AppLayout, InputLabel, TextInput, PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner
     },
     props:{
-        product: Object
+        provider: Object,
+        tickets: Array
 
     },
     data(){
@@ -33,29 +34,28 @@ export default{
         }
     },
     methods:{
-    onRowClick(){
-                let rowCollectionSelected = new Array();
-                this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
-                    rowCollectionSelected.push(recordSelected);
-                } );
+        onRowClick(){
+            // let rowCollectionSelected = new Array();
+            // this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
+            //     rowCollectionSelected.push(recordSelected);
+            // } );
 
-                this.rowCollectionSelected = rowCollectionSelected;
-                console.log(this.rowCollectionSelected);
-            },
+            // this.rowCollectionSelected = rowCollectionSelected;
+            // console.log(this.rowCollectionSelected);
+        },
     },
     mounted(){
-        console.log(this.product);
-        this.dt = $('#datatable').DataTable();
-        this.dt.on( 'select', () => this.onRowClick())
-        this.dt.on( 'deselect', () => this.onRowClick())
-        for (let index = 0; index < this.product.ProductLineItems.length; index++) {
-            const element = this.product.ProductLineItems[index];
-            for (let i = 0; i < element.sale.length; i++) {
-                const venta = element.sale[i];
-                venta.idVenta = 'Producto parte de la venta con Id:' + venta.id;
-                this.salesList.push(venta);
-            }
-        }
+        console.log(this.tickets);
+    },
+    computed: {
+        filterTableData() {
+            return this.tickets.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        },
+        
+
     }
 }
 
@@ -82,85 +82,72 @@ export default{
                             <table>
                                 <tr>
                                     <td>
-                                        <inertia-link :href="route('products.edit', product.id)">
+                                        <inertia-link :href="route('providers.edit', provider.id)">
                                             <PrimaryButton >
-                                                Editar Producto
+                                                Editar Provedor
                                             </PrimaryButton>
                                             
                                         </inertia-link>
+                                        <br/>
+                                        <br/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><b>ID DB :</b></td>
-                                    <td>{{product.id}}</td>
+                                    <td>{{provider.id}}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>NOMBRE PRODUCTO:</b></td>
-                                    <td>{{product.name}}</td>
+                                    <td><b>Compañia :</b></td>
+                                    <td>{{provider.company}}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>CODIGO DE BARRAS:</b></td>
-                                    <td>{{product.folio}}</td>
+                                    <td><b>Representante:</b></td>
+                                    <td>{{provider.representative}}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>DESCRIPCION:</b></td>
-                                    <td>{{product.Description}}</td>
+                                    <td><b>Descripción:</b></td>
+                                    <td>{{provider.description}}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>UNIDAD DE MEDIDA:</b></td>
-                                    <td>{{product.unit_measure}}</td>
+                                    <td><b>E-mail:</b></td>
+                                    <td>{{provider.email}}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>PRECIO DE LISTA:</b></td>
-                                    <td>$ {{product.price_list}}</td>
+                                    <td><b>Whatsapp:</b></td>
+                                    <td>{{provider.whatsapp}}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>PRECIO CLIENTE:</b></td>
-                                    <td>$ {{product.price_customer}}</td>
+                                    <td><b>Día de visita:</b></td>
+                                    <td>{{provider.visit_day}}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>PORCENTAJE (GANANCIA):</b></td>
-                                    <td>{{product.profit_percentage}} %</td>
+                                    <td><b>Fecha de creación:</b></td>
+                                    <td>{{provider.created_at}}</td>
                                 </tr>
-                                <tr>
-                                    <td><b>FECHA DE CADUCIDAD:</b></td>
-                                    <td>{{product.expiry_date}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>CREADO POR:</b></td>
-                                    <td>{{product.createdByUser.name}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>ULTIMA ACTUALIZACIÓN:</b></td>
-                                    <td>{{product.editedByUser.name}}</td>
-                                </tr>
-                                <tr>
-                                    <td ><b>Código de barras:  </b></td>
-                                    <td class="p-2">
-                                        <div v-html="product.bar_code" /> 
-                                        {{product.folio}}
-                                    </td>
-                                </tr>
+                                
+
                             </table>
                             
                         </div>
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
                         <div class="shadow bg-white md:rounded-md p-4">
-                            <h2>{{product.name}} // {{product.Description}}</h2>
+                            <h2>product.name // product.Description</h2>
                             <hr class="my-6"/>
+
+                            
 
                             <table>
                                 <tr>
                                     <td><b>Total de ventas:</b></td>
-                                    <td>{{product.totalVentas}}</td>
+                                    <td>¿product.totalVentas</td>
                                 </tr>
                             </table>
 
                             <table>
                                 <tr>
                                     <td><b>Total precio Cliente:</b></td>
-                                    <td>$ {{product.totalPrecioCliente}} MXN</td>
+                                    <td>$ ¿product.totalPrecioCliente MXN</td>
                                 </tr>
                             </table>
 
@@ -168,49 +155,31 @@ export default{
                             <table>
                                 <tr>
                                     <td><b>Total precio Lista:</b></td>
-                                    <td>$ {{product.totalPrecioList}} MXN</td>
+                                    <td>$ ¿product.totalPrecioList MXN</td>
                                 </tr>
                             </table>
-                            <hr class="my-6"/>
 
-                            <DataTable 
-                                class="cell-border compact stripe hover order-column loading"
-                                ref="table" id="datatable"
-                                :data="salesList"
-                                :options="{
-                                    responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
-                                        { 
-                                            extend: 'selectAll', 
-                                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                                        },
-                                        { 
-                                            extend: 'print',
-                                            text: 'Print selected rows', 
-                                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                                        }
-                                    ], language:{
-                                        search:'Buscar Producto ', zeroRecords:'No hay registros'
-                                    }
-                                }"
-                                :columns="[
-                                    {data:'idVenta'},
-                                    {data:'payment_method'},
-                                    {data:'store'},
-                                    {data:'total'},
-                                    {data:'created_at'}
-                            ]">
-                                <thead>
-                                    <tr>
-                                        <th>ID DB </th>
-                                        <th>MÉTODO DE PAGO</th>
-                                        <th>TIENDA</th>
-                                        <th>TOTAL DE ESA COMPRA</th>
-                                        <th>FECHA DE CREACION</th>
-                                    </tr>
-                                </thead>
-                            </DataTable>
                             <hr class="my-6"/>
-                            <inertia-link :href="route('products.index')">
+                            Agregar ticket<br/>
+                            <el-input v-model="search"  placeholder="Agregar ticket" class="shadow-2xl"/>
+                            <br/>
+                            <br/>
+                           
+
+                            <el-table :data="filterTableData" class="shadow-lg" stripe style="width: 100%; " >
+                                <el-table-column prop="noTicket" label="No. Ticket" width="120" />
+                                <el-table-column prop="who_issued_ticket" label="Surtido por" width="150" />
+                                <el-table-column prop="provider" label="Compañia" width="100" />
+                                <el-table-column label="Total" width="150" >
+                                    <template #default="i">
+                                        $ {{ i.row.total }} MXN 
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="date_time_issued" label="Fecha de compra" width="170" />
+                            </el-table>
+
+                            <hr class="my-6"/>
+                            <inertia-link :href="route('providers.index')">
                                 Regresar
                             </inertia-link>
                         </div>

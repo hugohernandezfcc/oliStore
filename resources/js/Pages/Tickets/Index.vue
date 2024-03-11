@@ -17,7 +17,8 @@ export default{
     },
     props:{
         tickets: Array,
-        total_investment: Number
+        total_investment: Number,
+        totalTickets: Number
     },
     methods:{
         show(id) {
@@ -55,7 +56,7 @@ export default{
         </template>
         
         <div class="m-4">
-            <h3 class="text-lg text-gray-900"> Listado de Tickets </h3>
+            <h3 class="text-lg text-gray-900"> Listado de Tickets - #{{ totalTickets }}</h3>
             <p class="text-sm text-gray">Catalogo de Tickets Registrados en la base de datos </p>
         </div>
 
@@ -107,7 +108,7 @@ export default{
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="provider" label="Provedor" width="150" />
+                <el-table-column prop="provider" label="Id" width="100" />
                 <el-table-column prop="createddate" label="Fecha de creación" width="150" />
                 <el-table-column prop="total" label="Total" width="150" />
                 <el-table-column prop="noTicket" label="Número de ticket" width="150" />
