@@ -35,7 +35,6 @@ export default{
     },
     mounted(){
         console.log(this.ticket);
-        
         console.log(this.sales);
         console.log(this.salesDates);
 

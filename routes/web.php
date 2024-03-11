@@ -17,8 +17,42 @@ use Inertia\Inertia;
 |
 */
 Route::get('/faker', function () {
-    $faker = Faker\Factory::create();
-    echo $faker->ean13();
+
+    $previously = null;
+    $toReturn = array();
+    
+    $tickets = App\Models\tickets::with('createdBy', 'ticketItems')->orderBy('created_at', 'desc')->get();
+
+    for ($i=0; $i < count($tickets) ; $i++) { 
+        $previously[$tickets[$i]->provider] = array();
+        
+        if(count($tickets[$i]->ticketItems) != 0){
+            for ($o=0; $o < count($tickets[$i]->ticketItems); $o++) 
+                if($tickets[$i]->ticketItems[$o]->product_id == null)
+                    array_push($previously[$tickets[$i]->provider], $tickets[$i]->ticketItems[$o]->bar_code);
+        }else
+            array_push($previously[$tickets[$i]->provider], 'SIN PRODUCTOS RELACIONADOS');
+        
+        if(count($previously[$tickets[$i]->provider]) == 0)
+            unset($previously[$tickets[$i]->provider]);
+
+
+        $dataObj = new \stdClass();
+        $dataObj->ticketId = $tickets[$i]->id;
+        $dataObj->date_time_issued = $tickets[$i]->date_time_issued;
+        $dataObj->provider = $tickets[$i]->provider;
+
+        if(isset($previously[$tickets[$i]->provider])){
+            $dataObj->issues = $previously[$tickets[$i]->provider];
+            array_push($toReturn, $dataObj);
+        }
+            
+
+    }
+
+    echo "<pre>";
+        print_r($toReturn);
+    echo "</pre>";
 });
 
 Route::get('/', function () {

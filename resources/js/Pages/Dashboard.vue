@@ -95,28 +95,29 @@
                 </div>
             </div>
         </div>
+        
         <div class="py-4 ">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex flex-wrap ">
-                        <div class="w-full md:w-1/4 p-2">
+                        <div class="w-full md:w-2/4 p-2">
                             <el-card class="box-card">
                                 <template #header>
                                     <div class="card-header">
-                                        <span>Ventas por mes</span>
+                                        <span>{{ counter }} Productos afectados en tickets </span>
                                     </div>
                                 </template>
-                                <Doughnut   :labels="['VueJs', 'EmberJs', 'ReactJs', 'AngularJs']" 
+                                <Doughnut   :key="componentKey" :labels="doughnut.x" 
                                             :datasets="[
                                                     {
-                                                    backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                                                    data: [40, 20, 80, 10]
+                                                    backgroundColor: Object.values(this.colors),
+                                                    data: doughnut.y
                                                 }
                                             ]"/>
 
                             </el-card>
                         </div>
-                        <div class="w-full md:w-3/4 p-2">
+                        <div class="w-full md:w-2/4 p-2">
                             <el-card class="box-card">
                                 <template #header>
                                     <div class="card-header">
@@ -209,12 +210,21 @@ export default {
                 x: [],
                 y: []
             },
-            componentKey: 0
+            doughnut:{
+                x: [],
+                y: []
+            },
+            componentKey: 0,
+            colors : [],
+            counter : 0
         }
     },
     methods:{
         refreshChildComponent() {
           this.componentKey++;
+        },
+        getRandomHexColor() {
+            return '#' + Math.floor(Math.random()*16777215).toString(16);
         },
         query(){
             this.loading = ElLoading.service({
@@ -271,6 +281,25 @@ export default {
             this.graphicBar.x =  res.data.graphicBar.keys;
             this.graphicPoligono.y =  res.data.ChartPoligono.values;
             this.graphicPoligono.x =  res.data.ChartPoligono.keys;
+
+            let counter = [];
+            for (let index = 0; index < res.data.doughnut.values.length; index++) {
+                
+                counter.push(res.data.doughnut.values[index].length);
+            }
+
+            this.colors = res.data.doughnut.values.reduce((acc, brand) => {
+                acc[brand] = this.getRandomHexColor();
+                return acc;
+            }, {});
+            
+            console.log(Object.values(this.colors));
+            this.counter = counter.reduce((acumulador, valorActual) => acumulador + valorActual, 0);
+
+
+            this.doughnut.y =  counter;
+            this.doughnut.x =  res.data.doughnut.keys;
+
             this.refreshChildComponent();
 
             this.loading.close()

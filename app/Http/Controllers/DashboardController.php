@@ -26,6 +26,7 @@ class DashboardController extends Controller
     public $sales;
     public $salesCounts = 0;
     public $toSearchInProducts = array();
+    public $toTicketsWithIssues = array();
     public $products;
     public $plis;
     public $productCounts = 0;
@@ -55,6 +56,7 @@ class DashboardController extends Controller
     public $finalResult = [];
     public $finalResultWeek = [];
     public $tickets = [];
+    public $previously = [];
     public $pasiveData = 0;
     /**
      * Display a listing of the resource.
@@ -72,6 +74,7 @@ class DashboardController extends Controller
         $this->prepareSalesByMonth();
         $this->prepareSalesByWeek();
         $this->prepareTickets();
+        $this->prepareTicketsWithIssues();
 
         return response()->json(
             [   
@@ -102,8 +105,45 @@ class DashboardController extends Controller
                     'keys' => array_keys($this->finalResultWeek),
                     'values' => array_values($this->finalResultWeek)
                 ],
+
+                'doughnut' => [
+                    'keys' => array_keys($this->previously),
+                    'values' => array_values($this->previously)
+                ],
             ]
         );
+    }
+
+    public function prepareTicketsWithIssues(){
+
+        $tickets = tickets::with('createdBy', 'ticketItems')->orderBy('created_at', 'desc')->get();
+
+        for ($i=0; $i < count($tickets) ; $i++) { 
+            $this->previously[$tickets[$i]->provider] = array();
+            
+            if(count($tickets[$i]->ticketItems) != 0){
+                for ($o=0; $o < count($tickets[$i]->ticketItems); $o++) 
+                    if($tickets[$i]->ticketItems[$o]->product_id == null)
+                        array_push($this->previously[$tickets[$i]->provider], $tickets[$i]->ticketItems[$o]->bar_code);
+            }else
+                array_push($this->previously[$tickets[$i]->provider], 'SIN PRODUCTOS RELACIONADOS');
+            
+            if(count($this->previously[$tickets[$i]->provider]) == 0)
+                unset($this->previously[$tickets[$i]->provider]);
+
+
+            $dataObj = new \stdClass();
+            $dataObj->ticketId = $tickets[$i]->id;
+            $dataObj->date_time_issued = $tickets[$i]->date_time_issued;
+            $dataObj->provider = $tickets[$i]->provider;
+
+            if(isset($this->previously[$tickets[$i]->provider])){
+                $dataObj->issues = $this->previously[$tickets[$i]->provider];
+                array_push($this->toTicketsWithIssues, $dataObj);
+            }
+        }
+
+        return $this->toTicketsWithIssues;
     }
 
     public function prepareTickets(){
