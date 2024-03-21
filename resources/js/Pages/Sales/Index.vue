@@ -47,6 +47,7 @@ export default{
     setup() {
 
     const componentKey = ref(0);
+    const componentKey1 = ref(0);
     
     function refreshComponent() {
       componentKey.value += 1;
@@ -381,20 +382,38 @@ export default{
                 // productName.Description.toLowerCase().includes(this.realtime.value.toLowerCase()) || productName.name.toLowerCase().includes(this.realtime.value.toLowerCase())
         },
         handleChangeMultiplicador(){
-            console.log(this.multiplicador);
-            console.log(this.rowCollectionSelected[0].final_price);
+            console.log(this.rowCollectionSelected);
 
-            this.rowCollectionSelected[0].price_customer = parseFloat(this.rowCollectionSelected[0].final_price);
+            if(this.rowCollectionSelected.length > 0)
+                this.rowCollectionSelected[0].price_customer = parseFloat(this.rowCollectionSelected[0].final_price);
+
             let localRowCollectionSelected = this.rowCollectionSelected;
 
             for (let i = 0; i < this.multiplicador; i++) {
                 localRowCollectionSelected.push(this.rowCollectionSelected[0]);
             }
 
-            this.rowCollectionSelected = localRowCollectionSelected;
-            console.log(this.rowCollectionSelected);
-        }
-        
+
+            for (let index = (this.rowCollectionSelected.length == 1) ? this.rowCollectionSelected : 2; index < localRowCollectionSelected.length; index++) {
+
+                this.form.total = parseFloat(this.form.total) + localRowCollectionSelected[index].price_customer;
+                this.productsAdded.push(localRowCollectionSelected[index]);
+            }
+            this.componentKey1 += 1; 
+            this.status = 'Productos Agregados';
+            this.form.no_products = this.productsAdded.length;
+            this.form.productosRelacionados = this.productsAdded;
+            try {
+                this.form.total = this.form.total.toFixed(2);
+            } catch (error) {
+                console.log(error);
+            }
+            this.dialogMultipleProducts = false;
+            this.multiplicador = 0;
+
+
+            console.log(this.productsAdded);
+        }  
     },
     mounted(){
         this.dt = $('#datatable').DataTable();
@@ -513,8 +532,8 @@ export default{
                 
 
                 <el-space fill>
-                    <h3>Especifica el número de piezas de  {{rowCollectionSelected[0].name}}</h3>
-                    <el-input-number v-model="multiplicador" :min="1" :max="10"  />
+                    <h3>Especifica el número de piezas </h3>
+                    <el-input-number v-model="multiplicador" :min="0" :max="10"  />
                 </el-space>
             </div><br/>
             
@@ -618,11 +637,7 @@ export default{
                                 </el-descriptions-item>
 
                                 <el-descriptions-item>
-                                    <template #label>
-                                        <div class="cell-item">
-                                            Precio
-                                        </div>
-                                    </template>
+                                    
                                     {{ productName.price_customer }}
                                 </el-descriptions-item>
 
@@ -651,7 +666,7 @@ export default{
                             <div class="bg-white p-1">
                                 <DataTable 
                                     class="cell-border compact stripe hover order-column loading"
-                                    ref="table" id="datatable"
+                                    ref="table" id="datatable" :key="componentKey1"
                                     :data="productsAdded"
                                     :options="{
                                         responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
@@ -687,7 +702,7 @@ export default{
                                     </thead>
                                 </DataTable>
                             </div>
-                            <el-button class="mt-3 mb-3" type="info" v-if="rowCollectionSelected.length == 1" @click="dialogMultipleProducts = true">+ Multiplicar producto</el-button>
+                            <el-button class="mt-3 mb-3" type="info"   @click="dialogMultipleProducts = true">+ Multiplicar producto</el-button>
                             <br/>
                             <div class="bg-white">
                                 <el-collapse  accordion class="shadow  md:rounded-md p-4 border-black border-spacing-3">

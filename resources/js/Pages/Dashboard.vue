@@ -117,30 +117,32 @@
 
                             </el-card>
                         </div>
-                        <div class="w-full md:w-2/4 p-2">
+                        <div class="w-full md:w-2/4">
                             <el-card class="box-card">
                                 <template #header>
                                     <div class="card-header">
-                                        <span>Lista de ventas</span>
+                                        <span>Productos a Corregir: {{ expressCreation.length }}</span>
                                     </div>
                                 </template>
                                 
-                                <el-table  height="250" >
-                                    <el-table-column prop="quantity" label="#" width="50" />
-                                    <el-table-column prop="money" label="$ Total" width="80" />
-                                    <el-table-column prop="producto" label="Barras" width="140" />
+                                <el-table :data="filterTableData" height="500" >
+                                    <el-table-column prop="name" label="Nombre"  />
+                                    <el-table-column prop="Description" label="Descripción"  />
+                                    <el-table-column prop="folio" label="Folio"  />
 
-                                        <el-table-column align="right" fixed="right" width="100">
+                                        <el-table-column align="right" fixed="right" width="90">
                                             <template #header>
                                                 <el-input v-model="search" size="small" placeholder="Type to search" />
                                             </template>
                                             <template #default="scope">
-                                                <el-button
-                                                size="small"
-                                                type="danger"
-                                                @click="handleDelete(scope.$index, scope.row)"
-                                                >Delete</el-button
-                                                >
+                                                <inertia-link :href="route('products.edit', scope.row.id)" >
+                                                    <el-button
+                                                    size="small"
+                                                    type="danger"
+
+                                                    >Editar</el-button
+                                                    >
+                                                </inertia-link>
                                             </template>
                                         </el-table-column>
 
@@ -158,7 +160,7 @@
 
 <script >
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { h } from 'vue';
+
 import { ElNotification } from 'element-plus';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -216,7 +218,8 @@ export default {
             },
             componentKey: 0,
             colors : [],
-            counter : 0
+            counter : 0,
+            expressCreation: []
         }
     },
     methods:{
@@ -281,6 +284,7 @@ export default {
             this.graphicBar.x =  res.data.graphicBar.keys;
             this.graphicPoligono.y =  res.data.ChartPoligono.values;
             this.graphicPoligono.x =  res.data.ChartPoligono.keys;
+            this.expressCreation   = res.data.expressCreation;
 
             let counter = [];
             for (let index = 0; index < res.data.doughnut.values.length; index++) {
@@ -309,7 +313,12 @@ export default {
         });
     },
     computed: {
-            
+        filterTableData() {
+            return this.expressCreation.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        },
     }
 }
 </script>

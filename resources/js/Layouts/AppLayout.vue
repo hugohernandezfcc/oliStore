@@ -25,6 +25,9 @@ const switchToTeam = (team) => {
 const logout = () => {
     router.post(route('logout'));
 };
+
+console.log(router.page.url.indexOf("tickets"));
+
 </script>
 
 <template>
@@ -48,27 +51,35 @@ const logout = () => {
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('sales.index')" :active="route().current('sales.index')">
+                                <NavLink :href="route('sales.index')" :active="router.page.url.indexOf('sales') >= 0">
                                     Ventas
                                 </NavLink>
-                                <NavLink :href="route('products.index')" :active="route().current('products')">
+                                <NavLink :href="route('products.index')" :active="router.page.url.indexOf('products') >= 0">
                                     Productos
                                 </NavLink>
 
-                                <NavLink :href="route('tickets.index')" :active="route().current('tickets')">
-                                    Tickets
+                                <NavLink :href="route('tickets.index')" :active="router.page.url.indexOf('tickets') >= 0">
+                                    Tickets 
                                 </NavLink>
 
-                                <NavLink :href="route('stores.index')" :active="route().current('stores')">
+                                <NavLink :href="route('stores.index')" :active="router.page.url.indexOf('stores') >= 0">
                                     Tiendas
                                 </NavLink>
 
-                                <NavLink :href="route('providers.index')" :active="route().current('providers')">
+                                <NavLink :href="route('providers.index')" :active="router.page.url.indexOf('providers') >= 0">
                                     Proveedores
                                 </NavLink>
 
-                                <NavLink :href="route('stocks.index')" :active="route().current('stocks')">
+                                <NavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0">
                                     Inventarios
+                                </NavLink>
+
+                                <NavLink :href="route('barcodes.index')" :active="router.page.url.indexOf('barcodes') >= 0">
+                                    Códigos de barras
+                                </NavLink>
+
+                                <NavLink :href="route('prices.index')" :active="router.page.url.indexOf('prices') >= 0">
+                                    Precios
                                 </NavLink>
                                 
                             </div>
@@ -211,24 +222,24 @@ const logout = () => {
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('sales.index')" :active="route().current('sales.index')">
+                        <ResponsiveNavLink :href="route('sales.index')" :active="router.page.url.indexOf('sales') >= 0">
                             Ventas
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('products.index')" :active="route().current('products')">
+                        <ResponsiveNavLink :href="route('products.index')" :active="router.page.url.indexOf('products') >= 0">
                             Productos
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('tickets.index')" :active="route().current('products')">
+                        <ResponsiveNavLink :href="route('tickets.index')" :active="router.page.url.indexOf('tickets') >= 0">
                             Tickets
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('stores.index')" :active="route().current('stores')">
+                        <ResponsiveNavLink :href="route('stores.index')" :active="router.page.url.indexOf('stores') >= 0">
                             Tiendas
                         </ResponsiveNavLink>
 
-                        <ResponsiveNavLink :href="route('providers.index')" :active="route().current('providers')">
+                        <ResponsiveNavLink :href="route('providers.index')" :active="router.page.url.indexOf('providers') >= 0">
                             Proveedores
                         </ResponsiveNavLink>
 
-                        <ResponsiveNavLink :href="route('stocks.index')" :active="route().current('stocks')">
+                        <ResponsiveNavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0">
                             Inventarios
                         </ResponsiveNavLink>
                     </div>

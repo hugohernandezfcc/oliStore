@@ -30,6 +30,7 @@ import { ElMessageBox } from 'element-plus';
                 whoIssuedTicket: '',
                 provider: '',
                 total: '',
+                id: '',
                 quantityItems: []
             },
             quantities:{
@@ -38,6 +39,7 @@ import { ElMessageBox } from 'element-plus';
                 producto: ''
             },
             search:'',
+            showMessage : false,
             options: [
             {
                 value: 'Hugo Hernández',
@@ -88,30 +90,86 @@ import { ElMessageBox } from 'element-plus';
                 });
 
             },
+            
             nextTicket() {
 
-                for(var k in this.form){
-                    console.log(this.form[k].length);
-                    if(this.form[k].length == 0 && k != 'quantityItems' && this.activeTicket == 0){
-                        this.cantContinue = true;
-                    }
-                }
+                // for(var k in this.form){
+                //     console.log(this.form[k].length);
+                //     if(this.form[k].length == 0 && k != 'quantityItems' && this.activeTicket == 0){
+                //         this.cantContinue = true;
+                //     }
+                // }
 
                
                 
-                if(!this.cantContinue){
-                    if (this.activeTicket++ > 2) 
-                        this.activeTicket = 0;
-                }else{
-                    ElMessageBox.confirm('Debes llenar todos los campos')
-                    .then(() => {
-                        console.log('se ha notificado que faltan cambios')
-                        this.cantContinue = false;
-                    }).catch(() => {
-                    // catch error
-                    })
-                }
+                // if(!this.cantContinue){
+
+                    if(this.activeTicket == 0 && !this.cantContinue){
+
+                        axios.get('/tickets/check/' + this.form.noTicket, {
+                            headers: {
+                                scheme: 'https'
+                            }
+                        }).then((res) => {
+                            console.log(res);
+                            if(res.data != ''){
+                                this.form.id = res.data.id;
+                                this.form.noTicket = res.data.noTicket;
+                                this.form.dateTimeIssued = res.data.date_time_issued;
+                                this.form.whoIssuedTicket = res.data.who_issued_ticket;
+                                this.form.provider = res.data.provider;
+                                this.form.total = res.data.total;
+                                this.form.quantityItems = [];
+                                for (let index = 0; index < res.data.ticket_items.length; index++) {
+                                    const element = res.data.ticket_items[index];
+                                    this.form.quantityItems.push({
+                                        quantity: element.quantity,
+                                        money: element.cost_customer,
+                                        producto: element.bar_code
+                                    })
+                                }
+                                this.showMessage = true;
+                            }else{
+                                this.showMessage = false;
+                            }
+
+                            if (this.activeTicket++ > 2) 
+                                this.activeTicket = 0;
+
+                            
+
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+
+                    }else{
+                        if (this.activeTicket++ > 2) 
+                            this.activeTicket = 0;
+                    }
+                    console.log('>>>',this.activeTicket);
+
+                    
+                // }else{
+                //     ElMessageBox.confirm('Debes llenar todos los campos')
+                //     .then(() => {
+                //         console.log('se ha notificado que faltan cambios')
+                //         this.cantContinue = false;
+                //     }).catch(() => {
+                //     // catch error
+                //     })
+                // }
                 
+
+            },
+            clearTicket(){
+                this.form.noTicket = '';
+                this.form.dateTimeIssued = '';
+                this.form.whoIssuedTicket = '';
+                this.form.provider = '';
+                this.form.total = '';
+                this.form.quantityItems = [];
+                this.activeTicket = 0;
+                this.showMessage = false;
 
             },
             nextProduct() {
@@ -191,6 +249,8 @@ import { ElMessageBox } from 'element-plus';
         <br/>
         <!-- #1 FORM -->
         <div v-if="activeTicket == 0" align-center>
+
+            
             Ticket No.<br/>
             <el-input v-model="form.noTicket" placeholder="001210222"  class="w-full shadow-2xl"/><br/><br/>
             Fecha/hora que fue surtido<br/>
@@ -222,6 +282,13 @@ import { ElMessageBox } from 'element-plus';
 
 
         <div v-if="activeTicket == 1" align-center>
+            <div v-if="showMessage == true">
+                Ticket encontrado: &nbsp;&nbsp;
+                <el-button size="small" type="info" round>Editar</el-button> <el-button size="small" @click="clearTicket" type="warning" round>Limpiar</el-button>
+                <el-divider content-position="center">
+                    Ticket {{ this.form.noTicket }} 
+                </el-divider>
+            </div>
             <el-row :gutter="20">
                 <el-col :span="6"># Cantidad
                     <el-input v-model="quantities.quantity" ref="quantity" placeholder="#" autofocus/>

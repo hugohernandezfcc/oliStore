@@ -6,15 +6,9 @@ use App\Models\tickets;
 use App\Models\ticketItems;
 use App\Models\Sales;
 use App\Models\Product;
-use App\Models\User;
-use App\Models\ProductLineItem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 use Carbon\Carbon;
-use Faker\Factory;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Expr\Cast\String_;
 
 class DashboardController extends Controller
 {
@@ -110,7 +104,14 @@ class DashboardController extends Controller
                     'keys' => array_keys($this->previously),
                     'values' => array_values($this->previously)
                 ],
+                'expressCreation' => $this->expressCreation()
             ]
+        );
+    }
+
+    public function expressCreation(){
+        return Product::where('Description', 'EXPRESS CREATION')->get(
+            ['name', 'id', 'folio', 'Description']
         );
     }
 
@@ -192,7 +193,7 @@ class DashboardController extends Controller
     public function prepareSalesByWeek() {
         $now = Carbon::now();
     
-        // Retrieve sales data for the current week
+        ###Considera agregar 1 día más a la variable  $now->endOfWeek()->toDateString()
         $sales = DB::table('product_line_items')
                     ->whereBetween('created_at', [$now->startOfWeek()->toDateString(), $now->endOfWeek()->toDateString()])
                     ->get(['created_at', 'final_price']); // Fetch only necessary fields
@@ -262,16 +263,7 @@ class DashboardController extends Controller
     }
 
     public function getProductsSoldDashboard(){
-        //estoy preparando aquí el número de productos por ventas
-        // for ($i=0; $i < count($this->sales); $i++) {
-        //     $soldProducts = array();
-        //     for ($o=0; $o < count($this->plis); $o++) { 
-        //         if($this->sales[$i]->id == $this->plis[$o]->sale_id){
-        //             array_push($soldProducts, $this->plis[$o]);
-        //         }
-        //     }
-        //     $this->productCounts = $this->productCounts + count($soldProducts);
-        // }
+        
         return number_format(count($this->plis), 0, ',');
     }
 

@@ -170,7 +170,7 @@ export default{
                             <el-switch
                                 v-model="form.visible_product"
                                 class="mb-2"
-                                active-text="No mostrar"
+                                active-text="Se Muestra"
                                 inactive-text=" "
                             />
                             
