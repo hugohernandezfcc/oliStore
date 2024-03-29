@@ -75,13 +75,13 @@ class TicketsController extends Controller
     public function store(Request $request)
     {   
 
-        if($request->get('id') == ''){
+        $datetime = Carbon::parse($request->get('dateTimeIssued'), 'CST');
         
+        if($request->get('id') == ''){
             $sale = null;
             $ticketCount = tickets::where('noTicket', $request->get('noTicket'))->get();
 
             if(count($ticketCount) == 0){
-                $datetime = Carbon::parse($request->get('dateTimeIssued'), 'CST');
                 $sale = tickets::create([
                     'noTicket'          => $request->get('noTicket'),
                     'who_issued_ticket' => $request->get('whoIssuedTicket'),
@@ -137,8 +137,72 @@ class TicketsController extends Controller
             return response()->json($sale);
         }else{
             $ticket = tickets::where('id', $request->get('id'))->with('ticketItems')->first();
-            return response()->json($ticket);
+            ticketItems::where('ticket_id', $ticket->id)->delete();
+
+            $ticketRecord = tickets::create([
+                'noTicket'          => $request->get('noTicket'),
+                'who_issued_ticket' => $request->get('whoIssuedTicket'),
+                'provider'          => $request->get('provider'),
+                'total'             => $request->get('total'),
+                'date_time_issued'  => $datetime,
+                'edited_by_id' => Auth::id(),
+                'id' => $request->get('id')
+            ]);
+
+            $productList = array();
+            $rows = $request->get('quantityItems');
+            foreach ($rows as $row) {
+                array_push($productList, $row['producto']);
+            }
+
+            $plis = DB::table('products')
+                ->whereIn('folio', $productList)
+                ->get();
+
+            $plisKey = array();
+            foreach ($plis as $pli) {
+                $plisKey[$pli->folio] = $pli;
+            }
+
+            $items = [];
+            foreach ($rows as $row) {
+                $tItem = new ticketItems;
+
+                try {
+                    $tItem->product_id = $plisKey[$row['producto']]->id;
+                    $tItem->product_name = $plisKey[$row['producto']]->name;
+                } catch (\Throwable $th) {
+                    // Handle the exception if needed
+                }
+
+                $tItem->created_by_id = Auth::id();
+                $tItem->edited_by_id = Auth::id();
+                $tItem->store_id = 3;
+                $tItem->ticket_id = $ticketRecord->id;
+                $tItem->cost_customer = $row['money'];
+                $tItem->bar_code = $row['producto'];
+                $tItem->quantity = floatval($row['quantity']);
+                $tItem->save();
+
+                array_push($items, $tItem);
+            }
+            return response()->json($ticketRecord);
         }
+    }
+
+    public function ticketItemShow($id)
+    {
+        return ticketItems::where('id', $id)->first();
+    }
+
+    public function ticketItemUpdate(Request $request)
+    {
+        $ticketItem = ticketItems::where('id', $request->get('id'))->first();
+        $ticketItem->quantity = $request->get('quantity');
+        $ticketItem->cost_customer = $request->get('cost_customer');
+        $ticketItem->save();
+
+        return response()->json($ticketItem);
     }
 
     /**
@@ -217,8 +281,22 @@ class TicketsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(tickets $tickets)
+    public function destroy($id)
     {
-        //
+        ticketItems::where('ticket_id', $id)->delete();
+        tickets::where('id', $id)->delete();
+
+        return $id;
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroyItem($id)
+    {
+        ticketItems::where('id', $id)->delete();
+        return $id; 
+        
     }
 }
