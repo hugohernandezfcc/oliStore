@@ -17,5 +17,3 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/resources/js/Pages/BarCodes
-/resources/js/Pages/Prices

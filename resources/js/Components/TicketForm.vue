@@ -34,8 +34,8 @@ import { ElMessageBox } from 'element-plus';
                 quantityItems: []
             },
             quantities:{
-                quantity: 0,
-                money: 0,
+                quantity: null,
+                money: null,
                 producto: ''
             },
             search:'',
