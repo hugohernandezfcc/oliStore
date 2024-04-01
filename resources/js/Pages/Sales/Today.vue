@@ -20,10 +20,11 @@ import FooterPos from '@/Components/FooterPos.vue';
 import { HollowDotsSpinner } from 'epic-spinners';
 import DatatableLocal from '@/Components/DatatableLocal.vue';
 import { useTransition } from '@vueuse/core';
-
+import { ElDivider } from 'element-plus';
+import { ElLoading } from 'element-plus';
 export default{
     components:{
-        AppLayout, InputLabel, TextInput, PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner, Field,DatatableLocal
+        AppLayout,ElLoading, InputLabel, TextInput, PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner, Field,DatatableLocal
     },
     
     props:{
@@ -31,15 +32,34 @@ export default{
         ventasTotales: Number,
         salesCount: Number,
         productCounts: Number,
-        total: Number
+        total: Number,
+        period: String,
+        duplicates: Array
     },
     data(){
         return {
-            
+            loading: null,
         }
     },
     methods:{
-        
+        deleteSale(id){
+            console.log(id);
+            this.loading = ElLoading.service({
+                lock: true,
+                text: 'Eliminando venta...',
+                background: '#ff000054',
+
+            });
+            axios.get(`/sales/delete/${id}`).then(response => {
+                console.log(response);
+                this.loading.close()
+                location.reload();
+            })
+            .catch(error => {
+                console.log(error);
+                this.loading.close()
+            });
+        }
     },
     created() {
 
@@ -57,7 +77,7 @@ export default{
     <AppLayout title="Dashboard">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                OliStore > Ventas de hoy > 
+                OliStore > Ventas del {{period}}
             </h2>
         </template>
 
@@ -77,6 +97,7 @@ export default{
                                 </tr>
                             </table>
                         </div>
+                        
                     </div>
                     <div class="md:col-span-2 mt-5 md:mt-0">
                         <div class="shadow bg-white md:rounded-md p-4">
@@ -94,23 +115,33 @@ export default{
                                 </el-col>
                                 
                             </el-row>
+                            <el-divider content-position="center" id="gotop">Posibles duplicados</el-divider>
 
-                            <div v-for="venta in ventas">
-                                <el-collapse v-model="activeNames" @change="handleChange">
-                                <el-collapse-item :title="`# Productos: ${venta.no_products} / TOTAL: $ ${venta.total} MXN`" name="1">
-                                    Id Venta: {{venta.id}} <br/>
-                                    Fecha/hora de venta: {{venta.fcreacion}}
-                                    <table>
-                                        <tr  v-for="(sp, spKey) in venta.soldProducts">
-                                            <td class="border border-slate-500 "># {{spKey + 1}}</td>
-                                            <td class="border border-slate-500 ">{{ sp.product.Description }}</td>
-                                            <td class="border border-slate-500 ">$ {{ sp.final_price }} MXN</td>
-                                        </tr>
-                                    </table>
-                                </el-collapse-item>
-                                </el-collapse>
-                            </div>
+                            <a v-for="dup in duplicates" class="py-2" type="primary" :href="`#${dup}`"> / {{dup}} </a>
 
+                            <el-divider content-position="center" >Ventas</el-divider>
+
+                            <el-timeline style="max-width: 600px">
+                                <el-timeline-item v-for="venta in ventas" center :timestamp="venta.fcreacion" :size="'large'" color="red" placement="top">
+                                    <el-card :id="venta.id">
+                                        <ul  class="infinite-list " >
+                                            <li v-for="(sp, spKey) in venta.soldProducts">
+                                                <span># {{spKey + 1}} &nbsp;</span>
+                                                <b class="text-xs ">{{ sp.product.name }}</b>
+
+                                                <b class="text-xs text-green-600 "> $ {{ sp.final_price }} MXN</b>
+                                            </li>
+                                            <el-divider content-position="center">
+                                                {{`# Productos: ${venta.no_products} / TOTAL: $ ${venta.total} MXN`}}
+                                            </el-divider>
+                                            <a  href="#gotop">Ir Arriba </a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                             <!-- <el-button type="danger" @click="delete(venta.id)" plain>No es duplicado</el-button> -->
+                                             <el-button type="danger" @click="deleteSale(venta.id)" plain>Eliminar</el-button>
+
+                                        </ul>
+                                    </el-card>
+                                </el-timeline-item>
+                            </el-timeline>
                             <inertia-link :href="route('sales.index')">
                                 Regresar
                             </inertia-link>

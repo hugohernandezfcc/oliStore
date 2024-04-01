@@ -82,8 +82,9 @@ Route::resource('barcodes',         App\Http\Controllers\BarCodeController::clas
 Route::resource('prices',           App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
 
 Route::get('/sales/retrieveproduct/{folio}', [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
-Route::get('/sales/today/results',                   [App\Http\Controllers\SalesController::class,  'salesToday'])->middleware('auth:sanctum')->name('sales.today');
-Route::get('/sales/yesterday/results',                   [App\Http\Controllers\SalesController::class,  'salesYesterday'])->middleware('auth:sanctum')->name('sales.yesterday');
+Route::get('/sales/delete/{salesId}',        [App\Http\Controllers\SalesController::class,          'deleteSales']);
+Route::get('/sales/{start}/{end}/results',   [App\Http\Controllers\SalesController::class,  'salesToday'])->middleware('auth:sanctum')->name('sales.today');
+Route::get('/sales/yesterday/results',       [App\Http\Controllers\SalesController::class,  'salesYesterday'])->middleware('auth:sanctum')->name('sales.yesterday');
 Route::post('/storeProduct',                 [App\Http\Controllers\StockController::class,          'storeProduct' ]);
 Route::post('/storeticket',                 [App\Http\Controllers\TicketsController::class,          'store' ]);
 Route::post('/storeProductFromPos',          [App\Http\Controllers\SalesController::class,          'storeProductFromPos' ]);
@@ -107,3 +108,4 @@ Route::post('/dashboard',
             'index'])->name('dashboard.results');;
 
 
+            

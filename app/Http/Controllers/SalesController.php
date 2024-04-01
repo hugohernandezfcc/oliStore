@@ -10,8 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Dotenv\Util\Str;
 use Faker\Factory;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr\Cast\String_;
 
 class SalesController extends Controller
 {
@@ -46,9 +48,9 @@ class SalesController extends Controller
         ]);
     }
 
-    public function salesToday(){
-
-        $sales = Sales::whereDate('created_at', Carbon::today())->get();
+    public function salesToday($start, $end){
+        
+        $sales = Sales::whereBetween('created_at', [Carbon::parse($start)->format('Y-m-d H:i:s'), Carbon::parse($end)->format('Y-m-d H:i:s')])->get();
         $products = Product::get(['name', 'id', 'folio', 'Description', 'price_list','price_customer','profit_percentage']);
         $toSearchInProducts = array();
 
@@ -74,6 +76,8 @@ class SalesController extends Controller
             $plis[$o]->product = $toDefineProductsById[$plis[$o]->product_id];
         }
 
+
+
         $toReturn = array();
         $productCounts = 0;
         $salesCounts = 0;
@@ -91,12 +95,26 @@ class SalesController extends Controller
             $productCounts = $productCounts + count($soldProducts);
         }
 
+        $fcreacionValues = array();
+        $duplicates = array();
+
+        foreach ($toReturn as $sale) {
+            $fcreacion = $sale['fcreacion'];
+            if (isset($fcreacionValues[$fcreacion])) 
+                array_push($duplicates, $sale['id']);
+            else
+                $fcreacionValues[$fcreacion] = true;
+
+        }
+
         return Inertia::render('Sales/Today', [
             'ventas' => $toReturn,
             'ventasTotales' => count($toReturn),
             'salesCount' => count($sales),
             'productCounts' => $productCounts,
-            'total' => $salesCounts
+            'total' => $salesCounts,
+            'period' => $start .' al '. $end,
+            'duplicates' => array_values($duplicates)
         ]);
     }
 
@@ -282,9 +300,16 @@ class SalesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Sales $sales)
+    public function deleteSales($salesId)
     {
-        //
+        try {
+            ProductLineItem::where('sale_id', $salesId)->delete();
+            Sales::find($salesId)->delete();
+            return response()->json(['status' => 'success', 'message' => 'Venta eliminada correctamente', 'id' => $salesId]);
+        } catch (\Exception $th) {
+            return response()->json(['status' => 'error', 'message' => 'Error al eliminar la venta', 'id' => $salesId, 'error_detail' => $th->getMessage()]);
+        }
+        
     }
 
     /**

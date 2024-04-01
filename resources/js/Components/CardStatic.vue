@@ -18,9 +18,9 @@
         </el-statistic>
         <div class="statistic-footer">
             <div class="footer-item">
-                <span>{{titleFooter}}</span>
+                <span class="cursor-pointer underline text-red-600 " @click="openLink">{{titleFooter.title}}</span>
                 <span class="green">
-                    {{mainValueFooter}}%
+                    <!-- {{mainValueFooter}}% -->
                     <el-icon>
                         <CaretTop />
                     </el-icon>
@@ -29,7 +29,7 @@
         </div>
     </div>
 </template>
-<script >
+<script > 
 
 
 import { ElNotification } from 'element-plus';
@@ -37,8 +37,6 @@ import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import BarChart from '@/Components/BarChart.vue';
-import ChartPoligono from '@/Components/ChartPoligono.vue';
-import Doughnut from '@/Components/Doughnut.vue';
 
 export default {
   name: 'CardStatic',
@@ -47,21 +45,28 @@ export default {
     mainValue: Number,
     mainValueFooter: Number,
     title: String,
-    titleFooter: String
+    titleFooter: Object
   },
   data(){
 
         return {
-            form:{
-                quantityItems: []
-            },
+          link: '',
         }
-    },
-  computed: {
-            
-        }
+  },
+  methods:{
+    openLink(){
+      window.open(this.link, '_blank');
+    }
+  },
+  mounted(){
+
+    this.link = '/sales/' + this.titleFooter.start+'/'+this.titleFooter.end+'/results';
+    console.log(this.titleFooter);
+    console.log(this.link);
+  }
 }
 </script>
+
 <style scoped>
 :global(h2#card-usage ~ .example .example-showcase) {
   background-color: var(--el-fill-color) !important;

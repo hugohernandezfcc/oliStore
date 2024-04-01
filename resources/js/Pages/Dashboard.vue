@@ -35,16 +35,16 @@
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex flex-wrap ">
                         <div class="w-full md:w-1/4 p-2">
-                            <CardStatic :mainValue="card1.mount" :mainValueFooter="12" :title="card1.title" :titleFooter="'Footer text'" />
+                            <CardStatic :key="componentKey" :mainValue="card1.mount" :mainValueFooter="12" :title="card1.title" :titleFooter="card1.footerValue" />
                         </div>
                         <div class="w-full md:w-1/4 p-2">
-                            <CardStatic :mainValue="card2.mount" :mainValueFooter="12" :title="card2.title" :titleFooter="'Footer text'" />
+                            <CardStatic :key="componentKey" :mainValue="card2.mount" :mainValueFooter="12" :title="card2.title" :titleFooter="'Footer text'" />
                         </div>
                         <div class="w-full md:w-1/4 p-2">
-                            <CardStatic :mainValue="card3.mount" :mainValueFooter="12" :title="card3.title" :titleFooter="'Footer text'" />
+                            <CardStatic :key="componentKey" :mainValue="card3.mount" :mainValueFooter="12" :title="card3.title" :titleFooter="'Footer text'" />
                         </div>
                         <div class="w-full md:w-1/4 p-2">
-                            <CardStatic :mainValue="card4.mount" :mainValueFooter="12" :title="card4.title" :titleFooter="'Footer text'" />
+                            <CardStatic :key="componentKey" :mainValue="card4.mount" :mainValueFooter="12" :title="card4.title" :titleFooter="'Footer text'" />
                         </div>
                     </div>
                 </div>
@@ -184,7 +184,12 @@ export default {
                 title: 'Ventas de ',
                 mount: 0,
                 footer: '',
-                footerValue: ''
+                footerValue: {
+                    start: '',
+                    end: '',   
+                    title: ''
+                }
+
             },
             card2:{
                 title: 'Prod. vendidos de ',
@@ -243,10 +248,15 @@ export default {
             }).then((res) => {
                 console.log(res.data);
                 this.card1.mount = res.data.salesToday.mount;
+                this.card1.footerValue.start = this.startDate.toLocaleDateString('en-GB').replace(/\//g, '-');
+                this.card1.footerValue.end = this.endDate.toLocaleDateString('en-GB').replace(/\//g, '-');
+                
+                this.card1.footerValue.title = 'Mostrar las ventas del periodo';
                 this.card2.mount = res.data.productsToday.mount;
                 this.card3.mount = res.data.ticketsRecorded.mount;
                 this.card4.mount = res.data.pasiveData.mount;
                 this.loading.close()
+                this.refreshChildComponent()
             }).catch((error) => {
                 console.log(error);
                 this.loading.close()
@@ -276,6 +286,10 @@ export default {
             console.log('>>>>>>>');
             console.log(res);
             this.card1.mount = res.data.salesToday.mount;
+            
+            this.card1.footerValue.title = 'Mostrar las ventas del periodo';
+            this.card1.footerValue.start = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
+            this.card1.footerValue.end = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
             this.card2.mount = res.data.productsToday.mount;
             this.card3.mount = res.data.ticketsRecorded.mount;
             this.card4.mount = res.data.pasiveData.mount;
