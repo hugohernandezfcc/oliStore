@@ -178,7 +178,7 @@ export default {
 
         return {
             startDate: new Date(),
-            endDate: new Date(),
+            endDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
             loading: null,
             card1:{
                 title: 'Ventas de ',
@@ -289,7 +289,7 @@ export default {
             
             this.card1.footerValue.title = 'Mostrar las ventas del periodo';
             this.card1.footerValue.start = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
-            this.card1.footerValue.end = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
+            this.card1.footerValue.end = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toLocaleDateString('en-GB').replace(/\//g, '-');
             this.card2.mount = res.data.productsToday.mount;
             this.card3.mount = res.data.ticketsRecorded.mount;
             this.card4.mount = res.data.pasiveData.mount;
