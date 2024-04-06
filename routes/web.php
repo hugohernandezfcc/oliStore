@@ -96,6 +96,30 @@ Route::get('tickets/destroyItem/{id}',       [App\Http\Controllers\TicketsContro
 Route::get('ticketItem/show/{id}',           [App\Http\Controllers\TicketsController::class, 'ticketItemShow'])->middleware('auth:sanctum');
 Route::post('ticketItem/update/{id}',         [App\Http\Controllers\TicketsController::class, 'ticketItemUpdate'])->middleware('auth:sanctum');
 
+/**
+ * Core routes
+ */
+Route::group(
+    [
+        'prefix' => 'core',
+        'middleware' => ['auth:sanctum']
+    ], function () {
+
+        /**
+         * Routes for users
+         */
+        Route::get('/active/users', [App\Http\Controllers\CoreController::class, 'getActiveUsers']  )->name('core.active.users');
+
+        /**
+         * Routes for tasks
+         */
+        Route::get('/get/task',     [App\Http\Controllers\CoreController::class, 'getTasks']        )->name('core.tasks');
+        Route::post('/add/task',    [App\Http\Controllers\CoreController::class, 'createTask']      )->name('core.add.task');
+        Route::post('/close/task',  [App\Http\Controllers\CoreController::class, 'editTask']        )->name('core.close.task');
+        Route::post('/open/task',   [App\Http\Controllers\CoreController::class, 'editTask']        )->name('core.open.task');
+        Route::post('/delete/task', [App\Http\Controllers\CoreController::class, 'deleteTask']      )->name('core.delete.task');
+    });
+
 
 
 

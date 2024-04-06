@@ -290,13 +290,13 @@ import { ElMessageBox } from 'element-plus';
                 </el-divider>
             </div>
             <el-row :gutter="20">
-                <el-col :span="6"># Cantidad
+                <el-col :span="6">Cantidad
                     <el-input v-model="quantities.quantity" ref="quantity" placeholder="#" autofocus/>
                 </el-col>
-                <el-col :span="6">$ Total
+                <el-col :span="8">Total
                     <el-input v-model="quantities.money" placeholder="$ MXN" />
                 </el-col>
-                <el-col :span="12">Producto
+                <el-col :span="10">Producto
                     <el-input v-model="quantities.producto" placeholder="Frijoles..." v-on:keyup="onEnter"/>
                 </el-col>
             </el-row>

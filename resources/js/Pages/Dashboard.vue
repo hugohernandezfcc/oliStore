@@ -29,7 +29,7 @@
             </div>
                 
         </template>
-
+        
         <div class="py-4 ">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
@@ -154,6 +154,20 @@
                 </div>
             </div>
         </div>
+        <div  class="py-4 ">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="overflow-hidden shadow-xl sm:rounded-lg">
+                    <FullCalendarCustom />
+                </div>
+            </div>
+        </div>
+        <div  class="py-4 ">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="overflow-hidden shadow-xl sm:rounded-lg">
+                    <BoxFounds />
+                </div>
+            </div>
+        </div>
         
     </AppLayout>
 </template>
@@ -170,10 +184,12 @@ import ChartPoligono from '@/Components/ChartPoligono.vue';
 import Doughnut from '@/Components/Doughnut.vue';
 import CardStatic from '@/Components/CardStatic.vue';
 import { ElLoading } from 'element-plus';
+import FullCalendarCustom from '@/Components/FullCalendarCustom.vue';
+import BoxFounds from '@/Components/BoxFounds.vue';
 
 export default {
   name: 'dashboard',
-  components: { BarChart, CardStatic, AppLayout, TextInput, InputLabel, ElNotification, ChartPoligono, Doughnut, InputError},
+  components: { BarChart, BoxFounds, CardStatic, AppLayout, TextInput, InputLabel, ElNotification, ChartPoligono, Doughnut, InputError, FullCalendarCustom},
   data(){
 
         return {

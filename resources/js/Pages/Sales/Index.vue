@@ -21,7 +21,7 @@ import 'datatables.net-select';
 import FooterPos from '@/Components/FooterPos.vue';
 import { HollowDotsSpinner } from 'epic-spinners';
 import DatatableLocal from '@/Components/DatatableLocal.vue';
-
+import ToDoList from '@/Components/ToDoList.vue';
 
 export default{
     components:{
@@ -35,10 +35,10 @@ export default{
         HollowDotsSpinner, 
         Field, 
         DatatableLocal, 
-        wizardForm
+        wizardForm,
+        ToDoList
     },
     props:{
-        ventas: Array,
         sale: Object,
         Sales: Array,
         results: Object,
@@ -421,7 +421,7 @@ export default{
         this.dt.on( 'deselect', () => this.onRowClick())
         console.log(this.results);
         this.productFiltersLocal = this.productFilters;
-        console.log(this.ventas);
+
         console.log(this.productFiltersLocal);
         this.localSales = this.Sales;
        
@@ -435,39 +435,7 @@ export default{
 
 <template>
     <AppLayout title="Dashboard">
-        <template #header>
-            <el-collapse  accordion class="shadow bg-white md:rounded-md p-4">
-                <el-collapse-item title="Ventas | punto de venta" name="1" >
-                    <DatatableLocal
-                    id="saleslocaltable"
-                    :columns="[
-                        {
-                            data:null, render:function(data,type,row,meta) {
-                                return `${meta.row+1}`
-                            }
-                        },
-                        { data: 'no_products', label:'CANTIDAD PRODUCTOS', render:function(data,type,row,meta) {
-                                return `${row.no_products} Productos en esta compra`
-                            }
-                        },
-                        { data: 'total', label:'NOMBRE PRODUCTO', render:function(data,type,row,meta) {
-                                return `$ ${row.total} MXN`
-                            }
-                        },
-                        { data: 'created_at', label:'FECHA DE CREACIÓN'},
-                        { data: 'created_by_id', label:'VENDIDO POR'},
-                        { data: 'id', label:'ID VENTA', render:function(data,type,row,meta) {
-                                return `<a href='/sales/show/${data}'> VER DETALLE </a> `;
-                            }
-                        }
-                    ]" 
-                    :search="'Buscar venta '"
-                    :zeroRecords="'No hay ventas'"
-                    :records="ventas"
-                    />
-                </el-collapse-item>
-            </el-collapse>
-        </template>
+        
 
         <!-- Modal a granel -->
         <el-dialog v-model="dialogFormVisible" :title="finallyAddRecordDescription">
@@ -553,29 +521,86 @@ export default{
         <!--/ Modal Multiplicar producto -->
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-2">
                 
-                <div class="md:grid md:grid-cols-3 md:gap-6">
+                <div class="md:grid md:grid-cols-8 md:gap-6">
                     
-                    <div class="md:col-span-1">
-                        <div class="px-4 sm:px0">
+                    <div class="md:col-span-3">
+                        <div class="">
 
-                            <el-collapse  accordion class="shadow bg-white md:rounded-md p-4">
-                                <el-collapse-item title="Registrar ticket" name="1" >
-                                    <wizardForm :TypeForm="'ticketForm'"/>
-                                </el-collapse-item>
-                                <el-collapse-item title="Consultar un producto" name="2">
-                                    <wizardForm :TypeForm="'productQuery'"/>
-                                </el-collapse-item>
-                                <el-collapse-item title="Lista de productos a surtir" name="3">
-                                    <wizardForm :TypeForm="'requestStock'"/>
-                                </el-collapse-item>
-                            </el-collapse>
+                            <el-tabs :tab-position="'left'" >
+                                <el-tab-pane>
+                                    <template #label>
+                                        <el-icon :size="25" :color="'#dc2626'">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M192 128v768h640V128zm-32-64h704a32 32 0 0 1 32 32v832a32 32 0 0 1-32 32H160a32 32 0 0 1-32-32V96a32 32 0 0 1 32-32m160 448h384v64H320zm0-192h192v64H320zm0 384h384v64H320z"></path></svg>
+                                        </el-icon>
+                                    </template>
+                                    <span class="text-xl text-red-600 ">
+                                        <b>Tickets y productos</b>
+                                    </span>
+                                    <br/><br/>
+                                    <el-collapse  accordion class="shadow bg-white md:rounded-md p-4">
+                                        <el-collapse-item title="Registrar ticket" name="1" >
+                                            <wizardForm :TypeForm="'ticketForm'"/>
+                                        </el-collapse-item>
+                                        <el-collapse-item title="Consultar un producto" name="2">
+                                            <wizardForm :TypeForm="'productQuery'"/>
+                                        </el-collapse-item>
+                                        <el-collapse-item title="Lista de productos a surtir" name="3">
+                                            <wizardForm :TypeForm="'requestStock'"/>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                </el-tab-pane>
+                                <el-tab-pane>
+                                    <template #label>
+                                        <el-icon :size="25" :color="'#dc2626'">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M280.768 753.728 691.456 167.04a32 32 0 1 1 52.416 36.672L314.24 817.472a32 32 0 0 1-45.44 7.296l-230.4-172.8a32 32 0 0 1 38.4-51.2l203.968 152.96zM736 448a32 32 0 1 1 0-64h192a32 32 0 1 1 0 64zM608 640a32 32 0 0 1 0-64h319.936a32 32 0 1 1 0 64zM480 832a32 32 0 1 1 0-64h447.936a32 32 0 1 1 0 64z"></path></svg>
+                                        </el-icon>
+                                    </template>
+                                    <span class="text-xl text-red-600 ">
+                                        <b>Mis tareas por realizar</b>
+                                    </span>
+                                    <br/><br/>
+                                    <ToDoList :placeholder="'Crear nueva tarea'" :defaultvalue="false"></ToDoList>
+
+                                </el-tab-pane>
+                                <el-tab-pane>
+                                    <template #label>
+                                        <el-icon :size="25" :color="'#dc2626'">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M192 352h640l64 544H128zm128 224h64V448h-64zm320 0h64V448h-64zM384 288h-64a192 192 0 1 1 384 0h-64a128 128 0 1 0-256 0"></path></svg>
+                                        </el-icon>
+                                    </template>
+                                    <span class="text-xl text-red-600 ">
+                                        <b>Compras (Surtido)</b>
+                                    </span>
+                                    <br/>
+                                    Agrega los productos faltantes o nuevos productos que los clientes piden a la hora de querer comprar.<br/>
+                                    <ToDoList :placeholder="'Producto faltante'" :defaultvalue="true"></ToDoList>
+                                </el-tab-pane>
+                                <el-tab-pane>
+                                    <template #label>
+                                        <el-icon :size="25" :color="'#dc2626'">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M256 640v192h640V384H768v-64h150.976c14.272 0 19.456 1.472 24.64 4.288a29.056 29.056 0 0 1 12.16 12.096c2.752 5.184 4.224 10.368 4.224 24.64v493.952c0 14.272-1.472 19.456-4.288 24.64a29.056 29.056 0 0 1-12.096 12.16c-5.184 2.752-10.368 4.224-24.64 4.224H233.024c-14.272 0-19.456-1.472-24.64-4.288a29.056 29.056 0 0 1-12.16-12.096c-2.688-5.184-4.224-10.368-4.224-24.576V640z"></path><path fill="currentColor" d="M768 192H128v448h640zm64-22.976v493.952c0 14.272-1.472 19.456-4.288 24.64a29.056 29.056 0 0 1-12.096 12.16c-5.184 2.752-10.368 4.224-24.64 4.224H105.024c-14.272 0-19.456-1.472-24.64-4.288a29.056 29.056 0 0 1-12.16-12.096C65.536 682.432 64 677.248 64 663.04V169.024c0-14.272 1.472-19.456 4.288-24.64a29.056 29.056 0 0 1 12.096-12.16C85.568 129.536 90.752 128 104.96 128h685.952c14.272 0 19.456 1.472 24.64 4.288a29.056 29.056 0 0 1 12.16 12.096c2.752 5.184 4.224 10.368 4.224 24.64z"></path><path fill="currentColor" d="M448 576a160 160 0 1 1 0-320 160 160 0 0 1 0 320m0-64a96 96 0 1 0 0-192 96 96 0 0 0 0 192"></path></svg>
+                                        </el-icon>
+                                    </template>
+                                    <span class="text-xl text-red-600 ">
+                                        <b>Gastos</b>
+                                    </span>
+                                    <br/><br/>
+                                    asdcasdc
+                                </el-tab-pane>
+                            </el-tabs>
+
+                            
 
                         </div>
                     </div>
-                    <div class="md:col-span-2 mt-5 md:mt-0">
 
+                    <div class="md:col-span-5 mt-5 md:mt-0">
+                        <span class="text-xl text-red-600 ">
+                            <b>Tickets y productos</b>
+                        </span>
+                        <br/><br/>
                         <div class="flex flex-row flex-wrap bg-slate-200 md:rounded-md p-4">
                             <div class="basis-1/2 p-1" >
                                 <InputLabel for="inbound_amount" value="Dinero recibido >> $" />
@@ -780,6 +805,8 @@ export default{
                         <br/>
                         <br/>
                     </div>
+
+
                 </div>
             </div>
         </div>
@@ -797,3 +824,11 @@ export default{
 </template>
 
 
+<style >
+.el-tabs__active-bar {
+    background-color: red !important;
+}
+.el-tabs__item.is-active {
+    background-color: #ff000021;
+}
+</style>

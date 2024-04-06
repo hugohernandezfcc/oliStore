@@ -40,7 +40,6 @@ class SalesController extends Controller
 
         
         return Inertia::render('Sales/Index', [
-            'ventas' => Sales::get(),
             'Sales' => $Sales,
             'Sale' => [],
             'results' => $summaryToday,
