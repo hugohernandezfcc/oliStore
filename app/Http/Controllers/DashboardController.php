@@ -69,7 +69,7 @@ class DashboardController extends Controller
         $this->prepareSalesByWeek();
         $this->prepareTickets();
         $this->prepareTicketsWithIssues();
-
+        
         return response()->json(
             [   
                 'typeView' => $this->typeView,
@@ -193,10 +193,12 @@ class DashboardController extends Controller
     public function prepareSalesByWeek() {
         $now = Carbon::now();
     
+
         ###Considera agregar 1 día más a la variable  $now->endOfWeek()->toDateString()
         $sales = DB::table('product_line_items')
-                    ->whereBetween('created_at', [$now->startOfWeek()->toDateString(), $now->endOfWeek()->toDateString()])
+                    ->whereBetween('created_at', [$now->startOfWeek()->toDateString(), $now->endOfWeek()->addDay(1)->toDateString()])
                     ->get(['created_at', 'final_price']); // Fetch only necessary fields
+
     
         // Initialize the array to hold summed prices for each day of the week
         $sumsByDayOfWeek = array_fill(0, 7, 0);
@@ -210,7 +212,7 @@ class DashboardController extends Controller
         // Prepare the final result with day names
         // $dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         $this->finalResultWeek = array_combine($this->dias, $sumsByDayOfWeek);
-        // debug($this->finalResultWeek); 
+
     }
 
     /**
