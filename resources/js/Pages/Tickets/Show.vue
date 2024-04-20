@@ -206,7 +206,7 @@ export default{
                             <el-table :data="filterTableData3" class="shadow-lg" stripe style="height: 300px;" >
                                 <el-table-column prop="id" label="Id" width="70" />
                                 <el-table-column prop="name" label="Producto" width="510" />
-                                <el-table-column prop="count" label="Producto" width="100" />
+                                <el-table-column prop="count" label="# Pedir" width="100" />
                             </el-table>
 
                             <el-divider content-position="center">
