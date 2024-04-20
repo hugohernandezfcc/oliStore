@@ -33,14 +33,37 @@ class CoreController extends Controller
         return response()->json($users);
     }
 
+    public function getSingleTask($name)
+    {
+        $task = Task::where('name', $name)->first();
+        return response()->json($task);
+    }
+
     /**
      * Get all tasks
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getTasks()
+    public function getTasks($recordType)
     {
-        $tasks = Task::where('assigned_to_id', Auth::id())->get();
+        
+        $tasks = Task::where([
+            ['assigned_to_id', '=', ($recordType == 'bills') ? 100000 : Auth::id()],
+            ['record_type', $recordType]
+        ])->get();
+
+        for ($i=0; $i < count($tasks); $i++) { 
+            $tasks[$i]->readOnly = !User::find(Auth::id())->is_admin;
+        }
+
+        return response()->json($tasks);
+    }
+
+    public function  getAnotherTasks($recordType)  {
+        $tasks = Task::where([
+            ['assigned_to_id', '!=', Auth::id()],
+            ['record_type', '=', $recordType] 
+        ])->get();
         return response()->json($tasks);
     }
 
@@ -53,6 +76,7 @@ class CoreController extends Controller
         $task->created_by_id = Auth::id();
         $task->edited_by_id = Auth::id();
         $task->expiry_date = Carbon::today()->addDays(10);
+        $task->record_type = $request->recordType;
         if($request->assigned_to == Auth::id())
             $task->description = 'my task';
         else{

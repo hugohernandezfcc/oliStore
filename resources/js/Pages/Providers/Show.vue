@@ -30,6 +30,8 @@ export default{
     },
     data(){
         return {
+            dialogVisible: false,
+            optionSchedule: '',
             salesList: []
         }
     },
@@ -43,6 +45,24 @@ export default{
             // this.rowCollectionSelected = rowCollectionSelected;
             // console.log(this.rowCollectionSelected);
         },
+        beforeCloseModal() {
+        this.dialogVisible = false;
+
+        // this.$confirm('Are you sure to close this dialog?')
+        //   .then(_ => {
+        //     done();
+        //   })
+        //   .catch(_ => {});
+      },
+      openModal(itemType) {
+
+        this.dialogVisible = true;
+        this.optionSchedule = itemType;
+        
+      },
+      closeModal() {
+        this.dialogVisible = false;
+      },
     },
     mounted(){
         console.log(this.tickets);
@@ -127,12 +147,26 @@ export default{
                                 
 
                             </table>
-                            
+                            <br/>
+                            <el-button type="danger" @click="openModal('normal')" plain>Programar visitas</el-button>
+                            <el-button type="warning" @click="openModal('extraordinary')" plain>Visita extraordinaria</el-button>
                         </div>
                     </div>
+
+                     <!-- modal -->
+                    <el-dialog v-model="dialogVisible"  :before-close="beforeCloseModal" :width="'80%'" :center="true">
+                        <div v-if="optionSchedule == 'extraordinary'">
+                            extraordnary
+                        </div>
+                        <div v-if="optionSchedule == 'normal'">
+                            normal
+                        </div>
+                    </el-dialog>
+                    <!-- /modal -->
+
                     <div class="md:col-span-2 mt-5 md:mt-0">
                         <div class="shadow bg-white md:rounded-md p-4">
-                            <h2>product.name // product.Description</h2>
+                            <h2>{{provider.company}} // {{provider.representative}}</h2>
                             <hr class="my-6"/>
 
                             
@@ -140,14 +174,14 @@ export default{
                             <table>
                                 <tr>
                                     <td><b>Total de ventas:</b></td>
-                                    <td>¿product.totalVentas</td>
+                                    <td>#</td>
                                 </tr>
                             </table>
 
                             <table>
                                 <tr>
                                     <td><b>Total precio Cliente:</b></td>
-                                    <td>$ ¿product.totalPrecioCliente MXN</td>
+                                    <td>#</td>
                                 </tr>
                             </table>
 
@@ -155,7 +189,7 @@ export default{
                             <table>
                                 <tr>
                                     <td><b>Total precio Lista:</b></td>
-                                    <td>$ ¿product.totalPrecioList MXN</td>
+                                    <td>#</td>
                                 </tr>
                             </table>
 

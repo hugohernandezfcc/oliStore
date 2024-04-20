@@ -20,6 +20,7 @@ export default{
         products: Array,
         sales: Array,
         salesDates: Array,
+        summary: Array
     },
     data(){
         return {
@@ -62,6 +63,12 @@ export default{
             return this.sales.filter(
                 (data) =>
                 !this.search2 || JSON.stringify(data).toLowerCase().includes(this.search2.toLowerCase() )
+            );
+        },
+        filterTableData3() {
+            return this.summary.filter(
+                (data) =>
+                !this.search3 || JSON.stringify(data).toLowerCase().includes(this.search3.toLowerCase() )
             );
         },
     }
@@ -192,30 +199,42 @@ export default{
                             </el-table>
 
                             <el-divider content-position="center">
+                                Orden de compra base
+                            </el-divider>
+
+                            <el-input v-model="search3"  placeholder="Type to search" class="shadow-2xl"/>
+                            <el-table :data="filterTableData3" class="shadow-lg" stripe style="height: 300px;" >
+                                <el-table-column prop="id" label="Id" width="70" />
+                                <el-table-column prop="name" label="Producto" width="510" />
+                                <el-table-column prop="count" label="Producto" width="100" />
+                            </el-table>
+
+                            <el-divider content-position="center">
                                 {{sales.length}} Ventar realizadas 
                             </el-divider>
 
                             <el-input v-model="search2"  placeholder="Type to search" class="shadow-2xl"/>
                             <el-table :data="filterTableData2" class="shadow-lg" stripe style="height: 300px;" >
-                                <el-table-column prop="id" label="Id" width="150" />
-                                <el-table-column prop="name" label="Producto" width="150" />
-                                <el-table-column label="Precio lista" width="150" >
+                                <el-table-column prop="id" label="Id" width="70" />
+                                <el-table-column prop="Description" label="Producto" width="220" />
+                                <el-table-column label="Precio lista" width="130" >
                                     <template #default="i">
                                         $ {{ i.row.price_list }} MXN 
                                     </template>
                                 </el-table-column>
 
-                                <el-table-column label="Precio unitario" width="150" >
+                                <el-table-column label="Precio unitario" width="130" >
                                     <template #default="i">
                                         $ {{ i.row.price_customer }} MXN 
                                     </template>
                                 </el-table-column>
                                 <el-table-column prop="folio" label="Producto" width="150" />
 
-
                             </el-table>
 
+                            
                             <hr class="my-6"/>
+
                             <inertia-link :href="route('tickets.index')">
                                 Regresar
                             </inertia-link>

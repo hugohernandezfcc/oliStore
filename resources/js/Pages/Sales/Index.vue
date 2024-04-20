@@ -42,7 +42,8 @@ export default{
         sale: Object,
         Sales: Array,
         results: Object,
-        productFilters: Array
+        productFilters: Array,
+        isAdmin: Boolean
     },
     setup() {
 
@@ -561,7 +562,7 @@ export default{
                                         <b>Mis tareas por realizar</b>
                                     </span>
                                     <br/><br/>
-                                    <ToDoList :placeholder="'Crear nueva tarea'" :defaultvalue="false"></ToDoList>
+                                    <ToDoList :isAdmin="isAdmin" :placeholder="'Crear nueva tarea'" :typeItem="'tasks'" :defaultvalue="false"></ToDoList>
 
                                 </el-tab-pane>
                                 <el-tab-pane>
@@ -575,7 +576,7 @@ export default{
                                     </span>
                                     <br/>
                                     Agrega los productos faltantes o nuevos productos que los clientes piden a la hora de querer comprar.<br/>
-                                    <ToDoList :placeholder="'Producto faltante'" :defaultvalue="true"></ToDoList>
+                                    <ToDoList :isAdmin="isAdmin" :placeholder="'Producto faltante'" :typeItem="'bills'" :defaultvalue="true"></ToDoList>
                                 </el-tab-pane>
                                 <el-tab-pane>
                                     <template #label>

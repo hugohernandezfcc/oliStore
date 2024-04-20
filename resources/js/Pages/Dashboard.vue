@@ -154,13 +154,7 @@
                 </div>
             </div>
         </div>
-        <div  class="py-4 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="overflow-hidden shadow-xl sm:rounded-lg">
-                    <FullCalendarCustom />
-                </div>
-            </div>
-        </div>
+        
         <div  class="py-4 ">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
@@ -184,12 +178,12 @@ import ChartPoligono from '@/Components/ChartPoligono.vue';
 import Doughnut from '@/Components/Doughnut.vue';
 import CardStatic from '@/Components/CardStatic.vue';
 import { ElLoading } from 'element-plus';
-import FullCalendarCustom from '@/Components/FullCalendarCustom.vue';
+
 import BoxFounds from '@/Components/BoxFounds.vue';
 
 export default {
   name: 'dashboard',
-  components: { BarChart, BoxFounds, CardStatic, AppLayout, TextInput, InputLabel, ElNotification, ChartPoligono, Doughnut, InputError, FullCalendarCustom},
+  components: { BarChart, BoxFounds, CardStatic, AppLayout, TextInput, InputLabel, ElNotification, ChartPoligono, Doughnut, InputError},
   data(){
 
         return {
@@ -312,8 +306,11 @@ export default {
 
             this.graphicBar.y =  res.data.graphicBar.values;
             this.graphicBar.x =  res.data.graphicBar.keys;
+
             this.graphicPoligono.y =  res.data.ChartPoligono.values;
             this.graphicPoligono.x =  res.data.ChartPoligono.keys;
+            console.log(this.graphicPoligono);
+
             this.expressCreation   = res.data.expressCreation;
 
             let counter = [];

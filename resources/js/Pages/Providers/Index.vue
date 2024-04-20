@@ -8,12 +8,12 @@ import 'datatables.net-select';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Footer from '@/Components/Footer.vue';
-
+import FullCalendarCustom from '@/Components/FullCalendarCustom.vue';
 
 
 export default{
     components:{
-        AppLayout, PrimaryButton, SecondaryButton, Footer
+        AppLayout, PrimaryButton, SecondaryButton, Footer, FullCalendarCustom
     },
     props:{
         providers: Array
@@ -66,38 +66,35 @@ export default{
             <h3 class="text-lg text-gray-900"> Listado de proveedores </h3>
             <p class="text-sm text-gray">Catalogo de proveedores registrados en la base de datos </p>
         </div>
-        <div class="shadow bg-white md:rounded-md p-4 m-4">
-            
-            <inertia-link :href="route('providers.create')" class="m-1"> 
-                <PrimaryButton >
-                    Crear Proveedor 
-                </PrimaryButton>
-            </inertia-link> 
-            <br/>
-            <br/>
-            
-            <el-table :data="filterTableData" class="shadow-lg" stripe style="width: 100%; height: 500px;" >
-                <el-table-column prop="company" label="Compañia" width="250" />
-                <el-table-column prop="representative" label="Representante" width="270" />
-                <el-table-column prop="description" label="Descripción" width="180" />
-                <el-table-column prop="email" label="E-mail" width="180" />
-                <el-table-column prop="whatsapp" label="Whatsapp" width="180" />
-                <el-table-column prop="visit_day" label="Día de visita" width="200" />
-                <el-table-column prop="created_at" label="Fecha de creación" width="180" />
-                <el-table-column prop="id" label="Provedor" width="100" />
-                <el-table-column align="right" fixed="right" width="120">
-                    <template #default="scope">
-                        <inertia-link :href="route('providers.show', scope.row.id)" >
-                            <el-button
-                            size="small"
-                            color="#dc2626"
-                            >Ver detalle</el-button
-                            >
-                        </inertia-link>
-                    </template>
-                </el-table-column>
-            </el-table>
+        <inertia-link :href="route('providers.create')" class="p-4 m-1"> 
+            <PrimaryButton >
+                Crear Proveedor 
+            </PrimaryButton>
+        </inertia-link> 
+        <div class="flex flex-wrap-reverse shadow bg-white p-4 m-4">
+            <div class="basis-1/4">
+                <el-table :data="filterTableData" class="shadow-lg" stripe style="width: 100%; height: 100%;" >
+                    <el-table-column prop="company" label="Compañia" width="250" />
+                    <el-table-column align="right" fixed="right" width="120">
+                        <template #default="scope">
+                            <inertia-link :href="route('providers.show', scope.row.id)" >
+                                <el-button
+                                size="small"
+                                color="#dc2626"
+                                >Ver detalle</el-button
+                                >
+                            </inertia-link>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <div class="basis-3/4">
+                <div class="overflow-hidden shadow-xl sm:rounded-lg ml-2">
+                    <FullCalendarCustom />
+                </div>
+            </div>
         </div>
+
     </AppLayout>
     
 </template>

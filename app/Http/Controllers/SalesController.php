@@ -13,7 +13,7 @@ use Carbon\Carbon;
 use Dotenv\Util\Str;
 use Faker\Factory;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Expr\Cast\String_;
+
 
 class SalesController extends Controller
 {
@@ -43,7 +43,8 @@ class SalesController extends Controller
             'Sales' => $Sales,
             'Sale' => [],
             'results' => $summaryToday,
-            'productFilters' => $products
+            'productFilters' => $products,
+            'isAdmin' => User::find(Auth::id())->is_admin
         ]);
     }
 

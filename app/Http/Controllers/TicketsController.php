@@ -138,8 +138,8 @@ class TicketsController extends Controller
         }else{
             $ticket = tickets::where('id', $request->get('id'))->with('ticketItems')->first();
             ticketItems::where('ticket_id', $ticket->id)->delete();
-
-            $ticketRecord = tickets::create([
+            $ticketRecord = tickets::find($request->get('id'));
+            $ticketRecord->update([
                 'noTicket'          => $request->get('noTicket'),
                 'who_issued_ticket' => $request->get('whoIssuedTicket'),
                 'provider'          => $request->get('provider'),
@@ -211,8 +211,8 @@ class TicketsController extends Controller
     public function show($id)
     {
         $ticket = tickets::where('id', $id)->with('createdBy', 'ticketItems')->orderBy('created_at', 'desc')->first();
-        $start = new Carbon($ticket->created_at);
-        $end = Carbon::now();
+        $start = new Carbon($ticket->date_time_issued);
+        $end = Carbon::now()->addDay(1);
         $ticket->created_at2 = Carbon::parse($ticket->created_at, 'CST')->addHour(-6)->format('d-m-Y H:i');
         $ticket->updated_at2 = Carbon::parse($ticket->updated_at, 'CST')->addHour(-6)->format('d-m-Y H:i');
         $ticket->date_time_issued = Carbon::parse($ticket->date_time_issued, 'CST')->addHour(-6)->format('d-m-Y H:i');
@@ -245,19 +245,40 @@ class TicketsController extends Controller
         $ticket->quantitytotal = array_sum($quantitytotal);
         $ticket->noProducts = ($ticket->ticketItems == null) ? 0 : count($ticket->ticketItems);
 
+        $salesResults = DB::table("product_line_items")
+                ->join("sales", "product_line_items.sale_id", "=", "sales.id")
+                ->join("products", "product_line_items.product_id", "=", "products.id")
+                ->whereBetween("product_line_items.created_at", [$start, $end])
+                ->whereIn("product_id", $pushProducts)
+                ->select("sales.*", "product_line_items.*", "products.*")
+                ->get();
 
+        $summary = [];
+        $toReturn = [];
+
+        for ($i = 0; $i < count($salesResults); $i++) {
+            if (isset($summary[$salesResults[$i]->Description])) {
+                $summary[$salesResults[$i]->Description]++;
+            } else {
+                $summary[$salesResults[$i]->Description] = 1;
+            }
+        }
+        $idCounter = 0;
+        foreach ($summary as $key => $value) {
+            $idCounter++;
+            $dataObj = new \stdClass();
+            $dataObj->id = $idCounter;
+            $dataObj->name = $key;
+            $dataObj->count = $value;
+            array_push($toReturn, $dataObj);
+        }
 
    
         return Inertia::render('Tickets/Show', [
             'ticket'    => $ticket,
             'products'  => $ticket->ticketItems,
-            'sales'     => DB::table('product_line_items')
-                            ->join('sales', 'product_line_items.sale_id', '=', 'sales.id')
-                            ->join('products', 'product_line_items.product_id', '=', 'products.id')
-                            ->whereBetween('product_line_items.created_at', [$start, $end])
-                            ->whereIn('product_id', $pushProducts)
-                            ->select('sales.*', 'product_line_items.*', 'products.*') 
-                            ->get(),
+            'sales'     => $salesResults,
+            'summary'   => $toReturn,
             'salesDates'=> [Carbon::parse($start, 'CST')->addHour(-6)->format('d-m-Y'), Carbon::parse($end, 'CST')->addHour(-6)->format('d-m-Y')]
         ]);
     }

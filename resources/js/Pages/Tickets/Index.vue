@@ -156,13 +156,13 @@ export default{
                     </template>
                 </el-table-column>
                 <el-table-column prop="provider" label="Id" width="100" />
-                <el-table-column prop="createddate" label="Fecha de creación" width="150" />
+                <el-table-column prop="date_time_issued" label="Fecha de surtido" width="150" />
                 <el-table-column prop="total" label="Total" width="150" />
+                <el-table-column prop="who_issued_ticket" label="Surtido por" width="150" />
                 <el-table-column prop="noTicket" label="Número de ticket" width="150" />
+                <el-table-column prop="createddate" label="Fecha de creación" width="150" />
                 <el-table-column prop="who_issued_ticket" label="Surtido por" width="150" />
                 <el-table-column prop="createdByName" label="Creado por" width="200" />
-                <el-table-column prop="who_issued_ticket" label="Surtido por" width="150" />
-                <el-table-column prop="date_time_issued" label="Fecha de surtido" width="150" />
                 <el-table-column prop="noProducts" label="No. Productos" width="150" />
                 <el-table-column prop="id" label="Id" width="150" />
 

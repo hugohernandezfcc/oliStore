@@ -19,7 +19,8 @@ class Task extends Model
         'created_by_id',
         'assigned_to_id',
         'edited_by_id',
-        'status'
+        'status',
+        'record_type'
     ];
 
     public function createdBy()
