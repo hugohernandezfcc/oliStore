@@ -44,7 +44,7 @@ class CoreController extends Controller
     public function getAll()
     {   
         
-        $tasks = Task::with('comments', 'createdBy', 'assignedTo')->orderBy('created_at', 'desc')->get();
+        $tasks = Task::with('comments', 'createdBy', 'assignedTo')->orderBy('created_at', 'desc')->limit(20)->get();
 
         return response()->json($tasks);
     }
