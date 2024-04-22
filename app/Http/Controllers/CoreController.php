@@ -34,9 +34,19 @@ class CoreController extends Controller
     }
 
     public function getSingleTask($name)
-    {
-        $task = Task::where('name', $name)->first();
+    {   
+        
+        $task = Task::where('name', str_replace('@', '/', $name))->first();
+        $task->readOnly = !User::find(Auth::id())->is_admin;
         return response()->json($task);
+    }
+
+    public function getAll()
+    {   
+        
+        $tasks = Task::with('comments', 'createdBy', 'assignedTo')->orderBy('created_at', 'desc')->get();
+
+        return response()->json($tasks);
     }
 
     /**
@@ -50,7 +60,7 @@ class CoreController extends Controller
         $tasks = Task::where([
             ['assigned_to_id', '=', ($recordType == 'bills') ? 100000 : Auth::id()],
             ['record_type', $recordType]
-        ])->get();
+        ])->orderBy('created_at', 'desc')->get();
 
         for ($i=0; $i < count($tasks); $i++) { 
             $tasks[$i]->readOnly = !User::find(Auth::id())->is_admin;
@@ -63,7 +73,7 @@ class CoreController extends Controller
         $tasks = Task::where([
             ['assigned_to_id', '!=', Auth::id()],
             ['record_type', '=', $recordType] 
-        ])->get();
+        ])->orderBy('created_at', 'desc')->get();
         return response()->json($tasks);
     }
 

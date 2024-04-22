@@ -50,30 +50,14 @@
                 </div>
             </div>
         </div>
-
         <div class="py-4 ">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex flex-wrap ">
-                        <div class="w-full md:w-2/4 p-2">
-                            <el-card class="box-card">
-                                <template #header>
-                                    <div class="card-header">
-                                        <span>Ventas por mes</span>
-                                    </div>
-                                </template>
-                                <BarChart  :key="componentKey" :labels="graphicBar.x" 
-                                            :datasets="[ 
-                                                {
-                                                    label: 'Acumulado de ventas por mes', 
-                                                    backgroundColor: 'red',
-                                                    data: graphicBar.y
-                                                } 
-                                            ]"/>
-
-                            </el-card>
+                        <div class="w-full md:w-1/2 p-2">
+                            <Wall />
                         </div>
-                        <div class="w-full md:w-2/4 p-2">
+                        <div class="w-full md:w-1/2 p-2">
                             <el-card class="box-card">
                                 <template #header>
                                     <div class="card-header">
@@ -90,17 +74,22 @@
                                                 ]"/>
                                 <template #footer>Footer content</template>
                             </el-card>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="py-4 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="flex flex-wrap ">
-                        <div class="w-full md:w-2/4 p-2">
+                            <el-card class="box-card">
+                                <template #header>
+                                    <div class="card-header">
+                                        <span>Ventas por mes</span>
+                                    </div>
+                                </template>
+                                <BarChart  :key="componentKey" :labels="graphicBar.x" 
+                                            :datasets="[ 
+                                                {
+                                                    label: 'Acumulado de ventas por mes', 
+                                                    backgroundColor: 'red',
+                                                    data: graphicBar.y
+                                                } 
+                                            ]"/>
+
+                            </el-card>
                             <el-card class="box-card">
                                 <template #header>
                                     <div class="card-header">
@@ -116,8 +105,6 @@
                                             ]"/>
 
                             </el-card>
-                        </div>
-                        <div class="w-full md:w-2/4">
                             <el-card class="box-card">
                                 <template #header>
                                     <div class="card-header">
@@ -155,13 +142,29 @@
             </div>
         </div>
         
-        <div  class="py-4 ">
+        
+        <div class="py-4 ">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="overflow-hidden shadow-xl sm:rounded-lg">
+                    <div class="flex flex-wrap ">
+                        <div class="w-full md:w-2/4 p-2">
+                            
+                        </div>
+                        <div class="w-full md:w-2/4">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- <div  class="py-4 ">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <BoxFounds />
                 </div>
             </div>
-        </div>
+        </div>-->
         
     </AppLayout>
 </template>
@@ -178,12 +181,12 @@ import ChartPoligono from '@/Components/ChartPoligono.vue';
 import Doughnut from '@/Components/Doughnut.vue';
 import CardStatic from '@/Components/CardStatic.vue';
 import { ElLoading } from 'element-plus';
-
+import Wall from '@/Components/Wall.vue';
 import BoxFounds from '@/Components/BoxFounds.vue';
 
 export default {
   name: 'dashboard',
-  components: { BarChart, BoxFounds, CardStatic, AppLayout, TextInput, InputLabel, ElNotification, ChartPoligono, Doughnut, InputError},
+  components: { BarChart, Wall, BoxFounds, CardStatic, AppLayout, TextInput, InputLabel, ElNotification, ChartPoligono, Doughnut, InputError},
   data(){
 
         return {

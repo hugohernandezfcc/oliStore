@@ -31,7 +31,7 @@
       <table class="bg-slate-50 m-2 ">
         <tr>
           <td >
-            <el-button  type="danger" @click="openModal(index)" plain v-if="!task.completed" :disabled="task.readonly">
+            <el-button  type="danger" @click="openModal(index)" plain v-if="!task.completed" >
             <!-- <el-button type="danger" @click="deleteTask(index)" plain v-if="!task.completed"> -->
                 <el-icon :size="17" :color="'#dc2626'" >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M389.44 768a96.064 96.064 0 0 1 181.12 0H896v64H570.56a96.064 96.064 0 0 1-181.12 0H128v-64zm192-288a96.064 96.064 0 0 1 181.12 0H896v64H762.56a96.064 96.064 0 0 1-181.12 0H128v-64zm-320-288a96.064 96.064 0 0 1 181.12 0H896v64H442.56a96.064 96.064 0 0 1-181.12 0H128v-64z"></path></svg>
@@ -54,27 +54,18 @@
       <div class="h-[2px] bg-red-500 w-full ">Elementos asignados a otros</div>
       <br/>
 
+
+
       <div v-for="(task, index) in anotherTasks" :label="`${index+1}`" :key="index">
         
-        <table class="bg-slate-50 m-2 ">
-          <tr>
-            <td >
-              <el-button type="warning" @click="deleteTask(index)" plain v-if="!task.completed" disabled>
-                  <el-icon :size="17" :color="'#dc2626'">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M176 416a112 112 0 1 0 0 224 112 112 0 0 0 0-224m0 64a48 48 0 1 1 0 96 48 48 0 0 1 0-96m336-64a112 112 0 1 1 0 224 112 112 0 0 1 0-224m0 64a48 48 0 1 0 0 96 48 48 0 0 0 0-96m336-64a112 112 0 1 1 0 224 112 112 0 0 1 0-224m0 64a48 48 0 1 0 0 96 48 48 0 0 0 0-96"></path></svg>
-                  </el-icon>
-              </el-button>
-              <el-button type="success"  plain v-if="task.completed" disabled>
-                <el-icon :size="20" :color="'#3a953ad6'" >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896m-55.808 536.384-99.52-99.584a38.4 38.4 0 1 0-54.336 54.336l126.72 126.72a38.272 38.272 0 0 0 54.336 0l262.4-262.464a38.4 38.4 0 1 0-54.272-54.336z"></path></svg>
-                </el-icon>
-              </el-button>
-            </td>
-            <td class="w-full"  :class="{ completed: task.completed, noncompleted: !task.completed}">&nbsp; {{index+1}}.-  {{ task.text }}</td>
+        <table class="bg-slate-50 m-1 w-full">
+          <tr >              
+            <td class="w-full"  :class="{ completed: task.completed, noncompleted: !task.completed}">&nbsp; <span class="text-sm">{{index+1}}.-  {{ task.text }}</span></td>
           </tr>
           <tr>
-            <td colspan="2" class="w-full text-xs text-gray-500"><b>Asignado a:</b> {{ task.assigned_to_name }}</td>
+            <td colspan="1" class="text-xs text-gray-500"><b class="text-red-600">Día: </b>{{ task.created_date }} | <b class="text-red-600">Asignación: </b>{{ task.assigned_to_name }}</td>
           </tr>
+          
         </table>
 
       </div>
@@ -111,7 +102,7 @@
         </template>
         <template #extra>
         <div class="flex items-center">
-          <el-button type="danger" plain class="ml-1" @click="deleteTask(modalData.index)">
+          <el-button type="danger" plain class="ml-1" @click="deleteTask(modalData.index)" v-if="modalData.readOnly == false">
             <el-icon :size="17" :color="'#dc2626'">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32zm448-64v-64H416v64zM224 896h576V256H224zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32m192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32"></path></svg>
             </el-icon>
@@ -133,7 +124,7 @@
         
       </el-page-header>
       <el-divider content-position="left">Comentarios</el-divider>
-      <!-- <Posts :target_id="38" /> -->
+      <Posts :target_id="modalData.id" />
     </el-dialog>
   <!-- /modal -->
   </template>
@@ -156,6 +147,7 @@
         newTask: '',
         tasks: [],
         anotherTasks: [],
+        dates_tasks: [],
         assigned_to: '',
         options: [],
         loading: false,
@@ -284,19 +276,23 @@
       fetchTasks(url) {
         return axios.get(url).then(response => {
           console.log(response.data);
+
           if (url.includes('another')) { // For 'anotherTasks'
 
             return response.data.map(task => ({
               text: task.name,
               assigned_to_name: this.matchUsers[task.assigned_to_id],
-              completed: task.status == 'completed'
+              completed: task.status == 'completed',
+              created_date: task.created_at.split('T')[0].slice(5)
             }));
 
           } else { // For 'tasks'
+            console.log('tere');
             return response.data.map(task => ({
               text: task.name,
               completed: task.status == 'completed',
-              readonly: task.readOnly
+              readonly: task.readOnly,
+              created_date: task.created_at.split('T')[0].slice(5)
             }));
           }
         });
@@ -304,7 +300,7 @@
       openModal(index) {
         this.modalData.title = this.tasks[index].text;
         this.loading2 = true;
-        axios.get(`core/get/single/task/${this.modalData.title}`).then(response => {
+        axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).then(response => {
           console.log(response.data);
           this.modalData.description = response.data.description;
           this.modalData.status = response.data.status;
@@ -334,11 +330,17 @@
         this.options = options; // Assuming 'this' is accessible
         this.matchUsers = matchUsers;
         console.log(this.matchUsers);
-        return Promise.all([ this.fetchTasks(`core/get/task/${this.typeItem}`), this.fetchTasks(`core/get/another/task/${this.typeItem}`) ]);
+        return Promise.all(
+          [ 
+            this.fetchTasks(`core/get/task/${this.typeItem}`), 
+            this.fetchTasks(`core/get/another/task/${this.typeItem}`) 
+          ]
+        );
       }).then(([tasks, anotherTasks]) => {
 
         this.tasks = tasks;
         this.anotherTasks = anotherTasks;
+
         console.log(this.tasks);
         console.log(this.anotherTasks);
         this.loading = false;

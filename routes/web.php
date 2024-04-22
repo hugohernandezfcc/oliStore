@@ -154,6 +154,8 @@ Route::group([
     Route::post('/create/post', [App\Http\Controllers\PostsController::class, 'createPost'])->name('social.create.post');
     Route::post('/get/posts', [App\Http\Controllers\PostsController::class, 'getPosts'])->name('social.posts');
     Route::post('/like/post', [App\Http\Controllers\PostsController::class, 'createLike'])->name('social.like.post');
+    Route::get('/get/all', [App\Http\Controllers\CoreController::class, 'getAll'])->name('social.get.all');
+
 
     // Route::post('/unlike/post', [App\Http\Controllers\LikesController::class, 'unlikePost'])->name('social.unlike.post');
     // Route::post('/comment/post', [App\Http\Controllers\CommentsController::class, 'commentPost'])->name('social.comment.post');

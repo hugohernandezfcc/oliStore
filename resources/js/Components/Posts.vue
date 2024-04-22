@@ -4,15 +4,15 @@
     v-model="textarea"
     :rows="2"
     type="textarea"
-    placeholder="Please input"
+    placeholder="ESCRIBE TU COMENTARIO"
     />
     <br>
     <br>
     
     <el-button type="danger" @click="createPost" plain>Comentar</el-button>
-    <el-button plain type="" @click="IlikeIt">
+      <!-- LIKE SYSTEM <el-button plain type="" @click="IlikeIt">
       <el-icon :size="20" :color="'#3a953ad6'" >
-      <!-- @click="toggleTask(modalData.index)" -->
+
               <svg fill="#000000" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
                       viewBox="0 0 512 512" xml:space="preserve">
                   <g>
@@ -24,7 +24,7 @@
                   </g>
               </svg>
               </el-icon> &nbsp; 10    
-  </el-button>
+      </el-button> LIKE SYSTEM -->
     <br>
     <br>
 
