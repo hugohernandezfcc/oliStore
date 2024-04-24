@@ -54,7 +54,7 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex flex-wrap ">
-                        <div class="w-full md:w-1/2 p-2">
+                        <div class="w-full md:w-1/2 p-2 h-[30rem] overflow-auto sm:h-[80rem]">
                             <Wall />
                         </div>
                         <div class="w-full md:w-1/2 p-2">
@@ -267,7 +267,9 @@ export default {
                 this.card1.footerValue.title = 'Mostrar las ventas del periodo';
                 this.card2.mount = res.data.productsToday.mount;
                 this.card3.mount = res.data.ticketsRecorded.mount;
+
                 this.card4.mount = res.data.pasiveData.mount;
+                
                 this.loading.close()
                 this.refreshChildComponent()
             }).catch((error) => {

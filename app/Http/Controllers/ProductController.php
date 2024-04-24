@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\ProductLineItem;
 use App\Models\Sales;
-
+use App\Models\Price;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -30,6 +30,7 @@ class ProductController extends Controller
 
         return Inertia::render('Products/Index', [
             'products' => $products,
+            
         ]);
     }
 
@@ -91,6 +92,8 @@ class ProductController extends Controller
         return Inertia::render('Products/Create');
     }
 
+    
+
     /**
      * Store a newly created resource in storage.
      */
@@ -113,17 +116,15 @@ class ProductController extends Controller
         Product::create($producto);
         return redirect()->route('products.index');
     }
-
+    
     /**
      * Display the specified resource.
      */
     public function show(Product $product)
     {
-        
+        $product = Product::with('createdBy', 'editedBy', 'ProductLineItems', 'prices')->find($product->id);
 
         $product->ProductLineItems = ProductLineItem::where('product_id', $product->id)->get();
-        $product->createdByUser = User::find($product->created_by_id);
-        $product->editedByUser = User::find($product->edited_by_id);
         $product->totalVentas = count($product->ProductLineItems);
         $product->totalPrecioCliente = 0;
         $product->totalPrecioList = 0;
@@ -136,7 +137,7 @@ class ProductController extends Controller
         }       
         
         
-        return Inertia::render('Products/Show', compact('product'));
+        return Inertia::render('Products/Show', compact('product') );
     }
 
     /**

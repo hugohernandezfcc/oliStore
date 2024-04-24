@@ -156,7 +156,7 @@ class DashboardController extends Controller
             array_push($this->tickets, $tickets[$i]->total);
             
         }
-        $this->pasiveData = number_format(array_sum($this->tickets), 2, '.', ',');
+        $this->pasiveData = 100;
 
        return $this->tickets;
 

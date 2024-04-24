@@ -2,12 +2,12 @@
 
     <el-input
     v-model="textarea"
-    :rows="2"
+    :rows="1.7"
     type="textarea"
     placeholder="ESCRIBE TU COMENTARIO"
+    class="mb-2"
     />
-    <br>
-    <br>
+
     
     <el-button type="danger" @click="createPost" plain>Comentar</el-button>
       <!-- LIKE SYSTEM <el-button plain type="" @click="IlikeIt">
@@ -26,7 +26,7 @@
               </el-icon> &nbsp; 10    
       </el-button> LIKE SYSTEM -->
     <br>
-    <br>
+
 
     <div v-for="item in items" :key="item.id">
         <el-row>

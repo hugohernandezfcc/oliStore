@@ -46,6 +46,9 @@
           </td>
           <td class="w-full" @click="toggleTask(index)" :class="{ completed: task.completed, noncompleted: !task.completed}">&nbsp; {{index+1}}.-  {{ task.text }}</td>
         </tr>
+        <tr :class="task.color">
+            <td colspan="2" class="text-xs text-gray-500"><b class="text-red-600">Día: </b>{{ task.created_date }} | <b class="text-red-600">Asignación: </b>{{ task.assigned_to_name }}<span v-if="task.color == 'bg-yellow-200'" class="underline text-red-600 "> || Aun pendiente</span></td>
+          </tr>
       </table>
     </div>
 
@@ -62,8 +65,8 @@
           <tr >              
             <td class="w-full"  :class="{ completed: task.completed, noncompleted: !task.completed}">&nbsp; <span class="text-sm">{{index+1}}.-  {{ task.text }}</span></td>
           </tr>
-          <tr>
-            <td colspan="1" class="text-xs text-gray-500"><b class="text-red-600">Día: </b>{{ task.created_date }} | <b class="text-red-600">Asignación: </b>{{ task.assigned_to_name }}</td>
+          <tr :class="task.color">
+            <td colspan="1" class="text-xs text-gray-500"><b class="text-red-600">Día: </b>{{ task.created_date }} | <b class="text-red-600">Asignación: </b>{{ task.assigned_to_name }}<span v-if="task.color == 'bg-yellow-200'" class="underline text-red-600 "> || Aun pendiente</span></td>
           </tr>
           
         </table>
@@ -276,14 +279,15 @@
       fetchTasks(url) {
         return axios.get(url).then(response => {
           console.log(response.data);
-
+          
           if (url.includes('another')) { // For 'anotherTasks'
 
             return response.data.map(task => ({
               text: task.name,
               assigned_to_name: this.matchUsers[task.assigned_to_id],
               completed: task.status == 'completed',
-              created_date: task.created_at.split('T')[0].slice(5)
+              created_date: task.created_at.split('T')[0].slice(5),
+              color: task.created_at.split('T')[0].slice(5) == new Date().toISOString().slice(5, 10) ? 'red' : 'bg-yellow-200'
             }));
 
           } else { // For 'tasks'
@@ -292,7 +296,9 @@
               text: task.name,
               completed: task.status == 'completed',
               readonly: task.readOnly,
-              created_date: task.created_at.split('T')[0].slice(5)
+              assigned_to_name: this.matchUsers[task.assigned_to_id],
+              created_date: task.created_at.split('T')[0].slice(5),
+              color: task.created_at.split('T')[0].slice(5) == new Date().toISOString().slice(5, 10) ? 'red' : 'bg-yellow-200'
             }));
           }
         });

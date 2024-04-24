@@ -103,7 +103,9 @@ Route::resource('stores',           App\Http\Controllers\StoreController::class 
 Route::resource('providers',        App\Http\Controllers\ProvidersController::class     )->middleware('auth:sanctum');
 Route::resource('stocks',           App\Http\Controllers\StockController::class         )->middleware('auth:sanctum');
 Route::resource('barcodes',         App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
-Route::resource('prices',           App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
+Route::resource('prices',         App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
+
+
 
 Route::get('/sales/retrieveproduct/{folio}', [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
 Route::get('/sales/delete/{salesId}',        [App\Http\Controllers\SalesController::class,          'deleteSales']);
@@ -112,7 +114,7 @@ Route::get('/sales/yesterday/results',       [App\Http\Controllers\SalesControll
 Route::post('/storeProduct',                 [App\Http\Controllers\StockController::class,          'storeProduct' ]);
 Route::post('/storeticket',                 [App\Http\Controllers\TicketsController::class,          'store' ]);
 Route::post('/storeProductFromPos',          [App\Http\Controllers\SalesController::class,          'storeProductFromPos' ]);
-Route::get('sales/show/{id}',                [App\Http\Controllers\SalesController::class, 'showById'])->middleware('auth:sanctum');
+Route::get('sales/show/{id}',                [App\Http\Controllers\SalesController::class, 'showById'])->middleware('auth:sanctum')->name('sales.show');
 Route::get('tickets/check/{noTicket}',       [App\Http\Controllers\TicketsController::class, 'validateTicket'])->middleware('auth:sanctum');
 
 Route::get('tickets/destroy/{id}',           [App\Http\Controllers\TicketsController::class, 'destroy'])->middleware('auth:sanctum');
@@ -144,6 +146,9 @@ Route::group(
         Route::post('/close/task',                  [App\Http\Controllers\CoreController::class, 'editTask']        )->name('core.close.task');
         Route::post('/open/task',                   [App\Http\Controllers\CoreController::class, 'editTask']        )->name('core.open.task');
         Route::post('/delete/task',                 [App\Http\Controllers\CoreController::class, 'deleteTask']      )->name('core.delete.task');
+        Route::post('/store/price',                 [App\Http\Controllers\CoreController::class, 'storePrice']      )->name('core.store.price');
+        Route::post('/active/price',                 [App\Http\Controllers\CoreController::class, 'activePrice']      )->name('core.active.price');
+        Route::post('/delete/price',                 [App\Http\Controllers\CoreController::class, 'deletePrice']      )->name('core.delete.price');
     });
 
 

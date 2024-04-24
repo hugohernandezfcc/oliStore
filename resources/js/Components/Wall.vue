@@ -1,24 +1,7 @@
 <template>
-     <el-collapse model-value="0" accordion >
-        <el-collapse-item :title="task.name" :name="index" v-for="(task, index) in tasks" :key="index" >
-            <el-card class="m-3">
-                <template #header>
-                <div class="card-header">
-                    <span> Tarea de <b class="text-red-600 ">{{task.assigned_to.name}}</b></span> || <span> {{task.status}}</span>
-                </div>
-                </template>
-                {{ task.name }}<br/>
-                <span class="text-sm " ><b>Abierta en </b> {{task.created_at.split('T')[0] }}</span>
-                <el-collapse v-model="activeNam2" accordion >
-                    <el-collapse-item :title="'Comentarios >> '"  >
-                        <Posts  :target_id="task.id" :key="index"/>
-                    </el-collapse-item>
-                </el-collapse>
-
-            </el-card>
-        </el-collapse-item>
-    </el-collapse>
-
+    <div  v-for="(task, index) in tasks" :key="index" v-loading="loading" element-loading-text="Cargando elementos ..." element-loading-background="#ff000054">
+        <WallItem :task="task" />
+    </div>
 </template>
 <style>
 .el-collapse-item__header{
@@ -32,37 +15,37 @@
 </style>
 <script>
     import Posts from './Posts.vue';
-    
+    import WallItem from './WallItem.vue';
+    import { ElLoading } from 'element-plus';
 
     export default {
         name: 'Wall',
         components: {
-            Posts,
+            Posts, WallItem, ElLoading
         },
         data() {
             return {
                 showPosts: false,
                 tasks: Array,
-                activeName: ['0'],
-                activeNam2: ['0']
+                loading: false,
             }
         },
         methods:{
             getAll(){
+                this.loading = true;
                 axios.get( route('social.get.all') ).then(response => {
                     console.log(response.data)
                     for (let i = 0; i < response.data.length; i++) {
                         response.data[i].status = response.data[i].status == 'open' ? 'Tarea abierta' : 'Tarea Finalizada';
                     }
                     this.tasks = response.data;
+                    this.loading = false;
                 }).catch(error => {
                     console.log(error)
+                    this.loading = false;
                 })
             },
-            togglePosts() {
-                // This method toggles the visibility state
-                this.showPosts = !this.showPosts;
-            }
+            
         },
         mounted() {
             console.log('mounting wall component');

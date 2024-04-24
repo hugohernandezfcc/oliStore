@@ -19,51 +19,185 @@ import 'datatables.net-select';
 import FooterPos from '@/Components/FooterPos.vue';
 import { HollowDotsSpinner } from 'epic-spinners'
 
+
 export default{
     components:{
         AppLayout, InputLabel, TextInput, PrimaryButton, SecondaryButton, FooterPos, SecondaryButtonPay, HollowDotsSpinner
     },
     props:{
         product: Object
-
     },
     data(){
         return {
-            salesList: []
+            salesList: [],
+            search2: '',
+            search: '',
+            dialogVisible: false,
+            form: {
+                price_list: '',
+                price_customer: '',
+                activar: false,
+                description: '',
+                bulk_sale: false
+            }
         }
     },
     methods:{
-    onRowClick(){
-                let rowCollectionSelected = new Array();
-                this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
-                    rowCollectionSelected.push(recordSelected);
-                } );
+        
+        closeModal(){
+            this.dialogVisible = false;
+        },
+        openModal(){
+            this.dialogVisible = true; 
+        },
+        submitNewPrice(){
+            console.log(this.form);
+            let revenue = this.form.price_customer - this.form.price_list;
+            let xrev = revenue / this.form.price_list;
+            axios.post(route('core.store.price'), {
+                product_id: this.product.id,
+                price_list: this.form.price_list,
+                price_customer: this.form.price_customer,
+                activar: this.form.activar,
+                description: this.form.description,
+                revenue: revenue,
+                porcentage_revenue: xrev * 100,
+                bulk_sale: this.form.bulk_sale ? 1 : 0
+            }).then(response => {
+                console.log(response);
+                this.dialogVisible = false;
+                this.$message({
+                    showClose: true,
+                    message: 'Precio guardado con éxito',
+                    type: 'success'
+                });
+                window.location.reload();
+            }).catch(error => {
+                console.log(error);
+                this.$message({
+                    showClose: true,
+                    message: 'Error al guardar el precio',
+                    type: 'error'
+                });
+            });
+        },
+        activarPrecio(id){
+            axios.post(route('core.active.price'), {
+                product_id: this.product.id,
+                active: 1,
+                price_id: id 
+            }).then(response => {
+                console.log(response);
 
-                this.rowCollectionSelected = rowCollectionSelected;
-                console.log(this.rowCollectionSelected);
-            },
+                this.$message({
+                    showClose: true,
+                    message: 'Precio activado con éxito',
+                    type: 'success'
+                });
+                window.location.reload();
+            }).catch(error => {
+                console.log(error);
+                this.$message({
+                    showClose: true,
+                    message: 'Error al activar el precio',
+                    type: 'error'
+                });
+            });
+        },
+        eliminarPrecio(id){
+            axios.post(route('core.delete.price'), {
+                price_id: id 
+            }).then(response => {
+                console.log(response);
+                
+                this.$message({
+                    showClose: true,
+                    message: 'Precio eliminado con éxito',
+                    type: 'success'
+                });
+                window.location.reload();
+            }).catch(error => {
+                console.log(error);
+                this.$message({
+                    showClose: true,
+                    message: 'Error al eliminar el precio',
+                    type: 'error'
+                });
+            });
+        }
+            
     },
     mounted(){
         console.log(this.product);
-        this.dt = $('#datatable').DataTable();
-        this.dt.on( 'select', () => this.onRowClick())
-        this.dt.on( 'deselect', () => this.onRowClick())
         for (let index = 0; index < this.product.ProductLineItems.length; index++) {
             const element = this.product.ProductLineItems[index];
             for (let i = 0; i < element.sale.length; i++) {
                 const venta = element.sale[i];
-                venta.idVenta = 'Producto parte de la venta con Id:' + venta.id;
+                venta.idVenta = 'Venta con Id:' + venta.id;
+                venta.total = '$' + venta.total + ' MXN';
                 this.salesList.push(venta);
             }
         }
+        console.log(this.salesList);
+    },
+    computed: {
+        filterTableData() {
+            return this.product.prices.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        },
+        filterTableData2() {
+            return this.salesList.filter(
+                (data) =>
+                !this.search2 || JSON.stringify(data).toLowerCase().includes(this.search2.toLowerCase() )
+            );
+        },
     }
 }
+
 
 
 
 </script>
 
 <template>
+     <el-dialog v-model="dialogVisible"  :before-close="closeModal" :width="'70%'" :center="true">
+
+        <el-alert type="info" show-icon :closable="false">
+            <p>Agregar nuevos precios de lista y cliente. Al activar el precio se actualizará el producto con la información que proporciones.</p>
+        </el-alert>
+        <br/>
+        <el-form :label-width="'180px'" >
+            <el-form-item label="Precio de lista">
+                <el-input v-model="form.price_list" placeholder="Precio de lista" />
+            </el-form-item>
+            <el-form-item label="Precio cliente">
+                <el-input v-model="form.price_customer" placeholder="Precio cliente" />
+            </el-form-item>
+
+            <el-form-item label="Activar precio">
+                <el-checkbox v-model="form.activar" :value="form.activar" name="activar">$ MXN</el-checkbox>
+            </el-form-item>
+            <el-form-item label="Se vende ">
+                <el-checkbox v-model="form.bulk_sale" :value="form.bulk_sale" name="bulk_sale">Granel</el-checkbox>
+            </el-form-item>
+            <el-form-item label="Descripción">
+                <el-input v-model="form.description" placeholder="El cambio es porque ha salido más caro." />
+            </el-form-item>
+            <el-row>
+                <el-col :span="16" class="text-center">
+                    <el-button color="#dc2626" @click="submitNewPrice" type="primary">Guardar  precio</el-button>
+                </el-col>
+                <el-col :span="8">
+                    <el-button @click="closeModal">Cancelar</el-button>
+                </el-col>
+            </el-row>
+        </el-form>
+        <el-divider content-position="left">Comentarios</el-divider>
+        precios anteriores
+    </el-dialog>
+
     <AppLayout title="Dashboard">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -128,11 +262,11 @@ export default{
                                 </tr>
                                 <tr>
                                     <td><b>CREADO POR:</b></td>
-                                    <td>{{product.createdByUser.name}}</td>
+                                    <td>{{product.created_by.name}}</td>
                                 </tr>
                                 <tr>
                                     <td><b>ULTIMA ACTUALIZACIÓN:</b></td>
-                                    <td>{{product.editedByUser.name}}</td>
+                                    <td>{{product.edited_by.name}}</td>
                                 </tr>
 
                                 <tr>
@@ -180,42 +314,72 @@ export default{
                             </table>
                             <hr class="my-6"/>
 
-                            <DataTable 
-                                class="cell-border compact stripe hover order-column loading"
-                                ref="table" id="datatable"
-                                :data="salesList"
-                                :options="{
-                                    responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
-                                        { 
-                                            extend: 'selectAll', 
-                                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                                        },
-                                        { 
-                                            extend: 'print',
-                                            text: 'Print selected rows', 
-                                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                                        }
-                                    ], language:{
-                                        search:'Buscar Producto ', zeroRecords:'No hay registros'
-                                    }
-                                }"
-                                :columns="[
-                                    {data:'idVenta'},
-                                    {data:'payment_method'},
-                                    {data:'store'},
-                                    {data:'total'},
-                                    {data:'created_at'}
-                            ]">
-                                <thead>
-                                    <tr>
-                                        <th>ID DB </th>
-                                        <th>MÉTODO DE PAGO</th>
-                                        <th>TIENDA</th>
-                                        <th>TOTAL DE ESA COMPRA</th>
-                                        <th>FECHA DE CREACION</th>
-                                    </tr>
-                                </thead>
-                            </DataTable>
+                            
+
+                            <el-input v-model="search2"  placeholder="Type to search" class="shadow-2xl"/>
+                            <el-table :data="filterTableData2" class="shadow-lg" stripe style="height: 300px;" >
+
+                                <el-table-column prop="idVenta" label="Id" width="150" />
+                                <el-table-column prop="created_at" label="Fecha creación" width="150" />
+                                <el-table-column prop="store" label="Tienda" width="120" />
+                                <el-table-column prop="total" label="Total de la venta" width="130" />
+                                <el-table-column prop="payment_method" label="Método pago" width="110" />
+                                <el-table-column align="right" fixed="right" width="120">
+                                    <template #default="scope">
+                                        <inertia-link :href="route('sales.show', scope.row.id)" >
+                                            <el-button
+                                            size="small"
+                                            color="#dc2626"
+                                            >Ver detalle</el-button
+                                            >
+                                        </inertia-link>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                            <br/>
+                            <el-button
+                                @click="openModal"
+                                color="#dc2626"
+                                >Agregar nuevo precio
+                            </el-button>
+                            <br/>
+                            <br/>
+                            <el-input v-model="search"  placeholder="Type to search" class="shadow-2xl"/>
+                            <el-table :data="filterTableData" class="shadow-lg" stripe style="height: 300px;" >
+
+                                <el-table-column label="Precio de lista" width="130" >
+                                    <template #default="scope">
+                                        <span>$ {{scope.row.price_list}} MXN</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="Precio cliente" width="130" >
+                                    <template #default="scope">
+                                        <span>$ {{scope.row.price_customer}} MXN</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column  label="% Ganancia" width="150" >
+                                    <template #default="scope">
+                                        <span>{{scope.row.porcentage_revenue}} %</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="description" label="Descripción" width="130" />
+                                <el-table-column align="right" fixed="right" width="100">
+                                    <template #default="scope">
+                                        <el-button @click="eliminarPrecio(scope.row.id) "
+                                            size="small"
+                                            >Eliminar</el-button>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column align="right" fixed="right" width="100">
+                                    <template #default="scope">
+                                        <el-button @click="activarPrecio(scope.row.id) "
+                                            size="small"
+                                            color="#dc2626"
+                                            >Activar</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+
                             <hr class="my-6"/>
                             <inertia-link :href="route('products.index')">
                                 Regresar

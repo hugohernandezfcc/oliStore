@@ -211,8 +211,20 @@ class TicketsController extends Controller
     public function show($id)
     {
         $ticket = tickets::where('id', $id)->with('createdBy', 'ticketItems')->orderBy('created_at', 'desc')->first();
+        $ticketLimit = tickets::where("provider", "=", $ticket->provider)
+            ->where("date_time_issued", ">", $ticket->date_time_issued)
+            ->where("id", "!=", $id)
+            ->with(["createdBy", "ticketItems"])
+            ->orderBy("created_at", "desc")
+            ->first();
         $start = new Carbon($ticket->date_time_issued);
-        $end = Carbon::now()->addDay(1);
+        
+        $end = null;
+        if($ticketLimit != null)
+            $end = (new Carbon($ticketLimit->date_time_issued))->addDay(1);
+        else if($ticketLimit == null)
+            $end = Carbon::now()->addDay(1);
+
         $ticket->created_at2 = Carbon::parse($ticket->created_at, 'CST')->addHour(-6)->format('d-m-Y H:i');
         $ticket->updated_at2 = Carbon::parse($ticket->updated_at, 'CST')->addHour(-6)->format('d-m-Y H:i');
         $ticket->date_time_issued = Carbon::parse($ticket->date_time_issued, 'CST')->addHour(-6)->format('d-m-Y H:i');
