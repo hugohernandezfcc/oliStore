@@ -71,7 +71,7 @@ export default{
                     message: 'Precio guardado con éxito',
                     type: 'success'
                 });
-                window.location.reload();
+
             }).catch(error => {
                 console.log(error);
                 this.$message({
