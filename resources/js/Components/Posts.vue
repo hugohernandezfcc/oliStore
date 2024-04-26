@@ -78,6 +78,7 @@ import axios from 'axios'
     methods: {
       createPost() {
         console.log(this.textarea)
+        console.log(this.target_id)
         this.textarea.length < 1 ? alert('No puedes enviar un comentario vacío') : axios.post(route('social.create.post'), {
           content: this.textarea,
           task_id: this.target_id

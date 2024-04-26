@@ -163,6 +163,7 @@
         loading2: false,
         matchUsers: [],
         modalData: {
+          id: null,
           title: '',
           description: '',
           status: '',
@@ -341,6 +342,7 @@ axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).t
   this.modalData.assigned_to = response.data.assigned_to;
   this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
   this.modalData.index = index;
+  this.modalData.id = response.data.id;
   this.dialogVisible = true;
   this.loading2 = false;
   console.log(response.data);
@@ -360,6 +362,7 @@ axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).t
   this.modalData.assigned_to = response.data.assigned_to;
   this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
   this.modalData.index = index;
+  this.modalData.id = response.data.id;
   this.dialogVisible = true;
   this.loading2 = false;
   console.log(response.data);
