@@ -146,37 +146,24 @@ Route::group(
         Route::post('/close/task',                  [App\Http\Controllers\CoreController::class, 'editTask']        )->name('core.close.task');
         Route::post('/open/task',                   [App\Http\Controllers\CoreController::class, 'editTask']        )->name('core.open.task');
         Route::post('/delete/task',                 [App\Http\Controllers\CoreController::class, 'deleteTask']      )->name('core.delete.task');
-        Route::post('/store/price',                 [App\Http\Controllers\CoreController::class, 'storePrice']      )->name('core.store.price');
-        Route::post('/active/price',                 [App\Http\Controllers\CoreController::class, 'activePrice']      )->name('core.active.price');
-        Route::post('/delete/price',                 [App\Http\Controllers\CoreController::class, 'deletePrice']      )->name('core.delete.price');
-    });
+
+        Route::post('/store/price',                 [App\Http\Controllers\PricesController::class,  'storePrice']   )->name('core.store.price');
+        Route::post('/active/price',                [App\Http\Controllers\PricesController::class,  'activePrice']  )->name('core.active.price');
+        Route::post('/delete/price',                [App\Http\Controllers\PricesController::class,  'deletePrice']  )->name('core.delete.price');
+
+        Route::get('/manager/task',                 [App\Http\Controllers\CoreController::class,    'taskManager']  )->name('core.task.manager');
+});
 
 
-Route::group([
-    'prefix' => 'social',
-    'middleware' => ['auth:sanctum']
-], function (){
-    Route::post('/create/post', [App\Http\Controllers\PostsController::class, 'createPost'])->name('social.create.post');
-    Route::post('/get/posts', [App\Http\Controllers\PostsController::class, 'getPosts'])->name('social.posts');
-    Route::post('/like/post', [App\Http\Controllers\PostsController::class, 'createLike'])->name('social.like.post');
-    Route::get('/get/all', [App\Http\Controllers\CoreController::class, 'getAll'])->name('social.get.all');
-
-
-    // Route::post('/unlike/post', [App\Http\Controllers\LikesController::class, 'unlikePost'])->name('social.unlike.post');
-    // Route::post('/comment/post', [App\Http\Controllers\CommentsController::class, 'commentPost'])->name('social.comment.post');
-    // Route::post('/reply/comment', [App\Http\Controllers\RepliesController::class, 'replyComment'])->name('social.reply.comment');
-    // Route::post('/delete/post', [App\Http\Controllers\PostsController::class, 'deletePost'])->name('social.delete.post');
-    // Route::post('/delete/comment', [App\Http\Controllers\CommentsController::class, 'deleteComment'])->name('social.delete.comment');
-    // Route::post('/delete/reply', [App\Http\Controllers\RepliesController::class, 'deleteReply'])->name('social.delete.reply');
-    // Route::post('/edit/post', [App\Http\Controllers\PostsController::class, 'editPost'])->name('social.edit.post');
-    // Route::post('/edit/comment', [App\Http\Controllers\CommentsController::class, 'editComment'])->name('social.edit.comment');
-    // Route::post('/edit/reply', [App\Http\Controllers\RepliesController::class, 'editReply'])->name('social.edit.reply');
-    // Route::get('/get/likes', [App\Http\Controllers\LikesController::class, 'getLikes'])->name('social.likes');
-    // Route::get('/get/comments', [App\Http\Controllers\CommentsController::class, 'getComments'])->name('social.comments');
-    // Route::get('/get/replies', [App\Http\Controllers\RepliesController::class, 'getReplies'])->name('social.replies');
-    // Route::get('/get/single/post/{id}', [App\Http\Controllers\PostsController::class, 'getSinglePost'])->name('social.single.post');
-    // Route::get('/get/single/comment/{id}', [App\Http\Controllers\CommentsController::class, 'getSingleComment'])->name('social.single.comment');
-
+Route::group(
+    [
+        'prefix' => 'social',
+        'middleware' => ['auth:sanctum']
+    ], function (){
+        Route::post('/create/post', [App\Http\Controllers\PostsController::class, 'createPost'])->name('social.create.post');
+        Route::post('/get/posts', [App\Http\Controllers\PostsController::class, 'getPosts'])->name('social.posts');
+        Route::post('/like/post', [App\Http\Controllers\PostsController::class, 'createLike'])->name('social.like.post');
+        Route::get('/get/all', [App\Http\Controllers\CoreController::class, 'getAll'])->name('social.get.all');
 });
 
 

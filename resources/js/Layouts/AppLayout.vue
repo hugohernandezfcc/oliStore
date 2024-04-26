@@ -74,13 +74,13 @@ console.log(router.page.url.indexOf("tickets"));
                                     Inventarios
                                 </NavLink>
 
-                                <NavLink :href="route('barcodes.index')" :active="router.page.url.indexOf('barcodes') >= 0">
+                                <!-- <NavLink :href="route('barcodes.index')" :active="router.page.url.indexOf('barcodes') >= 0">
                                     Códigos de barras
                                 </NavLink>
 
                                 <NavLink :href="route('prices.index')" :active="router.page.url.indexOf('prices') >= 0">
                                     Precios
-                                </NavLink>
+                                </NavLink> -->
                                 
                             </div>
                         </div>

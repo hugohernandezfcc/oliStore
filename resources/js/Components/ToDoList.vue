@@ -266,7 +266,7 @@
           console.log(error);
           this.loading = false;
           this.dialogVisible = false;
-          alert('Algo ha salido mal, avisale a Hugo.');
+          alert('No puedes eliminar tareas con una conversación iniciada.');
         });
       },
       deleteTask2(index) {
@@ -287,7 +287,7 @@
           console.log(error);
           this.loading = false;
           this.dialogVisible = false;
-          alert('Algo ha salido mal, avisale a Hugo.');
+          alert('No puedes eliminar tareas con una conversación iniciada.');
         });
       },
 
@@ -332,45 +332,44 @@
         });
       },
       openModal(index) {
+        this.modalData.title = this.tasks[index].text;
+        this.loading2 = true;
+        axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).then(response => {
+          console.log(response.data);
+          this.modalData.description = response.data.description;
+          this.modalData.status = response.data.status;
+          this.modalData.assigned_to = response.data.assigned_to;
+          this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
+          this.modalData.index = index;
+          this.modalData.id = response.data.id;
+          this.dialogVisible = true;
+          this.loading2 = false;
+          console.log(response.data);
+        }).catch(error => {
+          this.loading2 = false;
+          console.log(error);
+        });
+      },
+      openModal2(index) {
 
-this.modalData.title = this.tasks[index].text;
-this.loading2 = true;
-axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).then(response => {
-  console.log(response.data);
-  this.modalData.description = response.data.description;
-  this.modalData.status = response.data.status;
-  this.modalData.assigned_to = response.data.assigned_to;
-  this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
-  this.modalData.index = index;
-  this.modalData.id = response.data.id;
-  this.dialogVisible = true;
-  this.loading2 = false;
-  console.log(response.data);
-}).catch(error => {
-  this.loading2 = false;
-  console.log(error);
-});
-},
-openModal2(index) {
-
-this.modalData.title = this.anotherTasks[index].text;
-this.loading2 = true;
-axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).then(response => {
-  console.log(response.data);
-  this.modalData.description = response.data.description;
-  this.modalData.status = response.data.status;
-  this.modalData.assigned_to = response.data.assigned_to;
-  this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
-  this.modalData.index = index;
-  this.modalData.id = response.data.id;
-  this.dialogVisible = true;
-  this.loading2 = false;
-  console.log(response.data);
-}).catch(error => {
-  this.loading2 = false;
-  console.log(error);
-});
-},
+        this.modalData.title = this.anotherTasks[index].text;
+        this.loading2 = true;
+        axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).then(response => {
+          console.log(response.data);
+          this.modalData.description = response.data.description;
+          this.modalData.status = response.data.status;
+          this.modalData.assigned_to = response.data.assigned_to;
+          this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
+          this.modalData.index = index;
+          this.modalData.id = response.data.id;
+          this.dialogVisible = true;
+          this.loading2 = false;
+          console.log(response.data);
+        }).catch(error => {
+          this.loading2 = false;
+          console.log(error);
+        });
+      },
       closeModal() {
         this.dialogVisible = false;
       },

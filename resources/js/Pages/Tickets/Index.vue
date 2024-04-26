@@ -183,7 +183,7 @@ export default{
                 {{productDetail.folio}}
             </div>
             <div class="m-2 pl-2">
-                <h2 class="text-lg font-semibold text-red-600">{{ productDetail.Description }}</h2>
+                <h2 class="text-base font-semibold text-red-600">{{ productDetail.Description }}</h2>
                 <el-divider>Precios actuales</el-divider>
                 <p class="text-base text-gray-600">Precio lista: $ {{ productDetail.price_list }} MXN</p>
                 <p class="text-base text-gray-600">Precio cliente: $ {{ productDetail.price_customer }}  MXN</p>
@@ -233,7 +233,7 @@ export default{
                 </el-form>
             </div>
             <div class="m-2 pl-2">
-                <h2 class="text-lg font-semibold text-red-600">{{ productDetail.Description }}</h2>
+                <h2 class="text-sm font-semibold text-red-600">{{ productDetail.Description }}</h2>
                 <el-divider>Precios actuales</el-divider>
                 <p class="text-base text-gray-600">Precio lista: $ {{ productDetail.price_list }} MXN</p>
                 <p class="text-base text-gray-600">Precio cliente: $ {{ productDetail.price_customer }}  MXN</p>

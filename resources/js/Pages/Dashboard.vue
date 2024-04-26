@@ -54,8 +54,16 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex flex-wrap ">
-                        <div class="w-full md:w-1/2 p-2 h-[30rem] overflow-auto sm:h-[80rem]">
-                            <Wall />
+                        <div class="w-full md:w-1/2 p-2">
+                            <br/>
+
+                            <a href="/core/manager/task" class="bg-red-600 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Ver todas las tareas (Solo Desktop)</a>
+                            <br/>
+                            <br/>
+                            <div class=" h-[30rem] overflow-auto sm:h-[80rem]">
+                                <Wall />
+                            </div>
+                            
                         </div>
                         <div class="w-full md:w-1/2 p-2">
                             <el-card class="box-card">
