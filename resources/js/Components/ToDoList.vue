@@ -63,7 +63,13 @@
         
         <table class="bg-slate-50 m-1 w-full">
           <tr >              
-            <td class="w-full"  :class="{ completed: task.completed, noncompleted: !task.completed}">&nbsp; <span class="text-sm">{{index+1}}.-  {{ task.text }}</span></td>
+            <td class="w-full"  :class="{ completed: task.completed, noncompleted: !task.completed}">
+              <el-button  type="danger" @click="openModal2(index)" plain>
+                <el-icon :size="17" :color="'#dc2626'" >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M389.44 768a96.064 96.064 0 0 1 181.12 0H896v64H570.56a96.064 96.064 0 0 1-181.12 0H128v-64zm192-288a96.064 96.064 0 0 1 181.12 0H896v64H762.56a96.064 96.064 0 0 1-181.12 0H128v-64zm-320-288a96.064 96.064 0 0 1 181.12 0H896v64H442.56a96.064 96.064 0 0 1-181.12 0H128v-64z"></path></svg>
+                </el-icon>
+              </el-button>
+              &nbsp; <span class="text-sm">{{index+1}}.-  {{ task.text }}</span></td>
           </tr>
           <tr :class="task.color">
             <td colspan="1" class="text-xs text-gray-500"><b class="text-red-600">Día: </b>{{ task.created_date }} | <b class="text-red-600">Asignación: </b>{{ task.assigned_to_name }}<span v-if="task.color == 'bg-yellow-200'" class="underline text-red-600 "> || Aun pendiente</span></td>
@@ -105,7 +111,7 @@
         </template>
         <template #extra>
         <div class="flex items-center">
-          <el-button type="danger" plain class="ml-1" @click="deleteTask(modalData.index)" >
+          <el-button type="danger" plain class="ml-1" @click="deleteTask2(modalData.index)" >
             <el-icon :size="17" :color="'#dc2626'">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728=""><path fill="currentColor" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32zm448-64v-64H416v64zM224 896h576V256H224zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32m192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32"></path></svg>
             </el-icon>
@@ -262,6 +268,27 @@
           alert('Algo ha salido mal, avisale a Hugo.');
         });
       },
+      deleteTask2(index) {
+        this.loading = true;
+        axios.post(route('core.delete.task'), {
+          task: this.anotherTasks[index].text
+        }).then(response => {
+          console.log(response.data);
+          if(response.data.status == 'error') {
+            alert('No puedes eliminar tareas, contacta al responsable para que te ayude');
+            this.loading = false;
+            return;
+          }
+          this.anotherTasks.splice(index, 1);
+          this.loading = false;
+          this.dialogVisible = false;
+        }).catch(error => {
+          console.log(error);
+          this.loading = false;
+          this.dialogVisible = false;
+          alert('Algo ha salido mal, avisale a Hugo.');
+        });
+      },
 
       fetchActiveUsers() {
         return axios.get(route('core.active.users')).then(response => {
@@ -304,23 +331,43 @@
         });
       },
       openModal(index) {
-        this.modalData.title = this.tasks[index].text;
-        this.loading2 = true;
-        axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).then(response => {
-          console.log(response.data);
-          this.modalData.description = response.data.description;
-          this.modalData.status = response.data.status;
-          this.modalData.assigned_to = response.data.assigned_to;
-          this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
-          this.modalData.index = index;
-          this.dialogVisible = true;
-          this.loading2 = false;
-          console.log(response.data);
-        }).catch(error => {
-          this.loading2 = false;
-          console.log(error);
-        });
-      },
+
+this.modalData.title = this.tasks[index].text;
+this.loading2 = true;
+axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).then(response => {
+  console.log(response.data);
+  this.modalData.description = response.data.description;
+  this.modalData.status = response.data.status;
+  this.modalData.assigned_to = response.data.assigned_to;
+  this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
+  this.modalData.index = index;
+  this.dialogVisible = true;
+  this.loading2 = false;
+  console.log(response.data);
+}).catch(error => {
+  this.loading2 = false;
+  console.log(error);
+});
+},
+openModal2(index) {
+
+this.modalData.title = this.anotherTasks[index].text;
+this.loading2 = true;
+axios.get(`core/get/single/task/${this.modalData.title.replaceAll('/', '@')}`).then(response => {
+  console.log(response.data);
+  this.modalData.description = response.data.description;
+  this.modalData.status = response.data.status;
+  this.modalData.assigned_to = response.data.assigned_to;
+  this.modalData.assigned_to_name = this.matchUsers[response.data.assigned_to_id];
+  this.modalData.index = index;
+  this.dialogVisible = true;
+  this.loading2 = false;
+  console.log(response.data);
+}).catch(error => {
+  this.loading2 = false;
+  console.log(error);
+});
+},
       closeModal() {
         this.dialogVisible = false;
       },
