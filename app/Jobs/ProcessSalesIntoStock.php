@@ -12,7 +12,7 @@ use App\Models\ProductLineItem;
 use App\Models\Stock;
 use App\Models\Product;
 
-class ProcessSalesIntoStock implements ShouldQueue, ShouldBeUnique
+class ProcessSalesIntoStock implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $saleLocalId;
