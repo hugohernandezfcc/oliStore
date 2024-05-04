@@ -13,7 +13,7 @@ use Carbon\Carbon;
 use Dotenv\Util\Str;
 use Faker\Factory;
 use Illuminate\Support\Facades\DB;
-
+use App\Jobs\ProcessSalesIntoStock;
 
 class SalesController extends Controller
 {
@@ -234,8 +234,6 @@ class SalesController extends Controller
         ]);
         
         
-        
-        
 
         $prodLineRelacionados = $request->get('productosRelacionados');
         $prodLineRelacionadosArray = array();
@@ -253,6 +251,7 @@ class SalesController extends Controller
             array_push($prodLineRelacionadosArray, $ProductLineItem);
         }
 
+        ProcessSalesIntoStock::dispatch($sale->id);
 
         return response()->json([$sale, $prodLineRelacionadosArray]);
 
