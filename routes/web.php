@@ -107,7 +107,8 @@ Route::resource('prices',         App\Http\Controllers\BarCodeController::class 
 
 
 
-Route::get('/sales/retrieveproduct/{folio}', [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
+Route::get('/sales/retrieveproduct/{folio}',        [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
+Route::get('/sales/retrieveproduct/{folio}/stock',  [App\Http\Controllers\SalesController::class,          'retrieveProductForStock']);
 Route::get('/sales/delete/{salesId}',        [App\Http\Controllers\SalesController::class,          'deleteSales']);
 Route::get('/sales/{start}/{end}/results',   [App\Http\Controllers\SalesController::class,  'salesToday'])->middleware('auth:sanctum')->name('sales.today');
 Route::get('/sales/yesterday/results',       [App\Http\Controllers\SalesController::class,  'salesYesterday'])->middleware('auth:sanctum')->name('sales.yesterday');

@@ -132,10 +132,17 @@ export default{
                 background: 'rgba(0, 0, 0, 0.7)',
                 customClass: 'text-red-600' 
             })
-            axios.get('/sales/retrieveproduct/'+folio).then((res) => {
+            axios.get('/sales/retrieveproduct/'+folio+'/stock').then((res) => {
                 
                 console.log(res);
+
+                if(res.data[0].stocks.length > 0){
+                    this.counterProducts = res.data[0].stocks[0].quantity;
+                }
+
                 this.formResult = res.data[0];
+
+
                 ElNotification.success({
                     title: 'Success',
                     message: res.data[0].name + ' encontrado',

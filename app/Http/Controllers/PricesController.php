@@ -42,10 +42,19 @@ class PricesController extends Controller
             $price->save();
         }
 
+
+
         $price = Price::where('id', $request->price_id)->first();
         $price->active = $request->active;
         $price->edited_by_id = Auth::id();
         $price->save();
+
+        $producto = Product::where('id', $request->product_id)->first();
+        $producto->price_list       = $price->price_list;
+        $producto->price_customer   = $price->price_customer;
+
+        $producto->save();
+
         return response()->json($price);
 
     }

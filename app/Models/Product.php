@@ -60,6 +60,11 @@ class Product extends Model
         return $this->hasMany(Price::class);
     }
 
+    public function stocks(): HasMany
+    {
+        return $this->hasMany(Stock::class);
+    }
+
     //implement the attribute
     public function getBarCodeAttribute()
     {

@@ -5,7 +5,8 @@
                 OliStore
             </h2>
         </template>
-        <!-- <PosItem /> -->
+        <PosList />
+        
         <div class="m-4">
             <h3 class="text-lg text-gray-900"> Listado de Tareas - #{{ tasks.length }}</h3>
             <p class="text-sm text-gray">Listado de tareas por colaborador - Ordenado por fecha de creación / colaborador </p>
@@ -32,13 +33,13 @@
     import AppLayout from '@/Layouts/AppLayout.vue';
     import WallItem from '@/Components/WallItem.vue';
     import { ElLoading } from 'element-plus';
-    import PosItem from '@/Components/PosItem.vue';
+    import PosList from '@/Components/PosList.vue';
 
     export default {
         components:{
             AppLayout,
             WallItem,
-            ElLoading, PosItem
+            ElLoading, PosList
         },
         props: { 
             tasks: Array

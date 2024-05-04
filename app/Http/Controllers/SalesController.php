@@ -176,7 +176,9 @@ class SalesController extends Controller
         return Product::where('folio', $folio)->get();
     }
 
-
+    public function retrieveProductForStock(String $folio){
+        return Product::with('stocks')->where('folio', $folio)->get();
+    }
 
     /**
      * Show the form for creating a new resource.
