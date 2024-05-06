@@ -44,7 +44,7 @@ export default{
                     //     location.reload();
                     // }, 1000);
                     this.$emit("clearEverything");
-
+                    console.log(res);
                 }).catch((error) => {
                     console.log(error);
                 });

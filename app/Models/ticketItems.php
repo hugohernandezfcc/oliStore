@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ticketItems extends Model
 {
     use HasFactory;
+    protected $table = 'ticket_items';
 
     protected $fillable = [
         'created_at',
@@ -21,8 +22,14 @@ class ticketItems extends Model
         'bar_code',
         'product_name',
         'quantity',
-        'cost_customer'
+        'cost_customer',
+        'stock_id'
     ];
+
+    public function stockId()
+    {
+        return $this->belongsTo(Stock::class, 'stock_id');
+    }
 
     public function ticketId()
     {

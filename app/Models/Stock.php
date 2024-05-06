@@ -20,7 +20,13 @@ class Stock extends Model
         'product_id',
         'created_by_id',
         'edited_by_id',
+        'last_ticket_item_applied_id'
     ];
+
+    public function lastTicketItemApplied()
+    {
+        return $this->belongsTo(Ticket::class, 'last_ticket_item_applied_id');
+    }
 
     public function provider()
     {

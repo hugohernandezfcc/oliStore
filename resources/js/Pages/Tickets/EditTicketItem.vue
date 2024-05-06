@@ -6,7 +6,7 @@ export default {
 		wizardForm
 	},
 	props: {
-		dialogVisible: {
+		dialogVisible: { 
 			type: Boolean
 		},
 

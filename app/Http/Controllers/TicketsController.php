@@ -4,17 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\tickets;
 use App\Models\ticketItems;
-use App\Models\Sales;
 use App\Models\Product;
-use App\Models\User;
-use App\Models\ProductLineItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
-use Faker\Factory;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Stmt\Echo_;
+use App\Models\Stock;
 
 class TicketsController extends Controller
 {
@@ -134,6 +130,8 @@ class TicketsController extends Controller
                 
                 array_push($items, $tItem);
             }
+
+            $this->applyStock($sale->id);
             return response()->json($sale);
         }else{
             $ticket = tickets::where('id', $request->get('id'))->with('ticketItems')->first();
@@ -186,8 +184,80 @@ class TicketsController extends Controller
 
                 array_push($items, $tItem);
             }
+
+            $this->applyStock($ticketRecord->id);
+
             return response()->json($ticketRecord);
         }
+    }
+
+    public function applyStock($idTicket){
+        $ticket = tickets::where('id', $idTicket)->with('ticketItems')->first();
+
+
+        $productList = [];
+        $productItemList = [];
+        $productItemListMissing = [];
+        for ($i = 0; $i < count($ticket->ticketItems); $i++) {
+            if ($ticket->ticketItems[$i]->product_id != null) {
+                array_push($productList, $ticket->ticketItems[$i]->product_id);
+                $productItemList[$ticket->ticketItems[$i]->bar_code] = intval(
+                    $ticket->ticketItems[$i]->quantity
+                );
+                $productItemListMissing[$ticket->ticketItems[$i]->bar_code] = intval(
+                    $ticket->ticketItems[$i]->quantity
+                );
+            }
+        }
+
+        
+
+
+        $stockProductRecord = DB::table('stocks')
+                            ->whereIn('product_id', $productList)
+                            ->get();
+
+        for ($i = 0; $i < count($stockProductRecord); $i++) {
+
+            if (isset($productItemListMissing[$stockProductRecord[$i]->folio])) 
+                unset($productItemListMissing[$stockProductRecord[$i]->folio]);
+            
+            
+            if ($stockProductRecord[$i]->last_ticket_item_applied_id != $idTicket) {
+                $updatedValues = [
+                    "last_ticket_item_applied_id" => $idTicket,
+                    "folio" => $stockProductRecord[$i]->folio,
+                    "quantity" =>
+                        intval($stockProductRecord[$i]->quantity) + intval($productItemList[$stockProductRecord[$i]->folio])
+                ];
+
+            
+                DB::table("stocks")
+                    ->where("id", $stockProductRecord[$i]->id)
+                    ->update($updatedValues);
+            }
+        }
+        $stocksToCreate = [];
+        foreach ($productItemListMissing as $key => $value) {
+            $product = Product::where("folio", $key)->first();
+            $stock = new Stock();
+            $stock->name = $product->name;
+            $stock->folio = $key;
+            $stock->product_id = $product->id;
+            $stock->description = $product->Description;
+            $stock->quantity = $value;
+            $stock->created_by_id = $product->created_by_id;
+            $stock->edited_by_id = $product->edited_by_id;
+            $stock->store_id = 3;
+            $stock->provider_id = 2;
+            $stock->profit = 0;
+            $stock->investment = 0;
+            $stock->last_ticket_item_applied_id = $idTicket;
+            $stock->save();
+            array_push($stocksToCreate, $stock);
+        }        
+
+
     }
 
     public function ticketItemShow($id)
