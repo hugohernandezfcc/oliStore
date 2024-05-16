@@ -25,7 +25,12 @@ export default{
         reportResults: Array 
     },
     methods:{
-
+        filterTableglobal() {
+            this.search = this.searchGlobal;
+            this.search1 = this.searchGlobal;
+            this.search2 = this.searchGlobal;
+            
+        },
     },
     data(){
         return {
@@ -41,6 +46,7 @@ export default{
             resultCounter: 0,
             resultCounter1: 0,
             resultCounter2: 0,
+            searchGlobal: ''
         }
     },
     mounted(){
@@ -109,6 +115,7 @@ export default{
 
     },
     computed: {
+        
         filterTableData8() {
             let result = this.reportResultsLocal8.filter(
                 (data) =>
@@ -186,6 +193,8 @@ export default{
         </div>
             
         <div class="shadow bg-white md:rounded-md p-4 m-4">
+            <el-input v-model="searchGlobal"  placeholder="Buscar en reporte" class="shadow-2xl shadow-red-200 mb-1"/>
+            <el-button @click="filterTableglobal" class="shadow-2xl shadow-red-200 mb-1">Filtrar</el-button>
             <div class="flex flex-wrap">
                 <div class="m-3">
                     <h3 class="text-lg text-gray-900"> Reporte de los ultimos 8 días </h3>
