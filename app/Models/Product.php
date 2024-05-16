@@ -30,7 +30,9 @@ class Product extends Model
         'edited_by_id',
         'take_portion',
         'express_creation',
-        'visible_product'
+        'visible_product',
+        'category_id',
+        'sub_category_id'
     ];
     
     protected $casts = [
@@ -38,6 +40,16 @@ class Product extends Model
         'created_at'  => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+    
+    public function subCategory()
+    {
+        return $this->belongsTo(Category::class, 'sub_category_id');
+    }
 
     public function createdBy()
     {

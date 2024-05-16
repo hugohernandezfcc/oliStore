@@ -96,15 +96,18 @@ Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified'
 });
 
 Route::resource('products',         App\Http\Controllers\ProductController::class       )->middleware('auth:sanctum');
+Route::resource('reports',         App\Http\Controllers\ReportsController::class       )->middleware('auth:sanctum');
 Route::resource('tickets',          App\Http\Controllers\TicketsController::class       )->middleware('auth:sanctum');
+Route::resource('purchaseorders',   App\Http\Controllers\PurchaseOrderController::class )->middleware('auth:sanctum');
 Route::resource('sales',            App\Http\Controllers\SalesController::class         )->middleware('auth:sanctum');
 Route::resource('salesproducts',    App\Http\Controllers\SalesProductsController::class )->middleware('auth:sanctum');
 Route::resource('stores',           App\Http\Controllers\StoreController::class         )->middleware('auth:sanctum');
 Route::resource('providers',        App\Http\Controllers\ProvidersController::class     )->middleware('auth:sanctum');
 Route::resource('stocks',           App\Http\Controllers\StockController::class         )->middleware('auth:sanctum');
 Route::resource('barcodes',         App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
-Route::resource('prices',         App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
+Route::resource('prices',           App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
 
+Route::post('/lookup/field/', [App\Http\Controllers\CoreController::class,          'lookupField' ])->name('lookup.field');
 
 
 Route::get('/sales/retrieveproduct/{folio}',        [App\Http\Controllers\SalesController::class,          'retrieveProduct']);

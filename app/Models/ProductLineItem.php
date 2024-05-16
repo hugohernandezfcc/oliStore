@@ -9,15 +9,17 @@ class ProductLineItem extends Model
 {
     use HasFactory;
 
+    protected $table = 'product_line_items';
+
     protected $fillable = [
-        'sale_id',
-        'product_id',
-        'created_by_id',
-        'edited_by_id',
-        'take_portion',
-        'unit_measure',
-        'quantity',
-        'final_price'
+        'sale_id', 
+        'product_id', 
+        'created_by_id', 
+        'edited_by_id', 
+        'take_portion', 
+        'unit_measure', 
+        'quantity', 
+        'final_price' 
     ];
 
     protected $casts = [

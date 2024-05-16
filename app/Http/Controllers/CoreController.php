@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Price;
 use Inertia\Inertia;
-
+use Debugbar;
 /**
  * Class CoreController
  * @package App\Http\Controllers
@@ -144,7 +144,30 @@ class CoreController extends Controller
             ]);
     }
 
+    public function lookupField(Request $request){
 
+        if(isset($request->where)){
+            return DB::table($request->table)
+            ->whereRaw(
+                "LOWER(".$request->where['field'].") ".$request->where['operator']." ?", 
+                [
+                    ($request->where['operator'] == 'LIKE') ? '%' . strtolower($request->where['value']) . '%' : strtolower($request->where['value'])
+                ]
+            )->orderBy($request->orderBy, $request->order)
+            ->limit($request->limit)
+            ->get($request->fields);
+
+            
+        }else{
+            return response()->json(
+                DB::table($request->table)
+                ->orderBy($request->orderBy, $request->order)
+                ->limit(10)
+                ->get($request->fields)
+            );
+        }
+
+    }
 
 
 }

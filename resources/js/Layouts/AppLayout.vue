@@ -62,6 +62,10 @@ console.log(router.page.url.indexOf("tickets"));
                                     Tickets 
                                 </NavLink>
 
+                                <NavLink :href="route('purchaseorders.index')" :active="router.page.url.indexOf('purchaseorders') >= 0">
+                                    Ordenes de compra 
+                                </NavLink>
+
                                 <NavLink :href="route('stores.index')" :active="router.page.url.indexOf('stores') >= 0">
                                     Tiendas
                                 </NavLink>
@@ -72,6 +76,9 @@ console.log(router.page.url.indexOf("tickets"));
 
                                 <NavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0">
                                     Inventarios
+                                </NavLink>
+                                <NavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0">
+                                    Reportes
                                 </NavLink>
 
                                 <!-- <NavLink :href="route('barcodes.index')" :active="router.page.url.indexOf('barcodes') >= 0">
@@ -231,6 +238,11 @@ console.log(router.page.url.indexOf("tickets"));
                         <ResponsiveNavLink :href="route('tickets.index')" :active="router.page.url.indexOf('tickets') >= 0">
                             Tickets
                         </ResponsiveNavLink>
+                        
+                        <ResponsiveNavLink :href="route('purchaseorders.index')" :active="router.page.url.indexOf('purchaseorders') >= 0">
+                            Ordenes de compra
+                        </ResponsiveNavLink>
+
                         <ResponsiveNavLink :href="route('stores.index')" :active="router.page.url.indexOf('stores') >= 0">
                             Tiendas
                         </ResponsiveNavLink>
@@ -241,6 +253,9 @@ console.log(router.page.url.indexOf("tickets"));
 
                         <ResponsiveNavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0">
                             Inventarios
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0">
+                            Reportes
                         </ResponsiveNavLink>
                     </div>
 
