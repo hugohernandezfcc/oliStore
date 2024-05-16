@@ -193,9 +193,9 @@ export default{
 
                     <br/> 
                     <el-input v-model="search"  placeholder="Buscar en reporte" class="shadow-2xl shadow-red-400 mb-3"/>
-                    <el-table :data="filterTableData8" class="shadow-lg shadow-red-400" stripe style="width: 100%; height: 400px;" >
+                    <el-table :data="filterTableData8" class="shadow-lg shadow-red-400" :default-sort="{ prop: 'count', order: 'descending' }" stripe style="width: 100%; height: 400px;" >
                         <el-table-column prop="description" label="Producto" width="350" />
-                        <el-table-column prop="count" label="Número de ventas" width="150" />
+                        <el-table-column prop="count" label="# de ventas" width="130" sortable/>
                     </el-table>
                 </div>
                 <div class="m-3">
@@ -204,9 +204,9 @@ export default{
 
                     <br/> 
                     <el-input v-model="search1"  placeholder="Buscar en reporte" class="shadow-2xl shadow-red-400 mb-3"/>
-                    <el-table :data="filterTableData15" class="shadow-lg shadow-red-400" stripe style="width: 100%; height: 400px;" >
+                    <el-table :data="filterTableData15" class="shadow-lg shadow-red-400" :default-sort="{ prop: 'count', order: 'descending' }" stripe style="width: 100%; height: 400px;" >
                         <el-table-column prop="description" label="Producto" width="350" />
-                        <el-table-column prop="count" label="Número de ventas" width="150" />
+                        <el-table-column prop="count" label="# de ventas" width="130" sortable/>
                     </el-table>
                 </div>
                 <div class="m-3">
@@ -215,9 +215,9 @@ export default{
 
                     <br/> 
                     <el-input v-model="search2"  placeholder="Buscar en reporte" class="shadow-2xl shadow-red-400 mb-3"/>
-                    <el-table :data="filterTableData30" class="shadow-lg shadow-red-400" stripe style="width: 100%; height: 400px;" >
+                    <el-table :data="filterTableData30" class="shadow-lg shadow-red-400" :default-sort="{ prop: 'count', order: 'descending' }" stripe style="width: 100%; height: 400px;" >
                         <el-table-column prop="description" label="Producto" width="350" />
-                        <el-table-column prop="count" label="Número de ventas" width="150" />
+                        <el-table-column prop="count" label="# de ventas" width="130" sortable/>
                     </el-table>
                 </div>
             </div>
