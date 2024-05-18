@@ -62,21 +62,24 @@ class ReportsController extends Controller
                     'saleId:id,created_at,created_by_id',
                     'productId:id,name,Description',
                     'createdBy:name'
-                ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(30))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->get(),
-                '15' => ProductLineItem::with([
-                    'saleId:id,created_at,created_by_id',
-                    'productId:id,name,Description',
-                    'createdBy:name'
-                ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(15))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->get(),
-                '8' => ProductLineItem::with([
-                    'saleId:id,created_at,created_by_id',
-                    'productId:id,name,Description',
-                    'createdBy:name'
-                ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(8))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->get()
+                ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(31))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->get(),
+                '15' => [],
+                '8' => []
             ]
         ]);
     }
-
+    // ProductLineItem::with([
+    //     'saleId:id,created_at,created_by_id',
+    //     'productId:id,name,Description',
+    //     'createdBy:name'
+    // ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(16))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->limit(50)->get()
+    
+    // ProductLineItem::with([
+    //     'saleId:id,created_at,created_by_id',
+    //     'productId:id,name,Description',
+    //     'createdBy:name'
+    // ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(9))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->limit(50)->get()
+    
     /**
      * Show the form for editing the specified resource.
      */

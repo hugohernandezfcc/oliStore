@@ -9,7 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Footer from '@/Components/Footer.vue';
 import wizardForm from '@/Components/TicketForm.vue';
-
+import moment from 'moment';
 
 export default{
     components:{
@@ -46,21 +46,43 @@ export default{
             resultCounter: 0,
             resultCounter1: 0,
             resultCounter2: 0,
-            searchGlobal: ''
+            originalResultCounter: 0,
+            originalResultCounter1: 0,
+            originalResultCounter2: 0,
+            searchGlobal: '',
+            date: new Date()
         }
     },
     mounted(){
-        this.reportResults['8'].forEach(item => {
+        this.reportResults['30'].forEach(item => {
             const description = (item.product_id.Description == 'EXPRESS CREATION') ? item.product_id.name : item.product_id.Description;
+            let difference = moment().diff(moment(item.created_at), 'days');
 
-            console.log(description);
+            if(difference <= 8){
+                // console.log(difference, description);
+                if (this.reportResults8[description] === undefined) 
+                    this.reportResults8[description] = 1;
+                else
+                    this.reportResults8[description] += 1;
+            }
 
-            if (this.reportResults8[description] === undefined) {
-                this.reportResults8[description] = 1;
-            } else {
-                this.reportResults8[description] += 1;
+            if(difference <= 15){
+                if (this.reportResults15[description] === undefined) {
+                    this.reportResults15[description] = 1;
+                } else {
+                    this.reportResults15[description] += 1;
+                }
+            }
+
+            if(difference <= 30){
+                if (this.reportResults30[description] === undefined) {
+                    this.reportResults30[description] = 1;
+                } else {
+                    this.reportResults30[description] += 1;
+                }
             }
         });
+
         let listKeys8 = Object.keys(this.reportResults8);
         for (let index = 0; index < listKeys8.length; index++) {
 
@@ -68,19 +90,9 @@ export default{
                 description: listKeys8[index], 
                 count: this.reportResults8[listKeys8[index]]
             });
+            this.originalResultCounter += this.reportResults8[listKeys8[index]];
         }
 
-        this.reportResults['15'].forEach(item => {
-            const description = (item.product_id.Description == 'EXPRESS CREATION') ? item.product_id.name : item.product_id.Description;
-
-            console.log(description);
-
-            if (this.reportResults15[description] === undefined) {
-                this.reportResults15[description] = 1;
-            } else {
-                this.reportResults15[description] += 1;
-            }
-        });
         let listKeys15 = Object.keys(this.reportResults15);
         for (let index = 0; index < listKeys15.length; index++) {
 
@@ -88,20 +100,9 @@ export default{
                 description: listKeys15[index], 
                 count: this.reportResults15[listKeys15[index]]
             });
+            this.originalResultCounter1 += this.reportResults15[listKeys15[index]];
         }
 
-
-        this.reportResults['30'].forEach(item => {
-            const description = (item.product_id.Description == 'EXPRESS CREATION') ? item.product_id.name : item.product_id.Description;
-
-            console.log(description);
-
-            if (this.reportResults30[description] === undefined) {
-                this.reportResults30[description] = 1;
-            } else {
-                this.reportResults30[description] += 1;
-            }
-        });
         let listKeys30 = Object.keys(this.reportResults30);
         for (let index = 0; index < listKeys30.length; index++) {
 
@@ -109,6 +110,7 @@ export default{
                 description: listKeys30[index], 
                 count: this.reportResults30[listKeys30[index]]
             });
+            this.originalResultCounter2 += this.reportResults30[listKeys30[index]];
         }
 
 
@@ -179,20 +181,21 @@ export default{
             <br/>
             <el-row>
                 <el-col :span="4" class="bg-white md:p-3 p-1 border-red-600 border md:m-2 lg:m-2">
-                    <el-statistic title="Ventas 30 d." :value="'# '+reportResults['30'].length" />
+                    <el-statistic title="Ventas 30 d." :value="'# '+originalResultCounter2" />
                 </el-col>
 
                 <el-col :span="4" class="bg-white md:p-3 p-1 border-red-600 border md:m-2 lg:m-2">
-                    <el-statistic title="Ventas 15 d." :value="'# '+reportResults['15'].length" />
+                    <el-statistic title="Ventas 15 d." :value="'# '+originalResultCounter1" />
                 </el-col>
 
                 <el-col :span="4" class="bg-white md:p-3 p-1 border-red-600 border md:m-2 lg:m-2">
-                    <el-statistic title="Ventas 8 d." :value="'# '+reportResults['8'].length" />
+                    <el-statistic title="Ventas 8 d." :value="'# '+originalResultCounter" />
                 </el-col>
             </el-row>
         </div>
             
         <div class="shadow bg-white md:rounded-md p-4 m-4">
+            {{ formattedDate }}
             <el-input v-model="searchGlobal"  placeholder="Buscar en reporte" class="shadow-2xl shadow-red-200 mb-1"/>
             <el-button @click="filterTableglobal" class="shadow-2xl shadow-red-200 mb-1">Filtrar</el-button>
             <div class="flex flex-wrap">

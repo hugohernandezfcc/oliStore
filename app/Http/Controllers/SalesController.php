@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sales;
 use App\Models\Product;
+use App\Models\Store;
 use App\Models\User;
 use App\Models\ProductLineItem;
 use Illuminate\Http\Request;
@@ -44,7 +45,8 @@ class SalesController extends Controller
             'Sale' => [],
             'results' => $summaryToday,
             'productFilters' => $products,
-            'isAdmin' => User::find(Auth::id())->is_admin
+            'isAdmin' => User::find(Auth::id())->is_admin,
+            'stores' => Store::get(['id', 'name'])
         ]);
     }
 

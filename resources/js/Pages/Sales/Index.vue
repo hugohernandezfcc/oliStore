@@ -43,7 +43,8 @@ export default{
         Sales: Array,
         results: Object,
         productFilters: Array,
-        isAdmin: Boolean
+        isAdmin: Boolean,
+        stores: Array
     },
     setup() {
 
@@ -115,7 +116,8 @@ export default{
                 take_portion: false,
                 express_creation: true
             },
-            localSales:[]
+            localSales:[],
+            storeId: null,
         }
     },
     methods:{
@@ -603,7 +605,7 @@ export default{
                         </span>
                         <br/><br/>
                         <div class="flex flex-row flex-wrap bg-slate-200 md:rounded-md p-4">
-                            <div class="basis-1/2 p-1" >
+                            <div class="basis-1/3 p-1" >
                                 <InputLabel for="inbound_amount" value="Dinero recibido >> $" />
                                 <TextInput
                                     id="inbound_amount"
@@ -615,7 +617,7 @@ export default{
                                     v-on:keyup="calculateExchange"
                                 />
                             </div>
-                            <div class="basis-1/2 p-1" >
+                            <div class="basis-1/3 p-1" >
                                 <InputLabel for="outbound_amount" value="Cambio al cliente << $" />
                                 <TextInput
                                     id="outbound_amount"
@@ -626,6 +628,12 @@ export default{
                                     class="mt-1 block w-full text-xl text-rose-600  "
                                     disabled="true"
                                 />
+                            </div>
+                            <div class="basis-1/3 p-1">
+                                <InputLabel for="storeId" value="Tienda" />
+                                <el-select v-model="storeId" placeholder="Select" size="large" id="storeId" class="mt-1 w-full text-xl h-[2.7rem]" >
+                                        <el-option v-for="item in stores" :key="item.id" :label="item.name" :value="item.name" />
+                                </el-select>
                             </div>
                         </div>
                         <br/>
@@ -819,6 +827,7 @@ export default{
         :products="productsAdded"
         :total="form.total"
         :sale="form"
+        :storeId="storeId"
         @destroy="deleteRow"
         @clearEverything="clearEverything"
         v-if="productsAdded.length > 0"/>
@@ -831,5 +840,8 @@ export default{
 }
 .el-tabs__item.is-active {
     background-color: #ff000021;
+}
+.el-select .el-input {
+    height: 2.8rem !important;
 }
 </style>

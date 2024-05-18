@@ -7,7 +7,6 @@
                 <div class="basis-4/6 pr-4 pl-3   ">
                     <el-input v-model="scanner" placeholder="Please input" class="border-red-600 border font-bold  ">
                         <template #prefix>
-
                             <svg fill="#000000" height="25px" width="30px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
                                 viewBox="0 0 60 60" xml:space="preserve">
                                 <g>

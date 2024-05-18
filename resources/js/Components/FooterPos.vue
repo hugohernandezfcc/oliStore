@@ -14,7 +14,8 @@ export default{
         selectedProducts: Number,
         sale: Object,
         products: Array,
-        total: Number
+        total: Number,
+        storeId: String
         
     },
     methods:{
@@ -28,26 +29,38 @@ export default{
             console.log(this.$parent.form);
             console.log(this.sale)
             console.log(this.products)
+
             if(parseFloat(this.$parent.form.inbound_amount) >= this.total){
+    
+                if(this.storeId != '' && this.storeId != null){
+                    this.sale.store = this.storeId;
                 
-                axios.post(this.route('sales.store'), this.sale, {
-                    headers: {
-                        scheme: 'https'
-                    }
-                }).then((res) => {
-                    ElNotification.success({
-                        title: 'Success',
-                        message: 'Compra guardada',
+
+                    axios.post(this.route('sales.store'), this.sale, {
+                        headers: {
+                            scheme: 'https'
+                        }
+                    }).then((res) => {
+                        ElNotification.success({
+                            title: 'Success',
+                            message: 'Compra guardada',
+                            offset: 100,
+                        })
+                        // setTimeout(() => {
+                        //     location.reload();
+                        // }, 1000);
+                        this.$emit("clearEverything");
+                        console.log(res);
+                    }).catch((error) => {
+                        console.log(error);
+                    });
+                }else{
+                    ElNotification.warning({
+                        title: 'warning',
+                        message: 'Selecciona una tienda',
                         offset: 100,
-                    })
-                    // setTimeout(() => {
-                    //     location.reload();
-                    // }, 1000);
-                    this.$emit("clearEverything");
-                    console.log(res);
-                }).catch((error) => {
-                    console.log(error);
-                });
+                    });
+                }
                 
             }else{
                 ElNotification.warning({
