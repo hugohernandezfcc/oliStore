@@ -174,9 +174,8 @@ Route::group(
 Route::get('/products2/readcsv',             [App\Http\Controllers\ProductController::class,        'storeMasive' ]);
 Route::get('/passtoyesterday',               [App\Http\Controllers\SalesProductsController::class,  'editSales' ]);
 
-Route::post('/dashboard', 
-            [App\Http\Controllers\DashboardController::class,          
-            'index'])->name('dashboard.results');;
+Route::post('/dashboard',                    [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.results');;
+Route::post('/cardsales',                     [App\Http\Controllers\DashboardController::class, 'cardSales'])->name('card.sales');;
 
 
             

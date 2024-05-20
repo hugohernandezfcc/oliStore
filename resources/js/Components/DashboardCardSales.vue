@@ -1,18 +1,11 @@
 <template>
     <div class="statistic-card">
-        <el-statistic :value="mainValue">
+        <el-statistic :value="'$ '+salesByStore[store_str] +' MXN'">
             <template #title>
                 <div style="display: inline-flex; align-items: center">
-                    {{title}}
-                <el-tooltip
-                    effect="dark"
-                    content="Number of users who logged into the product in one day"
-                    placement="top"
-                >
-                    <el-icon style="margin-left: 4px" :size="12">
-                        <Warning />
-                    </el-icon>
-                </el-tooltip>
+                    Tienda:  <el-select v-model="store_str" placeholder="Select" size="small"  style="width: 100%;">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                 </div>
             </template>
         </el-statistic>
@@ -21,9 +14,6 @@
                 <span class="cursor-pointer underline text-red-600 " @click="openLink">{{titleFooter.title}}</span>
                 <span class="green">
                     <!-- {{mainValueFooter}}% -->
-                    <el-icon>
-                        <CaretTop />
-                    </el-icon>
                 </span>
             </div>
         </div>
@@ -33,23 +23,27 @@
 
 
 import { ElNotification } from 'element-plus';
-import TextInput from '@/Components/TextInput.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import InputError from '@/Components/InputError.vue';
-import BarChart from '@/Components/BarChart.vue';
+
+
+
+
 
 export default {
-  name: 'CardStatic',
-  components: { BarChart, TextInput, InputLabel, ElNotification, InputError},
+  name: 'DashboardCardSales',
+  components: {  ElNotification},
   props:{
-    mainValue: Number,
+
     mainValueFooter: Number,
     title: String,
     titleFooter: Object
   },
   data(){
     return {
-      link: '',
+        link: '',
+        options : [],
+        mount: 0,
+        salesByStore: [],
+        store_str: 'total',
     }
   },
   methods:{
@@ -58,6 +52,28 @@ export default {
     }
   },
   mounted(){
+    this.salesByStore['total'] = 0;
+
+
+    axios.post(route('card.sales')).then((res) => {
+    //   console.log(res);
+      res.data['stores'].forEach((element) => {
+        this.options.push({label: element.name, value: element.name});
+      });
+      
+      res.data['sales'].forEach((element) => {
+        if(this.salesByStore[element.store] == undefined)
+            this.salesByStore[element.store] = parseFloat(element.total);
+        else
+            this.salesByStore[element.store] += parseFloat(element.total);
+
+        this.salesByStore['total'] += parseFloat(element.total);
+      });
+
+      
+    }).catch((error) => {
+      console.log(error);
+    });
 
     this.link = '/sales/' + this.titleFooter.start+'/'+this.titleFooter.end+'/results';
     console.log(this.titleFooter);

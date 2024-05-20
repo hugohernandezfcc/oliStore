@@ -6,6 +6,7 @@ use App\Models\tickets;
 use App\Models\ticketItems;
 use App\Models\Sales;
 use App\Models\Product;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -237,6 +238,7 @@ class DashboardController extends Controller
     }
 
     public function prepareSalesForDashboard(){
+        
         $this->dates = $this->getBothDates();
         $this->sales = Sales::whereBetween('created_at', $this->dates['range'])->get();
         
@@ -245,6 +247,14 @@ class DashboardController extends Controller
             array_push($this->toSearchInProducts, $this->sales[$i]->id);
         }
 
+    }
+
+    public function cardSales(){
+
+        return response()->json([
+            'stores' => Store::get(['id', 'name']),
+            'sales' => Sales::whereBetween('created_at', [Carbon::yesterday(),Carbon::tomorrow() ])->get()
+        ]);
     }
 
     public function prepareProductsSoldDashboard(){

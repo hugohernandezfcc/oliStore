@@ -34,17 +34,22 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="flex flex-wrap ">
-                        <div class="w-full md:w-1/4 p-2">
-                            <CardStatic :key="componentKey" :mainValue="card1.mount" :mainValueFooter="12" :title="card1.title" :titleFooter="card1.footerValue" />
+                        <div class="w-full md:w-1/4 p-2 ">
+                            <DashboardCardSales 
+                                    :key="componentKey" 
+                                    :mainValueFooter="12" 
+                                    :title="card1.title" 
+                                    :titleFooter="card1.footerValue" 
+                                    class="border border-red-600"/>
                         </div>
                         <div class="w-full md:w-1/4 p-2">
-                            <CardStatic :key="componentKey" :mainValue="card2.mount" :mainValueFooter="12" :title="card2.title" :titleFooter="'Footer text'" />
+                            <CardStatic :key="componentKey" :mainValue="card2.mount" :mainValueFooter="12" :title="card2.title" :titleFooter="'Footer text'" class="border border-red-600"/>
                         </div>
                         <div class="w-full md:w-1/4 p-2">
-                            <CardStatic :key="componentKey" :mainValue="card3.mount" :mainValueFooter="12" :title="card3.title" :titleFooter="'Footer text'" />
+                            <CardStatic :key="componentKey" :mainValue="card3.mount" :mainValueFooter="12" :title="card3.title" :titleFooter="'Footer text'" class="border border-red-600"/>
                         </div>
                         <div class="w-full md:w-1/4 p-2">
-                            <CardStatic :key="componentKey" :mainValue="card4.mount" :mainValueFooter="12" :title="card4.title" :titleFooter="'Footer text'" />
+                            <CardStatic :key="componentKey" :mainValue="card4.mount" :mainValueFooter="12" :title="card4.title" :titleFooter="'Footer text'" class="border border-red-600"/>
                         </div>
                     </div>
                 </div>
@@ -188,13 +193,14 @@ import BarChart from '@/Components/BarChart.vue';
 import ChartPoligono from '@/Components/ChartPoligono.vue';
 import Doughnut from '@/Components/Doughnut.vue';
 import CardStatic from '@/Components/CardStatic.vue';
+import DashboardCardSales from '@/Components/DashboardCardSales.vue';
 import { ElLoading } from 'element-plus';
 import Wall from '@/Components/Wall.vue';
 import BoxFounds from '@/Components/BoxFounds.vue';
 
 export default {
   name: 'dashboard',
-  components: { BarChart, Wall, BoxFounds, CardStatic, AppLayout, TextInput, InputLabel, ElNotification, ChartPoligono, Doughnut, InputError},
+  components: { BarChart, Wall, BoxFounds, CardStatic, DashboardCardSales, AppLayout, TextInput, InputLabel, ElNotification, ChartPoligono, Doughnut, InputError},
   data(){
 
         return {
@@ -210,7 +216,6 @@ export default {
                     end: '',   
                     title: ''
                 }
-
             },
             card2:{
                 title: 'Prod. vendidos de ',
