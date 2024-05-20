@@ -253,7 +253,7 @@ class DashboardController extends Controller
 
         return response()->json([
             'stores' => Store::get(['id', 'name']),
-            'sales' => Sales::whereBetween('created_at', [Carbon::yesterday(),Carbon::tomorrow() ])->get()
+            'sales' => Sales::whereBetween('created_at', [Carbon::today(),Carbon::tomorrow() ])->get()
         ]);
     }
 
