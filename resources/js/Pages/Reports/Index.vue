@@ -82,7 +82,7 @@ export default{
                 
           
                 <el-table-column prop="id" label="Id" width="150" />
-                <el-table-column prop="name" label="Name" width="150" />
+                <el-table-column prop="name" label="Name" width="200" />
                 <el-table-column prop="object" label="Objeto" width="150" />
                 <el-table-column prop="description" label="Description" width="400" />
                 <el-table-column prop="created_at" label="Fecha de creación" width="150" />
@@ -91,11 +91,7 @@ export default{
                 <el-table-column align="right" fixed="right" width="120">
                     <template #default="scope">
                         <inertia-link :href="route('reports.show', scope.row.id)" >
-                            <el-button
-                            size="small"
-                            color="#dc2626"
-                            >Ver detalle</el-button
-                            >
+                            <el-button size="small" color="#dc2626"> Ver reporte </el-button>
                         </inertia-link>
                     </template>
                 </el-table-column>

@@ -28,6 +28,8 @@ const logout = () => {
 
 console.log(router.page.url.indexOf("tickets"));
 
+
+
 </script>
 
 <template>
@@ -44,9 +46,10 @@ console.log(router.page.url.indexOf("tickets"));
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('dashboard')" v-if="$page.props.auth.user.is_admin">
                                     <ApplicationMark class="block h-9 w-auto" />
                                 </Link>
+                                <ApplicationMark class="block h-9 w-auto" v-if="!$page.props.auth.user.is_admin"/>
                             </div>
 
                             <!-- Navigation Links -->
@@ -74,10 +77,10 @@ console.log(router.page.url.indexOf("tickets"));
                                     Proveedores
                                 </NavLink>
 
-                                <NavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0">
+                                <NavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0" v-if="$page.props.auth.user.is_admin">
                                     Inventarios
                                 </NavLink>
-                                <NavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0">
+                                <NavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0" v-if="$page.props.auth.user.is_admin">
                                     Reportes
                                 </NavLink>
 
@@ -251,10 +254,10 @@ console.log(router.page.url.indexOf("tickets"));
                             Proveedores
                         </ResponsiveNavLink>
 
-                        <ResponsiveNavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0">
+                        <ResponsiveNavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0" v-if="$page.props.auth.user.is_admin">
                             Inventarios
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0">
+                        <ResponsiveNavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0" v-if="$page.props.auth.user.is_admin">
                             Reportes
                         </ResponsiveNavLink>
                     </div>

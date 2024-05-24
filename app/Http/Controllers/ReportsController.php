@@ -14,6 +14,8 @@ use Inertia\Inertia;
 use Illuminate\Support\Carbon;
 use App\Models\Sales;
 use App\Models\ProductLineItem;
+use Illuminate\Http\JsonResponse;
+use stdClass;
 
 class ReportsController extends Controller
 {
@@ -53,33 +55,131 @@ class ReportsController extends Controller
      */
     public function show(string $id)
     {
+        $reporte = Report::with('createdBy', 'editedBy')->find($id);
+        $data = array();
+        switch ($reporte->template) {
+            case 'ReportSales':
+                $data = self::reportSales($reporte, "inertia");
+                break;
+            case 'ReportPrices':
+                $data = self::reportPrices("", "", $reporte, "inertia");
+            break;
+
+            default:
+                # code...
+                break;
+        }
+
+        return Inertia::render('Reports/' . $reporte->template, $data);
+    }
+
+    /**
+     * 
+     * @param $report   
+     * @param $returnType - String to return a json response or array to inertia
+     * 
+     * @return array | JsonResponse
+     * 
+     */
+    public static function reportSales(Report $report, String $returnType) : array | JsonResponse {
         $start = Carbon::now();
 
-        return Inertia::render('Reports/Show', [
-            'report' => Report::with('createdBy', 'editedBy')->find($id),
+        $data = [
+            'report' => $report,
             'reportResults' => [
                 '30' =>ProductLineItem::with([
-                    'saleId:id,created_at,created_by_id',
+                    'saleId:id,created_at,created_by_id,store',
                     'productId:id,name,Description',
                     'createdBy:name'
                 ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(31))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->get(),
                 '15' => [],
                 '8' => []
             ]
-        ]);
+        ];
+
+        switch ($returnType) {
+            case 'json':
+                return response()->json($data);
+                break;
+            case 'inertia':
+                return $data;
+                break;
+        }
     }
-    // ProductLineItem::with([
-    //     'saleId:id,created_at,created_by_id',
-    //     'productId:id,name,Description',
-    //     'createdBy:name'
-    // ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(16))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->limit(50)->get()
     
-    // ProductLineItem::with([
-    //     'saleId:id,created_at,created_by_id',
-    //     'productId:id,name,Description',
-    //     'createdBy:name'
-    // ])->whereBetween('created_at', [Carbon::parse(Carbon::now()->subDays(9))->format('Y-m-d H:i:s'), Carbon::parse($start)->format('Y-m-d H:i:s')])->limit(50)->get()
-    
+    /**
+     * 
+     * @param $startDateTime   
+     * @param $endDateTime   
+     * @param $returnType - String to return a json response or array to inertia
+     * 
+     * @return array | JsonResponse
+     * 
+     */
+    public static function reportPrices(String $startDateTime = '', String $endDateTime = '', Report $report, String $returnType = '') : array | JsonResponse {
+        $startDateTime = ($startDateTime == '') ? Carbon::now()->subDays(9) : $startDateTime;
+        $endDateTime = ($endDateTime == '') ? Carbon::now() : $endDateTime;
+
+        $productLineItems = ProductLineItem::with([
+            'saleId:id,created_at,store',
+            'productId:id,name,price_list,price_customer,take_portion',
+            'createdBy:name'
+        ])->whereBetween('created_at', [
+            Carbon::parse($startDateTime)->format('Y-m-d H:i:s'), 
+            Carbon::parse($endDateTime)->format('Y-m-d H:i:s')
+        ])->orderBy('created_at', 'desc')->get();
+
+        $toReturn = [];
+        
+        for ($i=0; $i < count($productLineItems); $i++) { 
+            $record = new stdClass();
+
+            if($productLineItems[$i]->saleId->store != ''){
+                if($productLineItems[$i]->productId->take_portion == false){
+                    if($productLineItems[$i]->saleId->store == "Oli Store 1")
+                        $productLineItems[$i]->saleId->store = "Oli Store 1 (Pedregal)";
+
+                    if(!isset($toReturn[$productLineItems[$i]->saleId->store]))
+                        $toReturn[$productLineItems[$i]->saleId->store] = [];
+
+
+                    if(isset($toReturn[$productLineItems[$i]->saleId->store][explode(' ', $productLineItems[$i]->created_at)[0]])){
+                        
+                        $record->product = $productLineItems[$i]->productId;
+                        $record->store = $productLineItems[$i]->saleId;
+
+                        array_push($toReturn[$productLineItems[$i]->saleId->store][explode(' ', $productLineItems[$i]->created_at)[0]], $record);
+                    }else{
+                        $toReturn[$productLineItems[$i]->saleId->store][explode(' ', $productLineItems[$i]->created_at)[0]] = array();
+                        $record->product = $productLineItems[$i]->productId;
+                        $record->store = $productLineItems[$i]->saleId;
+
+                        array_push($toReturn[$productLineItems[$i]->saleId->store][explode(' ', $productLineItems[$i]->created_at)[0]], $record);
+                    }
+                }
+            }
+        }
+
+        $data = [
+            'report' => $report,
+            'reportResults' => [
+                'records' => $toReturn,
+            ]
+        ];
+
+        switch ($returnType) {
+            case 'json':
+                return response()->json($data);
+                break;
+            case 'inertia':
+                return $data;
+                break;
+            
+        }
+
+    }
+
+
     /**
      * Show the form for editing the specified resource.
      */

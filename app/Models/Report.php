@@ -18,7 +18,8 @@ class Report extends Model
         'fields',
         'criterials',
         'created_by_id',
-        'updated_by_id'
+        'updated_by_id',
+        'template'
     ];
     protected $casts = [
         'created_at'  => 'datetime:Y-m-d H:i',

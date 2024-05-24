@@ -28,6 +28,7 @@ export default{
                 object: '',
                 fields: '',
                 criterials: '',
+                template:''
             }
         }
     },
@@ -65,7 +66,7 @@ export default{
                         
                         
                         <div class="col-span-6 sm:col-span-4">
-                            <InputLabel for="name" value="Nombre del producto" />
+                            <InputLabel for="name" value="Nombre del reporte" />
                             <TextInput
                                 id="name"
                                 v-model="form.name"
@@ -73,6 +74,17 @@ export default{
                                 class="mt-1 block w-full"
                                 
                                 autocomplete="name"
+                            />
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="template" value="Template" />
+                            <TextInput
+                                id="template"
+                                v-model="form.template"
+                                type="text"
+                                class="mt-1 block w-full"
+
                             />
                         </div>
 
