@@ -10,6 +10,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Footer from '@/Components/Footer.vue';
 import wizardForm from '@/Components/TicketForm.vue';
 import moment from 'moment';
+import { list } from 'postcss';
 
 export default{
     components:{
@@ -40,44 +41,58 @@ export default{
             originalResultCounter: 0,
 
             date: new Date(),
-            summaries: new Array()
+            summaries: new Array(),
+            list: 0,
+            customer: 0,
+            revenue: 0,
+            byDay: 0,
         }
     },
     beforeMount(){
         let globalResults = [];
 
         console.log(this.reportResults.records);
-        console.log(Object.values(this.reportResults.records)[0])
-        for (const key in Object.values(this.reportResults.records)[0]) {
-            if(this.summaries[key] !== undefined)
-                this.summaries[key] = {list:0, customer:0, revenue:0}
-            else{
-                this.summaries[key] = [];
-                this.summaries[key] = {list:0, customer:0, revenue:0}
+        console.log(Object.values(this.reportResults.records).length)
+        console.log(Object.keys(this.reportResults.records).length)
+        console.log(Object.keys(this.reportResults.records))
+        
+        Object.keys(this.reportResults.records).forEach((tienda) => {
+
+            if (!this.summaries[tienda]) {
+                this.summaries[tienda] = {};
             }
 
-            for (let index = 0; index < Object.values(this.reportResults.records)[0][key].length; index++) {
-                const element = Object.values(this.reportResults.records)[0][key][index];
-                console.log(element);
+            for (const key in this.reportResults.records[tienda]) {
+                console.log(tienda);
+                console.log(key);
 
-                this.summaries[key].list += parseFloat(element.product.price_list);
-                this.summaries[key].customer += parseFloat(element.product.price_customer);
-                this.summaries[key].revenue += parseFloat(parseFloat(element.product.price_customer)-parseFloat(element.product.price_list));
 
+                if (!this.summaries[tienda][key]) {
+                    this.summaries[tienda][key] = { list: 0, customer: 0, revenue: 0 };
+                }
+
+                for (let index = 0; index < this.reportResults.records[tienda][key].length; index++) {
+                    const element = this.reportResults.records[tienda][key][index];
+                    // console.log(element);
+
+                    this.summaries[tienda][key].list += parseFloat(element.product.price_list);
+                    this.summaries[tienda][key].customer += parseFloat(element.product.price_customer);
+                    this.summaries[tienda][key].revenue += parseFloat(parseFloat(element.product.price_customer)-parseFloat(element.product.price_list));
+
+                }
             }
-        }
+            
+        });
+        Object.keys(this.reportResults.records).forEach((tienda) => {
+            for (const key in this.reportResults.records[tienda]) {
+                this.list += this.summaries[tienda][key].list;
+                this.customer += this.summaries[tienda][key].customer;
+                this.revenue += this.summaries[tienda][key].revenue;
+            }
+        });
+        this.byDay = this.revenue / 8;
         console.log(this.summaries);
-        // console.log(globalResults);
-        // let listKeys = Object.keys(this.reportResults);
-        // for (let index = 0; index < listKeys.length; index++) {
-
-        //     this.reportResultsLocal.push({
-        //         description: listKeys[index], 
-        //         count: this.reportResults8[listKeys[index]],
-        //         store: globalResults[listKeys[index]].sale_id.store
-        //     });
-        //     this.originalResultCounter += this.reportResults8[listKeys[index]];
-        // }
+        
 
     },
     computed: {
@@ -101,6 +116,53 @@ export default{
 
 }
 </script>
+<style scoped>
+:global(h2#card-usage ~ .example .example-showcase) {
+  background-color: var(--el-fill-color) !important;
+}
+
+.el-statistic {
+  --el-statistic-content-font-size: 28px;
+}
+
+.statistic-card {
+    height: 100%;
+    margin: 0 0 0 10px;
+    padding: 15px;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid red;
+}
+
+.statistic-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--el-text-color-regular);
+  margin-top: 16px;
+}
+
+.statistic-footer .footer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statistic-footer .footer-item span:last-child {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.green {
+  color: var(--el-color-success);
+}
+.red {
+  color: var(--el-color-error);
+}
+</style>
 <template>
     <AppLayout title="Dashboard">
         <template #header>
@@ -112,63 +174,65 @@ export default{
             <p class="text-sm text-gray">{{report.description}}</p>
             <br/>
            
-            <el-date-picker v-model="rangeValue" type="daterange" range-separator="To" start-placeholder="Start date" end-placeholder="End date"  />
+            <el-row>
+                <el-col :span="4">
+                    <div class="statistic-card">
+                        <el-statistic :value="'$'+revenue.toFixed(2)+' MXN'">
+                            <template #title>
+                                Total de Ganancias
+                            </template>
+                        </el-statistic>
+                    </div>
+                </el-col>
+                <el-col :span="4">
+                    <div class="statistic-card">
+                        <el-statistic :value="'$'+list.toFixed(2)+' MXN'">
+                            <template #title>
+                                Total de precio de lista
+                            </template>
+                        </el-statistic>
+                    </div>
+                </el-col>
+                <el-col :span="4">
+                    <div class="statistic-card">
+                        <el-statistic :value="'$'+customer.toFixed(2)+' MXN'">
+                            <template #title>
+                                Total de precio de cliente
+                            </template>
+                        </el-statistic>
+                    </div>
+                </el-col>
+                <el-col :span="4">
+                    <div class="statistic-card">
+                        <el-statistic :value="'$'+byDay.toFixed(2)+' MXN'">
+                            <template #title>
+                                Promedio de Ganancia
+                            </template>
+                        </el-statistic>
+                    </div>
+                </el-col>
+            </el-row>   
 
         </div>
         
         <div class="shadow bg-white md:rounded-md lg:p-4 lg:m-4 m-1">
             <h3 class="text-lg text-gray-900"> Reporte de los ultimos 8 días </h3>
 
-            <div class="flex flex-wrap" v-for="(fechas,tienda) in reportResults.records" :key="fechas">
+            <div class="flex flex-wrap " >
                 
-                <el-descriptions
-                    class="margin-top"
-                    :title="'Tienda '+tienda"
-                    :column="2"
-                    :size="'small'"
-                    border
-                >
-                    <el-descriptions-item :label="tienda">
-                        <div  v-for="(k1,v1) in fechas" :key="k1">
-                            <div class="flex flex-wrap" v-for="(registros,v1) in fechas" :key="k1">
-                                <el-descriptions
-                                    class="margin-top"
-                                    title="Fecha"
-                                    :column="2"
-                                    :size="'small'"
-                                    border
-                                >
-                                    <el-descriptions-item :label="v1">
-                                        <el-table :data="registros" class="mt-4 border border-slate-600 " style="width: 100%" :height="300" fixed>
-                                            <el-table-column label="Producto" width="180">
-                                                <template #default="scope">
-                                                    {{ scope.row.product.name }}
-                                                </template>
-                                            </el-table-column>
-                                            <el-table-column :label="'Ganancia - $' +summaries[v1].revenue.toFixed(2)" width="180">
-                                                <template #default="scope">
-                                                    $ {{ (scope.row.product.price_customer - scope.row.product.price_list).toFixed(2) }} 
-                                                </template>
-                                            </el-table-column>
-                                            <el-table-column :label="'P. Lista - $' +summaries[v1].list.toFixed(2)" width="160" >
-                                                <template #default="scope">
-                                                    $ {{ scope.row.product.price_list }} 
-                                                </template>
-                                            </el-table-column>
+                <div v-for="(fechas,tienda) in reportResults.records" :key="fechas" class="m-2 shadow-lg shadow-red-600 ">
+                    <h1 class="bg-red-500 text-white bold m-1 p-1">{{'Tienda '+tienda}}</h1>
 
-                                            <el-table-column :label="'P. Cliente - $' +summaries[v1].customer.toFixed(2)" width="160" >
-                                                <template #default="scope">
-                                                    $ {{ scope.row.product.price_customer }} 
-                                                </template>
-                                            </el-table-column>
-                                            
-                                        </el-table>
-                                    </el-descriptions-item>
-                                </el-descriptions>
-                            </div>
-                        </div>
-                    </el-descriptions-item>
-                </el-descriptions>
+                    <div  v-for="(k1,v1) in fechas" :key="k1">
+                        <el-descriptions class="margin-top" :column="4"  border>
+                            <el-descriptions-item :label="'Fecha'">{{ v1 }}</el-descriptions-item>
+                            <el-descriptions-item :label="'Ganancia'">{{ summaries[tienda][v1].revenue.toFixed(2) }}</el-descriptions-item>
+                            <el-descriptions-item :label="'P. Lista'">{{ summaries[tienda][v1].list.toFixed(2) }}</el-descriptions-item>
+                            <el-descriptions-item :label="'P. Cliente'">{{ summaries[tienda][v1].customer.toFixed(2) }}</el-descriptions-item>
+                        </el-descriptions>
+                    </div>
+                </div>
+
             </div>
         </div>
     </AppLayout>

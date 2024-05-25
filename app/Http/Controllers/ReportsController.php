@@ -116,17 +116,17 @@ class ReportsController extends Controller
      * @return array | JsonResponse
      * 
      */
-    public static function reportPrices(String $startDateTime = '', String $endDateTime = '', Report $report, String $returnType = '') : array | JsonResponse {
+    public static function reportPrices(String $startDateTime = '', String $endDateTime = '',  $report, String $returnType = '') : array | JsonResponse {
         $startDateTime = ($startDateTime == '') ? Carbon::now()->subDays(9) : $startDateTime;
         $endDateTime = ($endDateTime == '') ? Carbon::now() : $endDateTime;
-
+        $carbon = Carbon::now();
         $productLineItems = ProductLineItem::with([
             'saleId:id,created_at,store',
             'productId:id,name,price_list,price_customer,take_portion',
             'createdBy:name'
         ])->whereBetween('created_at', [
-            Carbon::parse($startDateTime)->format('Y-m-d H:i:s'), 
-            Carbon::parse($endDateTime)->format('Y-m-d H:i:s')
+            $carbon->startOfWeek()->format("Y-m-d H:i"), 
+            $carbon->endOfWeek()->format("Y-m-d H:i")
         ])->orderBy('created_at', 'desc')->get();
 
         $toReturn = [];
