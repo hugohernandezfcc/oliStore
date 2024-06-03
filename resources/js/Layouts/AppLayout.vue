@@ -55,43 +55,92 @@ console.log(router.page.url.indexOf("tickets"));
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('sales.index')" :active="router.page.url.indexOf('sales') >= 0">
-                                    Ventas
+                                    Ventas <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M256 640v192h640V384H768v-64h150.976c14.272 0 19.456 1.472 24.64 4.288a29.056 29.056 0 0 1 12.16 12.096c2.752 5.184 4.224 10.368 4.224 24.64v493.952c0 14.272-1.472 19.456-4.288 24.64a29.056 29.056 0 0 1-12.096 12.16c-5.184 2.752-10.368 4.224-24.64 4.224H233.024c-14.272 0-19.456-1.472-24.64-4.288a29.056 29.056 0 0 1-12.16-12.096c-2.688-5.184-4.224-10.368-4.224-24.576V640z"></path><path fill="currentColor" d="M768 192H128v448h640zm64-22.976v493.952c0 14.272-1.472 19.456-4.288 24.64a29.056 29.056 0 0 1-12.096 12.16c-5.184 2.752-10.368 4.224-24.64 4.224H105.024c-14.272 0-19.456-1.472-24.64-4.288a29.056 29.056 0 0 1-12.16-12.096C65.536 682.432 64 677.248 64 663.04V169.024c0-14.272 1.472-19.456 4.288-24.64a29.056 29.056 0 0 1 12.096-12.16C85.568 129.536 90.752 128 104.96 128h685.952c14.272 0 19.456 1.472 24.64 4.288a29.056 29.056 0 0 1 12.16 12.096c2.752 5.184 4.224 10.368 4.224 24.64z"></path><path fill="currentColor" d="M448 576a160 160 0 1 1 0-320 160 160 0 0 1 0 320m0-64a96 96 0 1 0 0-192 96 96 0 0 0 0 192"></path></svg>
                                 </NavLink>
-                                <NavLink :href="route('products.index')" :active="router.page.url.indexOf('products') >= 0">
-                                    Productos
-                                </NavLink>
+                                
 
-                                <NavLink :href="route('tickets.index')" :active="router.page.url.indexOf('tickets') >= 0">
-                                    Tickets 
-                                </NavLink>
+
+                                <div class="hidden sm:flex sm:items-center sm:ms-6">
+                                    <div class="relative">
+                                        <Dropdown align="right" width="48" >
+                                            <template #trigger>
+                                                    <span class="inline-flex rounded-md ">
+                                                        <button type="button" class=" hover:bg-red-100  inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+                                                            Productos e Inventarios 
+                                                            
+                                                            <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="m801.728 349.184 4.48 4.48a128 128 0 0 1 0 180.992L534.656 806.144a128 128 0 0 1-181.056 0l-4.48-4.48-19.392 109.696a64 64 0 0 1-108.288 34.176L78.464 802.56a64 64 0 0 1 34.176-108.288l109.76-19.328-4.544-4.544a128 128 0 0 1 0-181.056l271.488-271.488a128 128 0 0 1 181.056 0l4.48 4.48 19.392-109.504a64 64 0 0 1 108.352-34.048l142.592 143.04a64 64 0 0 1-34.24 108.16l-109.248 19.2zm-548.8 198.72h447.168v2.24l60.8-60.8a63.808 63.808 0 0 0 18.752-44.416h-426.88l-89.664 89.728a64.064 64.064 0 0 0-10.24 13.248zm0 64c2.752 4.736 6.144 9.152 10.176 13.248l135.744 135.744a64 64 0 0 0 90.496 0L638.4 611.904zm490.048-230.976L625.152 263.104a64 64 0 0 0-90.496 0L416.768 380.928zM123.712 757.312l142.976 142.976 24.32-137.6a25.6 25.6 0 0 0-29.696-29.632l-137.6 24.256zm633.6-633.344-24.32 137.472a25.6 25.6 0 0 0 29.632 29.632l137.28-24.064-142.656-143.04z"></path></svg>
+                                                        </button>
+                                                    </span>
+                                                </template> 
+                                            <template #content>
+                                                <!-- Account Management -->
+                                                <div class="block px-4 py-2 text-xs text-gray-400">
+                                                    Listas
+                                                </div>
+                                                <DropdownLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0" v-if="$page.props.auth.user.is_admin">
+                                                    Inventarios
+                                                </DropdownLink>
+
+                                                <DropdownLink :href="route('products.index')" :active="router.page.url.indexOf('products') >= 0">
+                                                    Productos
+                                                </DropdownLink>
+
+                                                <DropdownLink :href="route('providers.index')" :active="router.page.url.indexOf('providers') >= 0">
+                                                    Proveedores
+                                                </DropdownLink>
+                                                
+                                            </template>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+
 
                                 <NavLink :href="route('purchaseorders.index')" :active="router.page.url.indexOf('purchaseorders') >= 0">
-                                    Ordenes de compra 
+                                    Ordenes de compra <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M480 320h192c21.33 0 32-10.67 32-32s-10.67-32-32-32H480c-21.33 0-32 10.67-32 32s10.67 32 32 32"></path><path fill="currentColor" d="M887.01 72.99C881.01 67 873.34 64 864 64H160c-9.35 0-17.02 3-23.01 8.99C131 78.99 128 86.66 128 96v832c0 9.35 2.99 17.02 8.99 23.01S150.66 960 160 960h704c9.35 0 17.02-2.99 23.01-8.99S896 937.34 896 928V96c0-9.35-3-17.02-8.99-23.01M192 896V128h96v768zm640 0H352V128h480z"></path><path fill="currentColor" d="M480 512h192c21.33 0 32-10.67 32-32s-10.67-32-32-32H480c-21.33 0-32 10.67-32 32s10.67 32 32 32m0 192h192c21.33 0 32-10.67 32-32s-10.67-32-32-32H480c-21.33 0-32 10.67-32 32s10.67 32 32 32"></path></svg>
                                 </NavLink>
 
                                 <NavLink :href="route('stores.index')" :active="router.page.url.indexOf('stores') >= 0">
-                                    Tiendas
+                                    Tiendas <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 128 128 447.936V896h255.936V640H640v256h255.936V447.936z"></path></svg>
                                 </NavLink>
 
-                                <NavLink :href="route('providers.index')" :active="router.page.url.indexOf('providers') >= 0">
-                                    Proveedores
-                                </NavLink>
-
-                                <NavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0" v-if="$page.props.auth.user.is_admin">
-                                    Inventarios
-                                </NavLink>
-                                <NavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0" v-if="$page.props.auth.user.is_admin">
-                                    Reportes
-                                </NavLink>
-
-                                <!-- <NavLink :href="route('barcodes.index')" :active="router.page.url.indexOf('barcodes') >= 0">
-                                    Códigos de barras
-                                </NavLink>
-
-                                <NavLink :href="route('prices.index')" :active="router.page.url.indexOf('prices') >= 0">
-                                    Precios
-                                </NavLink> -->
                                 
+                                
+                                <div class="hidden sm:flex sm:items-center sm:ms-6">
+                                    <div class="relative">
+                                        <Dropdown align="right" width="48" >
+                                            <template #trigger>
+                                                    <span class="inline-flex rounded-md ">
+                                                        <button type="button" class=" hover:bg-red-100 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-red-100 transition ease-in-out duration-150">
+                                                            Finanzas 
+                                                            <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 "  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M448 68.48v64.832A384.128 384.128 0 0 0 512 896a384.128 384.128 0 0 0 378.688-320h64.768A448.128 448.128 0 0 1 64 512 448.128 448.128 0 0 1 448 68.48z"></path><path fill="currentColor" d="M576 97.28V448h350.72A384.064 384.064 0 0 0 576 97.28zM512 64V33.152A448 448 0 0 1 990.848 512H512z"></path></svg>
+                                                        </button>
+                                                    </span>
+                                                </template> 
+                                            <template #content>
+                                                <!-- Account Management -->
+                                                <div class="block px-4 py-2 text-xs text-gray-400">
+                                                    Finanzas y reportes
+
+                                                </div>
+                                                <DropdownLink :href="route('liabilities.index')" :active="router.page.url.indexOf('liabilities') >= 0" v-if="$page.props.auth.user.is_admin">
+                                                    Gastos
+                                                </DropdownLink>
+                                                <DropdownLink :href="route('financials.index')" :active="router.page.url.indexOf('financials') >= 0" v-if="$page.props.auth.user.is_admin">
+                                                    Periodos
+                                                </DropdownLink>
+
+                                                <DropdownLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0" v-if="$page.props.auth.user.is_admin">
+                                                    Reportes
+                                                </DropdownLink>
+
+                                                <DropdownLink :href="route('tickets.index')" :active="router.page.url.indexOf('tickets') >= 0">
+                                                    Tickets 
+                                                </DropdownLink>
+                                                
+                                            </template>
+                                        </Dropdown>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -256,6 +305,12 @@ console.log(router.page.url.indexOf("tickets"));
 
                         <ResponsiveNavLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0" v-if="$page.props.auth.user.is_admin">
                             Inventarios
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('liabilities.index')" :active="router.page.url.indexOf('liabilities') >= 0" v-if="$page.props.auth.user.is_admin">
+                            Gastos
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('financials.index')" :active="router.page.url.indexOf('financials') >= 0" v-if="$page.props.auth.user.is_admin">
+                            Periodos
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0" v-if="$page.props.auth.user.is_admin">
                             Reportes

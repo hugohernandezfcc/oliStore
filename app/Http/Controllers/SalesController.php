@@ -50,9 +50,9 @@ class SalesController extends Controller
         ]);
     }
 
-    public function salesToday($start, $end){
-        
-        $sales = Sales::whereBetween('created_at', [Carbon::parse($start)->format('Y-m-d H:i:s'), Carbon::parse($end)->format('Y-m-d H:i:s')])->get();
+    public function salesToday($start, $end, $storeId){
+        $store = Store::find($storeId);
+        $sales = Sales::whereBetween('created_at', [Carbon::parse($start)->format('Y-m-d H:i:s'), Carbon::parse($end)->format('Y-m-d H:i:s')])->where('store', $store->name)->get();
         $products = Product::get(['name', 'id', 'folio', 'Description', 'price_list','price_customer','profit_percentage']);
         $toSearchInProducts = array();
 

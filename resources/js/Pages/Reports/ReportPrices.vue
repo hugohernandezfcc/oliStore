@@ -28,9 +28,15 @@ export default{
     methods:{
         filterTableglobal() {
             this.search = this.searchGlobal;
-
-            
         },
+        getCurrentDayNumber(){
+            let day = new Date().getDay();
+            const dayMapping = { 0: 7, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6 };
+
+            console.log('Before return ', dayMapping[day]);
+            return dayMapping[day];
+        },
+
     },
     data(){
         return {
@@ -90,7 +96,7 @@ export default{
                 this.revenue += this.summaries[tienda][key].revenue;
             }
         });
-        this.byDay = this.revenue / 8;
+        this.byDay = this.revenue / this.getCurrentDayNumber();
         console.log(this.summaries);
         
 

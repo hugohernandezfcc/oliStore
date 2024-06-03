@@ -27,6 +27,9 @@ const hasActions = computed(() => !! useSlots().actions);
                     <div class="grid grid-cols-6 gap-6">
                         <slot name="form" />
                     </div>
+                    <div class="">
+                        <slot name="details" />
+                    </div>
                 </div>
 
                 <div v-if="hasActions" class="flex items-center justify-end px-4 py-3 bg-gray-50 text-end sm:px-6 shadow sm:rounded-bl-md sm:rounded-br-md">

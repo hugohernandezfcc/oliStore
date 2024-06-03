@@ -1,6 +1,4 @@
 <?php
-
-
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,86 +15,17 @@ use Inertia\Inertia;
 |
 */
 
-use App\Models\Product;
-Route::get('/matchProducts', function () {
-
-
-    $products = Product::select('folio', \DB::raw('count(*) as total') )
-                        ->groupBy('folio')
-                        ->get();
-
-    $array = array();
-
-    foreach ($products as $product) {
-        if($product->total > 1){
-            echo "Folio: " . $product->folio . ", Total: " . $product->total . "<br>";
-            array_push($array, $product->folio);
-        }
-    }
-    echo "<br><br>";
-    $details = Product::select( 'id', 'name', 'Description', 'folio' )->whereIn('folio', $array)->orderBy('folio', 'asc')->get();
-    foreach ($details as $detail) {
-        echo "Id: " . $detail->id . " Folio: " . $detail->folio . ", Name: " . $detail->name . ", Description: " . $detail->Description . "<br>";
-    }
-
-});
-Route::get('/faker', function () {
-
-    $previously = null;
-    $toReturn = array();
-    
-    $tickets = App\Models\tickets::with('createdBy', 'ticketItems')->orderBy('created_at', 'desc')->get();
-
-    for ($i=0; $i < count($tickets) ; $i++) { 
-        $previously[$tickets[$i]->provider] = array();
-        
-        if(count($tickets[$i]->ticketItems) != 0){
-            for ($o=0; $o < count($tickets[$i]->ticketItems); $o++) 
-                if($tickets[$i]->ticketItems[$o]->product_id == null)
-                    array_push($previously[$tickets[$i]->provider], $tickets[$i]->ticketItems[$o]->bar_code);
-        }else
-            array_push($previously[$tickets[$i]->provider], 'SIN PRODUCTOS RELACIONADOS');
-        
-        if(count($previously[$tickets[$i]->provider]) == 0)
-            unset($previously[$tickets[$i]->provider]);
-
-
-        $dataObj = new \stdClass();
-        $dataObj->ticketId = $tickets[$i]->id;
-        $dataObj->date_time_issued = $tickets[$i]->date_time_issued;
-        $dataObj->provider = $tickets[$i]->provider;
-
-        if(isset($previously[$tickets[$i]->provider])){
-            $dataObj->issues = $previously[$tickets[$i]->provider];
-            array_push($toReturn, $dataObj);
-        }
-            
-
-    }
-
-    echo "<pre>";
-        print_r($toReturn);
-    echo "</pre>";
-});
-
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
-
 Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
 
+Route::resource('boxcut',           App\Http\Controllers\BoxCutController::class        )->middleware('auth:sanctum');
+Route::resource('financials',       App\Http\Controllers\FinancialController::class     )->middleware('auth:sanctum');
 Route::resource('products',         App\Http\Controllers\ProductController::class       )->middleware('auth:sanctum');
-Route::resource('reports',         App\Http\Controllers\ReportsController::class       )->middleware('auth:sanctum');
+Route::resource('liabilities',      App\Http\Controllers\LiabilitiesController::class   )->middleware('auth:sanctum');
+Route::resource('reports',          App\Http\Controllers\ReportsController::class       )->middleware('auth:sanctum');
 Route::resource('tickets',          App\Http\Controllers\TicketsController::class       )->middleware('auth:sanctum');
 Route::resource('purchaseorders',   App\Http\Controllers\PurchaseOrderController::class )->middleware('auth:sanctum');
 Route::resource('sales',            App\Http\Controllers\SalesController::class         )->middleware('auth:sanctum');
@@ -110,13 +39,13 @@ Route::resource('prices',           App\Http\Controllers\BarCodeController::clas
 Route::post('/lookup/field/', [App\Http\Controllers\CoreController::class,          'lookupField' ])->name('lookup.field');
 
 
-Route::get('/sales/retrieveproduct/{folio}',        [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
-Route::get('/sales/retrieveproduct/{folio}/stock',  [App\Http\Controllers\SalesController::class,          'retrieveProductForStock']);
-Route::get('/sales/delete/{salesId}',        [App\Http\Controllers\SalesController::class,          'deleteSales']);
-Route::get('/sales/{start}/{end}/results',   [App\Http\Controllers\SalesController::class,  'salesToday'])->middleware('auth:sanctum')->name('sales.today');
-Route::get('/sales/yesterday/results',       [App\Http\Controllers\SalesController::class,  'salesYesterday'])->middleware('auth:sanctum')->name('sales.yesterday');
-Route::post('/storeProduct',                 [App\Http\Controllers\StockController::class,          'storeProduct' ]);
-Route::post('/storeticket',                 [App\Http\Controllers\TicketsController::class,          'store' ]);
+Route::get('/sales/retrieveproduct/{folio}',            [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
+Route::get('/sales/retrieveproduct/{folio}/stock',      [App\Http\Controllers\SalesController::class,          'retrieveProductForStock']);
+Route::get('/sales/delete/{salesId}',                   [App\Http\Controllers\SalesController::class,          'deleteSales']);
+Route::get('/sales/{start}/{end}/results/{storeId}',    [App\Http\Controllers\SalesController::class,  'salesToday'])->middleware('auth:sanctum')->name('sales.today');
+Route::get('/sales/yesterday/results',                  [App\Http\Controllers\SalesController::class,  'salesYesterday'])->middleware('auth:sanctum')->name('sales.yesterday');
+Route::post('/storeProduct',                            [App\Http\Controllers\StockController::class,          'storeProduct' ]);
+Route::post('/storeticket',                             [App\Http\Controllers\TicketsController::class,          'store' ]);
 Route::post('/storeProductFromPos',          [App\Http\Controllers\SalesController::class,          'storeProductFromPos' ]);
 Route::get('sales/show/{id}',                [App\Http\Controllers\SalesController::class, 'showById'])->middleware('auth:sanctum')->name('sales.show');
 Route::get('tickets/check/{noTicket}',       [App\Http\Controllers\TicketsController::class, 'validateTicket'])->middleware('auth:sanctum');
@@ -168,6 +97,17 @@ Route::group(
         Route::post('/get/posts', [App\Http\Controllers\PostsController::class, 'getPosts'])->name('social.posts');
         Route::post('/like/post', [App\Http\Controllers\PostsController::class, 'createLike'])->name('social.like.post');
         Route::get('/get/all', [App\Http\Controllers\CoreController::class, 'getAll'])->name('social.get.all');
+});
+
+Route::group(
+    [
+        'prefix' => 'box',
+        'middleware' => ['auth:sanctum']
+    ], function (){
+        Route::get('/is/open/box', [App\Http\Controllers\BoxController::class, 'getBox'])->name('box.is.open');
+        Route::post('/open/box', [App\Http\Controllers\BoxController::class, 'store'])->name('box.open');
+        Route::post('/close/box/{id}', [App\Http\Controllers\BoxController::class, 'update'])->name('box.close');
+        Route::post('/save/box/cut', [App\Http\Controllers\BoxCutController::class, 'store'])->name('box.cut.save');
 });
 
 

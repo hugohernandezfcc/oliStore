@@ -115,6 +115,7 @@ export default {
       popper-class="lookup-field"
       placeholder="Nombre del producto"
       @select="handleSelect"
+
     >
       <template #suffix>
         <el-icon class="el-input__icon" @click="handleIconClick">
@@ -146,5 +147,6 @@ export default {
   .lookup-field li .highlighted .addr {
     color: #ddd;
   }
+  
 </style>
   

@@ -41,6 +41,7 @@ export default {
     return {
         link: '',
         options : [],
+        paramLink: [],
         mount: 0,
         salesByStore: [],
         store_str: 'total',
@@ -48,6 +49,7 @@ export default {
   },
   methods:{
     openLink(){
+      this.link = '/sales/' + this.titleFooter.start+'/'+this.titleFooter.end+'/results/'+(this.paramLink[this.store_str] == undefined ? 3 : this.paramLink[this.store_str]);
       window.open(this.link, '_blank');
     }
   },
@@ -58,7 +60,11 @@ export default {
     axios.post(route('card.sales')).then((res) => {
     //   console.log(res);
       res.data['stores'].forEach((element) => {
-        this.options.push({label: element.name, value: element.name});
+          this.options.push({label: element.name, value: element.name});
+          
+          
+          this.paramLink[element.name] = element.id;
+
       });
       
       res.data['sales'].forEach((element) => {
@@ -75,7 +81,7 @@ export default {
       console.log(error);
     });
 
-    this.link = '/sales/' + this.titleFooter.start+'/'+this.titleFooter.end+'/results';
+    this.link = '/sales/' + this.titleFooter.start+'/'+this.titleFooter.end+'/results/'+this.paramLink[this.store_str];
     console.log(this.titleFooter);
     console.log(this.link);
   }

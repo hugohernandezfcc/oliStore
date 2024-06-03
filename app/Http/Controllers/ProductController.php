@@ -30,7 +30,6 @@ class ProductController extends Controller
 
         return Inertia::render('Products/Index', [
             'products' => $products,
-            
         ]);
     }
 

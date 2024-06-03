@@ -76,11 +76,7 @@ export default{
             </el-row>
             <br/>
             <el-table :data="filterTableData" class="shadow-lg" stripe style="width: 100%; height: 500px;" >
-                
-                    
-                
-                
-          
+
                 <el-table-column prop="id" label="Id" width="150" />
                 <el-table-column prop="name" label="Name" width="200" />
                 <el-table-column prop="object" label="Objeto" width="150" />

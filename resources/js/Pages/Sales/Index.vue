@@ -21,7 +21,9 @@ import 'datatables.net-select';
 import FooterPos from '@/Components/FooterPos.vue';
 import { HollowDotsSpinner } from 'epic-spinners';
 import DatatableLocal from '@/Components/DatatableLocal.vue';
-import ToDoList from '@/Components/ToDoList.vue';
+// import ToDoList from '@/Components/ToDoList.vue';
+import BoxCut from '@/Components/BoxCut.vue';
+import Box from '@/Components/Box.vue';
 
 export default{
     components:{
@@ -36,7 +38,9 @@ export default{
         Field, 
         DatatableLocal, 
         wizardForm,
-        ToDoList
+        // ToDoList,
+        BoxCut,
+        Box
     },
     props:{
         sale: Object,
@@ -553,6 +557,15 @@ export default{
                                             <wizardForm :TypeForm="'requestStock'"/>
                                         </el-collapse-item>
                                     </el-collapse>
+                                    <br/>
+
+
+                                    <BoxCut :type="'POS'" :stores="stores" />
+                                    <br/>
+                                    <br/>
+                                    <Box />
+                                    
+
                                 </el-tab-pane>
                                 <el-tab-pane>
                                     <template #label>
@@ -564,7 +577,7 @@ export default{
                                         <b>Mis tareas por realizar</b>
                                     </span>
                                     <br/><br/>
-                                    <ToDoList :isAdmin="isAdmin" :placeholder="'Crear nueva tarea'" :typeItem="'tasks'" :defaultvalue="false"></ToDoList>
+                                    <!-- <ToDoList :isAdmin="isAdmin" :placeholder="'Crear nueva tarea'" :typeItem="'tasks'" :defaultvalue="false"></ToDoList> -->
 
                                 </el-tab-pane>
                                 <el-tab-pane>
@@ -578,7 +591,7 @@ export default{
                                     </span>
                                     <br/>
                                     Agrega los productos faltantes o nuevos productos que los clientes piden a la hora de querer comprar.<br/>
-                                    <ToDoList :isAdmin="isAdmin" :placeholder="'Producto faltante'" :typeItem="'bills'" :defaultvalue="true"></ToDoList>
+                                    <!-- <ToDoList :isAdmin="isAdmin" :placeholder="'Producto faltante'" :typeItem="'bills'" :defaultvalue="true"></ToDoList> -->
                                 </el-tab-pane>
                                 <el-tab-pane>
                                     <template #label>
@@ -606,7 +619,7 @@ export default{
                         <br/><br/>
                         <div class="flex flex-row flex-wrap bg-slate-200 md:rounded-md p-4">
                             <div class="basis-1/3 p-1" >
-                                <InputLabel for="inbound_amount" value="Dinero recibido >> $" />
+                                <InputLabel for="inbound_amount" value="Dinero recibido" />
                                 <TextInput
                                     id="inbound_amount"
                                     ref="inbound_amount"
@@ -618,7 +631,7 @@ export default{
                                 />
                             </div>
                             <div class="basis-1/3 p-1" >
-                                <InputLabel for="outbound_amount" value="Cambio al cliente << $" />
+                                <InputLabel for="outbound_amount" value="Cambio al cliente" />
                                 <TextInput
                                     id="outbound_amount"
                                     ref="outbound_amount"
