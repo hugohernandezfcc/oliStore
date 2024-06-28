@@ -5,14 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
-use App\Models\Product;
 use App\Models\User;
-use App\Models\ProductLineItem;
-use App\Models\Liabilities;
-use App\Models\Sales;
-use App\Models\Price;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Financial;
+use App\Models\BoxCut;
 use App\Models\Store;
 use App\Models\Box;
 
@@ -87,10 +82,33 @@ class BoxController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Box $box)
     {
-        //
+        $box = Box::with('seller')
+                    ->with('createdBy')
+                    ->with('editedBy')
+                    ->with('store')
+                    ->with('boxCut')
+                    ->find($box->id);
+
+        return Inertia::render('Box/Show', [
+            'customRecord' => $box,
+            'relatedList'            => [
+                'box_cut' => [
+                    'title'               => 'Cortes de caja',
+                    'titleModel'          => 'Nueva relación de corte de caja',
+                    'visibleColumns'      => BoxCut::RELATED_LIST_COLUMNS,
+                    'formFields'          => BoxCut::MODAL_FORM_FIELDS,
+                    'table'               => 'boxcut',
+                    'origin'              => 'box',
+                    'origin_field'        => 'store_id',
+                    'currentRecordId'     => $box->id,
+                    'showNewRecordButton' => false
+                ]
+            ]
+        ] );
     }
+    
 
     /**
      * Update the specified resource in storage.

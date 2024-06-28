@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\belongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BoxFund extends Model
 {
@@ -37,6 +38,7 @@ class BoxFund extends Model
         return $this->belongsTo(User::class, 'edited_by_id');
     }
 
+    
 }
 
 

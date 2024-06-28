@@ -57,4 +57,9 @@ class Store extends Model
     {
         return $this->hasMany(LineAnyItem::class);
     }
+
+    public function boxes() : HasMany
+    {
+        return $this->hasMany(Box::class)->orderBy('created_at', 'desc');
+    }
 }

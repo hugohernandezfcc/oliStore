@@ -12,7 +12,7 @@ use App\Models\Store;
 use App\Models\ProductLineItem;
 use App\Models\Sales;
 use App\Models\Providers;
-use App\Models\Stock;
+use App\Models\Box;
 use App\Models\LineAnyItem;
 
 class StoreController extends Controller
@@ -61,6 +61,7 @@ class StoreController extends Controller
         $tienda = Store::with('createdBy')
             ->with('updatedBy')
             ->with('owner')
+            ->with('boxes')
             ->find($store->id);
 
         $tienda->line_any_items = LineAnyItem::where('origin', 'stores')->where('store_id', $store->id)
@@ -89,8 +90,21 @@ class StoreController extends Controller
                     'origin'         => 'stores',
                     'origin_field'   => 'store_id',
                     'target_field'   => 'provider_id',
-                    'currentRecordId' => $store->id
+                    'currentRecordId'=> $store->id
                 ],
+            ],
+            'relatedList'            => [
+                'boxes' => [
+                    'title'               => 'Cajas',
+                    'titleModel'          => 'Nueva relación de cajas',
+                    'visibleColumns'      => Box::RELATED_LIST_COLUMNS,
+                    'formFields'          => Box::MODAL_FORM_FIELDS,
+                    'table'               => 'box',
+                    'origin'              => 'stores',
+                    'origin_field'        => 'store_id',
+                    'currentRecordId'     => $store->id,
+                    'showNewRecordButton' => false
+                ]
             ]
         ] );
     }

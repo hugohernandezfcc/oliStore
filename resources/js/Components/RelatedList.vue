@@ -254,8 +254,10 @@ export default {
                 this.form.push(field);
         }
         setTimeout(() => {
+            console.log('this.customRecordsRelated')
+            console.log(this.customRecordsRelated)
+
             if(this.customRecordsRelated !== undefined){
-                console.log(this.customRecordsRelated);
                 for (let i = 0; i < this.customRecordsRelated.length; i++) {
                     let customRecord = {}
                     
@@ -266,7 +268,7 @@ export default {
                 }
             }
             
-        }, 1500);
+        }, 2000);
     }
 }
 </script>

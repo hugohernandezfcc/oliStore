@@ -22,6 +22,7 @@ Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified'
 });
 
 Route::resource('boxcut',           App\Http\Controllers\BoxCutController::class        )->middleware('auth:sanctum');
+Route::resource('box',              App\Http\Controllers\BoxController::class        )->middleware('auth:sanctum');
 Route::resource('financials',       App\Http\Controllers\FinancialController::class     )->middleware('auth:sanctum');
 Route::resource('products',         App\Http\Controllers\ProductController::class       )->middleware('auth:sanctum');
 Route::resource('liabilities',      App\Http\Controllers\LiabilitiesController::class   )->middleware('auth:sanctum');

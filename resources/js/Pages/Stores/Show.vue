@@ -6,6 +6,7 @@ import Footer           from '@/Components/Footer.vue';
 import moment           from 'moment';
 import FormSection      from '@/Components/FormSection.vue';
 import RelatedList      from '@/Components/RelatedList.vue';
+import RelatedListNative from '@/Components/RelatedListNative.vue';
 
 export default{
     components:{
@@ -14,13 +15,16 @@ export default{
         SecondaryButton,
         Footer,
         FormSection,
-        RelatedList
+        RelatedList,
+        RelatedListNative
     },
     name: 'StoresShow',
     props:{
         customRecord: Object,
-        relatedListConfig: Object
+        relatedListConfig: Object,
+        relatedList: Object
     },
+
     methods:{
         eliminar() {
             if (confirm('¿Estás seguro de eliminar este registro?')) {
@@ -56,7 +60,8 @@ export default{
         let globalResults = [];
         this.lineItems();
         console.log('componente montado', this.customRecord)
-        console.log('testing', this.relatedListConfig)
+        console.log('testing', this.lineItemsObject)
+        console.log('testing', this.customRecord.boxes)
 
     },
     computed: {
@@ -168,6 +173,24 @@ export default{
                                 :currentRecordId      ="c['currentRecordId']"
                                 classCard             ="'my-2 -pr-0 w-[470px]'" />
                         </div>
+
+                        <div v-for="(m, o) in relatedList">
+
+                            <RelatedListNative 
+                                :customRecordsRelated ="customRecord.boxes"
+                                :title                ="m['title']"
+                                :titleModel           ="m['titleModel']"
+                                :visibleColumns       ="m['visibleColumns']"
+                                :formFields           ="m['formFields']" 
+                                :table                ="m['table']"
+                                :origin               ="m['origin']"
+                                :origin_field         ="m['origin_field']"
+                                :currentRecordId      ="m['currentRecordId']"
+                                :showNewRecordButton  ="m['showNewRecordButton']"
+                                classCard             ="'my-2 -pr-0 w-[470px]'" />
+                        </div>
+
+                        <!-- RelatedListNative -->
 
                     </template>
                     
