@@ -10,9 +10,11 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Store;
 use App\Models\Providers;
+use App\Models\LineAnyItem;
 use App\Models\ProductLineItem;
 use App\Models\Sales;
 use App\Models\tickets;
+
 
 class ProvidersController extends Controller
 {
@@ -40,6 +42,8 @@ class ProvidersController extends Controller
         Providers::create($request->all());
         return Inertia::render('Providers/Index');
     }
+
+    
 
     /**
      * Display the specified resource.
@@ -76,6 +80,20 @@ class ProvidersController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $LineAnyItem = LineAnyItem::where('provider_id', $id)
+                                    ->where('target_id', 'provider_id')
+                                    ->where('target', 'providers')
+                                    ->get();
+
+        if($LineAnyItem->count() == 1){
+            foreach ($LineAnyItem as $item) {
+                $item->delete();
+            }
+        }
+
+        $Providers = Providers::find($id);
+        $Providers->delete();
+
+        return redirect()->route('providers.index');
     }
 }

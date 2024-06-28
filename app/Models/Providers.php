@@ -9,6 +9,24 @@ class Providers extends Model
 {
     use HasFactory;
     protected $table = 'providers';
+    public const RELATED_LIST_COLUMNS = [
+        ['prop' => 'company',       'label' => 'Compañia'],
+        ['prop' => 'visit_day',     'label' => 'Días de visita'],
+        ['prop' => 'whatsapp',      'label' => 'WhatsApp'],
+        ['prop' => 'representative','label' => 'Representante'],
+        ['prop' => 'whatsapp',      'label' => 'Whatsapp'],
+        ];
+        public const MODAL_FORM_FIELDS = [
+        ['prop' => 'id',              'label' => 'Id',                'type' => 'text'],
+        ['prop' => 'representative', 'label' => 'Representante',      'type' => 'text'],
+        ['prop' => 'description',    'label' => 'Descripción',        'type' => 'text'],
+        ['prop' => 'phone',          'label' => 'Teléfono',           'type' => 'text'],
+        ['prop' => 'email',          'label' => 'Correo Electrónico', 'type' => 'text'],
+        ['prop' => 'whatsapp',       'label' => 'WhatsApp',           'type' => 'text'],
+        ['prop' => 'company',        'label' => 'Compañia',           'type' => 'text'],
+        ['prop' => 'visit_day',      'label' => 'Días de visita',     'type' => 'text'],
+    ];
+
     protected $fillable = [
         'representative',
         'description',
@@ -19,7 +37,9 @@ class Providers extends Model
         'visit_day',
         'created_by_id',
         'edited_by_id',
-        'store_id'
+        'store_id',
+        'created_at',
+        'updated_at'
     ];
 
     protected $casts = [

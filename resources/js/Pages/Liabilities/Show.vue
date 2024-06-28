@@ -1,16 +1,10 @@
 <script >
-import AppLayout from '@/Layouts/AppLayout.vue';
-import $ from 'jquery';
-import "datatables.net-responsive-dt/css/responsive.dataTables.min.css"
-import "datatables.net-dt/css/jquery.dataTables.min.css"
-import 'datatables.net-responsive-bs5';
-import 'datatables.net-select';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import Footer from '@/Components/Footer.vue';
-
-import moment from 'moment';
-import FormSection from '@/Components/FormSection.vue';
+import AppLayout        from '@/Layouts/AppLayout.vue';
+import PrimaryButton    from '@/Components/PrimaryButton.vue';
+import SecondaryButton  from '@/Components/SecondaryButton.vue';
+import Footer           from '@/Components/Footer.vue';
+import moment           from 'moment';
+import FormSection      from '@/Components/FormSection.vue';
 
 export default{
     components:{

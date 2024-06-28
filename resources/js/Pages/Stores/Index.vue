@@ -1,124 +1,104 @@
 <script >
 import AppLayout from '@/Layouts/AppLayout.vue';
-import $ from 'jquery';
-import "datatables.net-responsive-dt/css/responsive.dataTables.min.css"
-import "datatables.net-dt/css/jquery.dataTables.min.css"
-import 'datatables.net-responsive-bs5';
-import 'datatables.net-select';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import Footer from '@/Components/Footer.vue';
-
 
 
 export default{
     components:{
-        AppLayout, PrimaryButton, SecondaryButton, Footer
+        AppLayout,
+        PrimaryButton,
+        SecondaryButton
     },
+
     props:{
-        stores: Array
-        
-
-
+        stores: Array 
     },
     methods:{
-        onRowClick(){
-            let rowCollectionSelected = new Array();
-            this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
-                rowCollectionSelected.push(recordSelected);
-            } );
-
-            this.rowCollectionSelected = rowCollectionSelected;
-            console.log(this.rowCollectionSelected);
-        }
-
+        
     },
     data(){
         return {
-            rowCollectionSelected: new Array(),
-            dt: null,
-            
+
+            search:'',
+
         }
     },
     mounted(){
-        this.dt = $('#datatable').DataTable();
-        this.dt.on( 'select', () => this.onRowClick())
-        this.dt.on( 'deselect', () => this.onRowClick())
-        
-        console.log(this.rowCollectionSelected.length);
-        console.log(this.stores);
+        console.log('mounted',this.stores);
+    },
+    computed: {
+        filterTableData() {
+            return this.stores.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        },
     }
+
 }
-
 </script>
-
 <template>
-
-    <AppLayout title="Dashboard">
+    <AppLayout title="Gastos">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                OliStore
-            </h2>
+            <h3 class="text-lg text-gray-900"> Listado de Gastos - # {{ stores.length }}</h3>
+            <p class="text-sm text-gray">Catalogo de gastos registrados recurrentes </p>
         </template>
         
-        <div class="m-4">
-            <h3 class="text-lg text-gray-900"> Listado de tiendas </h3>
-            <p class="text-sm text-gray">Aquí podrás ver las tiendas registradas con sus detalles</p>
-        </div>
-        <div class="shadow bg-white md:rounded-md p-4 m-4">
-            
-            <inertia-link :href="route('stores.create')" class="m-1"> 
-                <PrimaryButton >
-                    Crear Tienda 
-                </PrimaryButton>
-            </inertia-link> 
-            
+        
 
+        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-2">
+            <div class="flex flex-row m-1">
+                <div class="basis-1/2">
+                    <inertia-link :href="route('stores.create')" class="m-1"> 
+                        <PrimaryButton >
+                            Nueva Tienda
+                        </PrimaryButton>
+                    </inertia-link> 
+                </div>
+                <div class="basis-1/2">
+                    <el-input v-model="search"  placeholder="Type to search" class="shadow-2xl"/>
+                </div>
+            </div>
+            
             <br/>
+            <el-table :data="filterTableData" class="shadow-lg m-1" stripe  >
+                <el-table-column align="left" width="70" fixed="left">
+                    <template #default="scope">
+                        <inertia-link :href="route('stores.show', scope.row.id)" >
+                            <el-button size="small" color="#dc2626"> 
+                                <svg class="h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 160c320 0 512 352 512 352S832 864 512 864 0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288 52.608 79.872 211.456 288 436.8 288 225.28 0 384.128-208.064 436.8-288-52.608-79.872-211.456-288-436.8-288zm0 64a224 224 0 1 1 0 448 224 224 0 0 1 0-448m0 64a160.192 160.192 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160-71.744-160-160-160"></path></svg>
+                            </el-button>
+                        </inertia-link>
+                    </template>
+                </el-table-column>
+
+                <el-table-column type="expand" sortable>
+                    <template #default="props" >
+                        <div class="m-6 w-[70%]">
+                            CFE: <p> {{ props.row.no_servicio_cfe }} </p>
+                            Agua: <p> {{ props.row.no_servicio_agua }} </p>
+                            Wi-fi: <p> {{ props.row.no_servicio_internet }} </p>
+                            Fecha pago CFE: <p> {{ props.row.fecha_pago_cfe }} </p>
+                            Fecha pago Agua: <p> {{ props.row.fecha_pago_agua }} </p>
+                            Fecha pago internet: <p> {{ props.row.fecha_pago_internet }} </p>
+                        </div>
+                    </template>
+                </el-table-column>
+
+                <el-table-column prop="name" label="Nombre" width="200" sortable/>
+                <el-table-column prop="external_number" label="Número" width="110" sortable/>                
+                <el-table-column prop="street" label="Calle" width="200" sortable/>                
+                <el-table-column prop="postal_code" label="Código postal" width="150" sortable/>                
+                <el-table-column prop="state" label="Estado" width="150" sortable/>                
+                <el-table-column prop="town" label="Colonia" width="200" sortable/>                
+                <el-table-column prop="phone" label="Teléfono" width="150" sortable/>                
+
+            </el-table>
+            
             <br/>
-            <DataTable 
-                class="cell-border compact stripe hover order-column loading"
-                ref="table" id="datatable"
-                :data="stores"
-                :options="{
-                    responsive:true, autoWidth:false, select: true,  dom:'Bfrtip', buttons:[
-                        { 
-                            extend: 'selectAll', 
-                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                        },
-                        { 
-                            extend: 'print',
-                            text: 'Print selected rows', 
-                            className: 'shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-red-600 text-white dark:text-gray-900' 
-                        }
-                    ], language:{
-                        search:'Buscar Tienda ', zeroRecords:'No hay registros'
-                    }
-                }"
-                
-                :columns="[
-                    {data:'id'},
-                    {data:'name'},
-                    {data:'street'},
-                    {data:'phone'},
-                    {data:'email'}
-            ]">
-                <thead>
-                    <tr>
-                        <th>ID DB </th>
-                        <th>NOMBRE TIENDA</th>
-                        <th>CALLE</th>
-                        <th>TELEFONO</th>
-                        <th>CORREO</th>
-                    </tr>
-                </thead>
-            </DataTable>
 
         </div>
+
     </AppLayout>
-    <!-- <Footer 
-        :selectedProducts="rowCollectionSelected.length" 
-        :products="rowCollectionSelected"
-        :product="(rowCollectionSelected.length > 0) ? rowCollectionSelected[0] : null"
-        v-if="rowCollectionSelected.length > 0"/> -->
 </template>

@@ -37,10 +37,10 @@ class BoxCutController extends Controller
     {
         $caja = Box::where("store_id", $request->store_id)
                 ->where("status", "open")
-                ->whereDate("created_at", Carbon::today())
+                ->whereDate("box_date", Carbon::today())
                 ->where("seller_id", Auth::id())
                 ->first();
-        
+
         $corte = new BoxCut();
         $corte->store_id            = $request->store_id;
         $corte->cash_box            = $request->cash_box;

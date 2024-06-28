@@ -1,115 +1,182 @@
 <script >
-import AppLayout from '@/Layouts/AppLayout.vue';
-import ActionMessage from '@/Components/ActionMessage.vue';
-import FormSection from '@/Components/FormSection.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import SecondaryButtonPay from '@/Components/SecondaryButtonPay.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { ref } from 'vue';
-import axios from 'axios';
+import AppLayout        from '@/Layouts/AppLayout.vue';
+import PrimaryButton    from '@/Components/PrimaryButton.vue';
+import SecondaryButton  from '@/Components/SecondaryButton.vue';
+import Footer           from '@/Components/Footer.vue';
+import moment           from 'moment';
+import FormSection      from '@/Components/FormSection.vue';
+import RelatedList      from '@/Components/RelatedList.vue';
 
 export default{
     components:{
-        AppLayout, InputLabel, TextInput, PrimaryButton, SecondaryButton
+        AppLayout,
+        PrimaryButton,
+        SecondaryButton,
+        Footer,
+        FormSection,
+        RelatedList
     },
+    name: 'StoresShow',
     props:{
-        store: Object
+        customRecord: Object,
+        relatedListConfig: Object
+    },
+    methods:{
+        eliminar() {
+            if (confirm('¿Estás seguro de eliminar este registro?')) {
+                this.$inertia.delete(route('stores.destroy', this.customRecord.id));
+            }
+        },
+        lineItems(){
 
+            for (let i = 0; i < this.customRecord.line_any_items.length; i++) {
+                console.log(this.customRecord.line_any_items[i]);
+
+                if (!this.lineItemsObject[this.customRecord.line_any_items[i].type]) {
+                    this.lineItemsObject[this.customRecord.line_any_items[i].type] = [];
+                }
+                
+
+                this.lineItemsObject[this.customRecord.line_any_items[i].type].push(
+                    this.customRecord.line_any_items[i][this.customRecord.line_any_items[i].target_id.replace('_id', '')]
+                );
+            }
+
+            console.log(this.lineItemsObject)
+        }
     },
     data(){
         return {
-            salesList: [],
-            dt: null
-        }
-    },
-    methods:{
-        onRowClick(){
-            let rowCollectionSelected = new Array();
-            this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
-                rowCollectionSelected.push(recordSelected);
-            } );
-
-            this.rowCollectionSelected = rowCollectionSelected;
-            console.log(this.rowCollectionSelected);
+            lineItemsObject: new Array(),
+            
+            date: new Date()
         }
     },
     mounted(){
-        console.log(this.store);
+        let globalResults = [];
+        this.lineItems();
+        console.log('componente montado', this.customRecord)
+        console.log('testing', this.relatedListConfig)
+
+    },
+    computed: {
+        
     }
+
 }
-
-
-
 </script>
 
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                OliStore
-            </h2>
+            Detalle de la tienda
         </template>
+        <div>
+            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+                <inertia-link :href="route('stores.edit', customRecord.id)">
+                    <PrimaryButton  class="mb-3 ml-3 lg:ml-0"> Editar Tienda </PrimaryButton>
+                </inertia-link>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="md:grid md:grid-cols-3 md:gap-6">
+
+                <FormSection >
+
+                    <template #title>
+                        {{customRecord.name}}
+                    </template>
+                    <template #description>
+                        {{customRecord.workin_hours}}<br/>
+                        {{customRecord.created_by.name}}
+
+                        
+
+                    </template>
+                    <template #details>
+                        <br/>
+                        <el-descriptions title="Detalle del Gasto" :column="1" border>
+                            <el-descriptions-item label="Calle" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.street}} {{ customRecord.external_number }}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="Código Postal" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.postal_code}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="Estado" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.state}} </span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="Colonia" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.town}} {{customRecord.country}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="Ultima actualización por" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.updated_by.name}}</span>
+                            </el-descriptions-item>
+                        </el-descriptions>
+                        <br/>
+
+                        <el-descriptions title="Detalles de contacto" :column="1" border>
+                            <el-descriptions-item label="Website" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.website}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="E-mail" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.email}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="phone" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.phone}} </span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="No. Proveedores" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.no_providers}}</span>
+                            </el-descriptions-item>
+                        </el-descriptions>
+
+                        <el-descriptions title="Detalles de servicios" :column="1" border>
+                            <el-descriptions-item label="Supervisor" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.owner.name}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="No. de servicio CFE" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.no_servicio_cfe}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="Fecha de pago CFE" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.fecha_pago_cfe}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="No. de servicio Agua" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.no_servicio_agua}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="Fecha de pago Agua" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.fecha_pago_agua}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="No. de servicio Wifi" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.no_servicio_internet}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="Fecha de pago Wifi" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.fecha_pago_internet}}</span>
+                            </el-descriptions-item>
+                        </el-descriptions>
+
+                    </template>
+                    <template #relatedlist>
+                        
+                        <div v-for="(c, i) in relatedListConfig">
+
+                            <RelatedList 
+                                :customRecordsRelated ="lineItemsObject[i]"
+                                :title                ="c['title']"
+                                :titleModel           ="c['titleModel']"
+                                :visibleColumns       ="c['visibleColumns']"
+                                :formFields           ="c['formFields']" 
+                                :table                ="c['table']"
+                                :origin               ="c['origin']"
+                                :origin_field         ="c['origin_field']"
+                                :target_field         ="c['target_field']"
+                                :currentRecordId      ="c['currentRecordId']"
+                                classCard             ="'my-2 -pr-0 w-[470px]'" />
+                        </div>
+
+                    </template>
                     
-                    <div class="md:col-span-1">
-                        <div class="px-4 sm:px0">
-                            <h3 class="text-lg text-gray-900"> Detalle de un producto </h3>
-                            <br/>
-                            <table>
-                                <tr>
-                                    <td>
-                                        <inertia-link :href="route('products.edit', store.id)">
-                                            <PrimaryButton >
-                                                Editar Producto
-                                            </PrimaryButton>
-                                            
-                                        </inertia-link>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><b>ID DB :</b></td>
-                                    <td>{{store.id}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>NOMBRE storeO:</b></td>
-                                    <td>{{store.name}}</td>
-                                </tr>
-                               
-                            </table>
-                            
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 mt-5 md:mt-0">
-                        <div class="shadow bg-white md:rounded-md p-4">
-                            <h2>{{store.name}} // {{store.id}}</h2>
-                            <hr class="my-6"/>
 
-                            
-                            <hr class="my-6"/>
-                            <!-- <DatatableLocal 
-                                :data=""
-                                :columns=""
-                                :search=""
-                                :zeroRecords=""
-                                :records=""
-                            /> -->
-                           
-                            <hr class="my-6"/>
-                            <inertia-link :href="route('products.index')">
-                                Regresar
-                            </inertia-link>
-                        </div>
-                    </div>
-                </div>
+                </FormSection>
+
+                
             </div>
         </div>
+
     </AppLayout>
 </template>
-
-

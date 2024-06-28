@@ -36,14 +36,10 @@ export default{
         }
     },
     methods:{
-        onRowClick(){
-            // let rowCollectionSelected = new Array();
-            // this.dt.rows({ selected: true }).data().each( function ( recordSelected, index ) {
-            //     rowCollectionSelected.push(recordSelected);
-            // } );
-
-            // this.rowCollectionSelected = rowCollectionSelected;
-            // console.log(this.rowCollectionSelected);
+        eliminar() {
+            if (confirm('¿Estás seguro de eliminar este registro?')) {
+                this.$inertia.delete(route('providers.destroy', this.provider.id));
+            }
         },
         beforeCloseModal() {
         this.dialogVisible = false;
@@ -104,12 +100,16 @@ export default{
                                     <td>
                                         <inertia-link :href="route('providers.edit', provider.id)">
                                             <PrimaryButton >
-                                                Editar Provedor
+                                                Editar 
                                             </PrimaryButton>
-                                            
                                         </inertia-link>
                                         <br/>
-                                        <br/>
+                                        </td>
+                                        <td>
+                                            <PrimaryButton @click="eliminar()">
+                                                Eliminar 
+                                            </PrimaryButton>
+                                            <br/>
                                     </td>
                                 </tr>
                                 <tr>

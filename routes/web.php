@@ -87,6 +87,21 @@ Route::group(
         Route::get('/manager/task',                 [App\Http\Controllers\CoreController::class,    'taskManager']  )->name('core.task.manager');
 });
 
+/**
+ * related list routes
+ */
+Route::group(
+    [
+        'prefix' => 'relatedlist',
+        'middleware' => ['auth:sanctum']
+    ], function () {
+
+        Route::post('/store', [App\Http\Controllers\LineAnyItemController::class, 'storeFromRelatedList'])->name('relatedlist.store');
+        Route::post('/delete', [App\Http\Controllers\LineAnyItemController::class, 'delete'])->name('relatedlist.delete');
+        Route::post('/update', [App\Http\Controllers\LineAnyItemController::class, 'update'])->name('relatedlist.update');
+
+});
+
 
 Route::group(
     [

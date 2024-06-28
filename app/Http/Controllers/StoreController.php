@@ -11,8 +11,10 @@ use App\Models\User;
 use App\Models\Store;
 use App\Models\ProductLineItem;
 use App\Models\Sales;
-use App\Models\Provider;
+use App\Models\Providers;
 use App\Models\Stock;
+use App\Models\LineAnyItem;
+
 class StoreController extends Controller
 {
     public function index(){
@@ -56,13 +58,41 @@ class StoreController extends Controller
 
     public function show(Store $store){
 
-        $store->createdByUser = User::find($store->created_by_id);
-        $store->editedByUser = User::find($store->edited_by_id);
-        $store->ownerUser = User::find($store->owner_id);
+        $tienda = Store::with('createdBy')
+            ->with('updatedBy')
+            ->with('owner')
+            ->find($store->id);
 
-        
-   
-        return Inertia::render('Stores/Show', compact('store'));
+        $tienda->line_any_items = LineAnyItem::where('origin', 'stores')->where('store_id', $store->id)
+                ->with('updatedBy')
+                ->with('createdBy')
+
+                ->with('provider')
+                ->with('worker')
+                ->with('sales')
+                ->with('box')
+                ->with('category')
+                ->with('orders')
+            ->get();
+
+            
+
+        return Inertia::render('Stores/Show',[
+            'customRecord'      => $tienda,
+            'relatedListConfig' => [
+                'stores_providers' => [
+                    'title'          => 'Proveedores',
+                    'titleModel'     => 'Nueva relación de proveedor',
+                    'visibleColumns' => Providers::RELATED_LIST_COLUMNS,
+                    'formFields'     => Providers::MODAL_FORM_FIELDS,
+                    'table'          => 'providers',
+                    'origin'         => 'stores',
+                    'origin_field'   => 'store_id',
+                    'target_field'   => 'provider_id',
+                    'currentRecordId' => $store->id
+                ],
+            ]
+        ] );
     }
 
     public function edit(Sales $sales){
