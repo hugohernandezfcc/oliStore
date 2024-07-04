@@ -1,5 +1,5 @@
 <template>
-    <el-tabs v-model="activeName" class="lg:w-[100%] md:w-[100%] sm:w-[230%] w-[180%]" @tab-click="handleClick">
+    <el-tabs v-model="activeName" class="w-full" @tab-click="handleClick">
         <el-tab-pane  label="Inventarios" name="first">
 
             <div class="w-full py-1" v-for="(s, i) in product.stores">
