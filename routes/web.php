@@ -39,7 +39,7 @@ Route::resource('salesproducts',    App\Http\Controllers\SalesProductsController
 Route::resource('stores',           App\Http\Controllers\StoreController::class         )->middleware('auth:sanctum');
 Route::resource('providers',        App\Http\Controllers\ProvidersController::class     )->middleware('auth:sanctum');
 Route::resource('stocks',           App\Http\Controllers\StockController::class         )->middleware('auth:sanctum');
-Route::resource('barcodes',         App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
+// Route::resource('barcodes',         App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
 Route::resource('prices',           App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
 Route::resource('categories',       App\Http\Controllers\CategoryController::class      )->middleware('auth:sanctum');
 
