@@ -19,10 +19,10 @@ use App\Models\tickets;
 class ProvidersController extends Controller
 {
     public function index(){
-        $tiendas = Providers::get();
+        $providers = Providers::get();
 
-        return Inertia::render('Providers/Index', [
-            'providers' => $tiendas,
+        return Inertia::render('Providers2/Index', [
+            'providers' => $providers,
         ]);
     }
 

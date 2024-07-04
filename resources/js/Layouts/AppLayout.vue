@@ -85,6 +85,10 @@ console.log(router.page.url.indexOf("tickets"));
                                                     Productos
                                                 </DropdownLink>
 
+                                                <DropdownLink :href="route('categories.index')" :active="router.page.url.indexOf('categories') >= 0">
+                                                    Categorias
+                                                </DropdownLink>
+
                                                 <DropdownLink :href="route('providers.index')" :active="router.page.url.indexOf('providers') >= 0">
                                                     Proveedores
                                                 </DropdownLink>
@@ -286,6 +290,9 @@ console.log(router.page.url.indexOf("tickets"));
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('products.index')" :active="router.page.url.indexOf('products') >= 0">
                             Productos
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('categories.index')" :active="router.page.url.indexOf('categories') >= 0">
+                            Categorias
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('tickets.index')" :active="router.page.url.indexOf('tickets') >= 0">
                             Tickets

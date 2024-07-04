@@ -18,7 +18,7 @@
             </div>
           </div>
         </template>
-        <el-table :data="filterTableData" class="shadow-lg -m-5" stripe >
+        <el-table :data="filterTableData" class="shadow-lg -m-5" stripe style="width: 100%; height: 400px;">
             <el-table-column align="left" width="70" fixed="left">
                 <template #default="scope">
                     <inertia-link :href="route(table+'.show', scope.row.id)" >

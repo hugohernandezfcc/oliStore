@@ -41,6 +41,8 @@ class BoxCutController extends Controller
                 ->where("seller_id", Auth::id())
                 ->first();
 
+
+
         $corte = new BoxCut();
         $corte->store_id            = $request->store_id;
         $corte->cash_box            = $request->cash_box;

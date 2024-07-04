@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\BarCode;
 use Inertia\Inertia;
 
-class BarCodeController extends Controller
+class CategoryControllerBarCodeController extends Controller
 {
     // Display a listing of the resource
     public function index()

@@ -3,7 +3,6 @@ import AppLayout        from '@/Layouts/AppLayout.vue';
 import PrimaryButton    from '@/Components/PrimaryButton.vue';
 import SecondaryButton  from '@/Components/SecondaryButton.vue';
 import Footer           from '@/Components/Footer.vue';
-import moment           from 'moment';
 import FormSection      from '@/Components/FormSection.vue';
 import RelatedList      from '@/Components/RelatedList.vue';
 import RelatedListNative from '@/Components/RelatedListNative.vue';
@@ -18,7 +17,7 @@ export default{
         RelatedList,
         RelatedListNative
     },
-    name: 'StoresShow',
+    name: 'CategoriesShow',
     props:{
         customRecord: Object,
         relatedListConfig: Object,
@@ -28,21 +27,20 @@ export default{
     methods:{
         eliminar() {
             if (confirm('¿Estás seguro de eliminar este registro?')) {
-                this.$inertia.delete(route('stores.destroy', this.customRecord.id));
+                this.$inertia.delete(route('categories.destroy', this.customRecord.id));
             }
         },
         lineItems(){
 
             for (let i = 0; i < this.customRecord.line_any_items.length; i++) {
-                console.log(this.customRecord.line_any_items[i]);
+
 
                 if (!this.lineItemsObject[this.customRecord.line_any_items[i].type]) {
                     this.lineItemsObject[this.customRecord.line_any_items[i].type] = [];
                 }
-                
 
                 this.lineItemsObject[this.customRecord.line_any_items[i].type].push(
-                    this.customRecord.line_any_items[i][this.customRecord.line_any_items[i].target_id.replace('_id', '')]
+                    (this.customRecord.line_any_items[i][this.customRecord.line_any_items[i].target_id.replace('_id', '')] == undefined) ? this.customRecord.line_any_items[i][this.customRecord.line_any_items[i].target_id.replace('_id', 's')] : this.customRecord.line_any_items[i][this.customRecord.line_any_items[i].target_id.replace('_id', '')]
                 );
             }
 
@@ -74,16 +72,16 @@ export default{
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            Detalle de la tienda
+            Detalle de la Categoría
         </template>
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <inertia-link :href="route('stores.edit', customRecord.id)">
-                    <PrimaryButton  class="mb-3 ml-3 lg:ml-0"> Editar Tienda </PrimaryButton>
+                    <PrimaryButton  class="mb-3 ml-3 lg:ml-0"> Editar Categoría </PrimaryButton>
                 </inertia-link>&nbsp;&nbsp;
-                <inertia-link :href="route('stores.edit', customRecord.id)">
-                    <PrimaryButton  class="mb-3 ml-3 lg:ml-0"> Ordenes de compra </PrimaryButton>
-                </inertia-link>
+                <PrimaryButton @click="eliminar" class="mb-3 ml-3 lg:ml-1"> 
+                    Eliminar <svg class="ml-1 -mt-0.5 h-4 w-4 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M352 192V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64H96a32 32 0 0 1 0-64zm64 0h192v-64H416zM192 960a32 32 0 0 1-32-32V256h704v672a32 32 0 0 1-32 32zm224-192a32 32 0 0 0 32-32V416a32 32 0 0 0-64 0v320a32 32 0 0 0 32 32m192 0a32 32 0 0 0 32-32V416a32 32 0 0 0-64 0v320a32 32 0 0 0 32 32"></path></svg>
+                </PrimaryButton>
 
 
                 <FormSection >
@@ -92,7 +90,7 @@ export default{
                         {{customRecord.name}}
                     </template>
                     <template #description>
-                        {{customRecord.workin_hours}}<br/>
+
                         {{customRecord.created_by.name}}
 
                         
@@ -102,67 +100,35 @@ export default{
 
                         <br/>
                         <el-descriptions title="Detalle del Gasto" :column="1" border>
-                            <el-descriptions-item label="Calle" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.street}} {{ customRecord.external_number }}</span>
+                            <el-descriptions-item label="Categoría" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.name}} </span>
                             </el-descriptions-item>
-                            <el-descriptions-item label="Código Postal" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.postal_code}}</span>
+                            <el-descriptions-item label="Descripción" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.description}} </span>
                             </el-descriptions-item>
-                            <el-descriptions-item label="Estado" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.state}} </span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="Colonia" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.town}} {{customRecord.country}}</span>
+                            <el-descriptions-item label="Icono" label-align="right" align="left" width="80px">
+                                <el-image
+                                    style="width: 40px;"
+                                    :src="customRecord.image" />
                             </el-descriptions-item>
                             <el-descriptions-item label="Ultima actualización por" label-align="right" align="left" width="80px">
                                 <span >{{customRecord.updated_by.name}}</span>
                             </el-descriptions-item>
+                            <el-descriptions-item label="Fecha de creación" label-align="right" align="left" width="80px">
+                                <span >{{customRecord.created_at}}</span>
+                            </el-descriptions-item>
+                            <el-descriptions-item label="Ultima actualización " label-align="right" align="left" width="80px">
+                                <span >{{customRecord.updated_at}}</span>
+                            </el-descriptions-item>
                         </el-descriptions>
                         <br/>
 
-                        <el-descriptions title="Detalles de contacto" :column="1" border>
-                            <el-descriptions-item label="Website" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.website}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="E-mail" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.email}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="phone" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.phone}} </span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="No. Proveedores" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.no_providers}}</span>
-                            </el-descriptions-item>
-                        </el-descriptions>
-
-                        <el-descriptions title="Detalles de servicios" :column="1" border>
-                            <el-descriptions-item label="Supervisor" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.owner.name}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="No. de servicio CFE" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.no_servicio_cfe}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="Fecha de pago CFE" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.fecha_pago_cfe}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="No. de servicio Agua" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.no_servicio_agua}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="Fecha de pago Agua" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.fecha_pago_agua}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="No. de servicio Wifi" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.no_servicio_internet}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="Fecha de pago Wifi" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.fecha_pago_internet}}</span>
-                            </el-descriptions-item>
-                        </el-descriptions>
+                       
 
                     </template>
                     <template #relatedlist>
-                        
-                        <div v-for="(c, i) in relatedListConfig">
+
+                        <div   v-for="(c, i) in relatedListConfig">
 
                             <RelatedList 
                                 :customRecordsRelated ="lineItemsObject[i]"
@@ -183,7 +149,7 @@ export default{
 
                         <div v-for="(m, o) in relatedList">
 
-                            <RelatedListNative 
+                            <!-- <RelatedListNative 
                                 :customRecordsRelated ="customRecord.boxes"
                                 :title                ="m['title']"
                                 :titleModel           ="m['titleModel']"
@@ -194,7 +160,7 @@ export default{
                                 :origin_field         ="m['origin_field']"
                                 :currentRecordId      ="m['currentRecordId']"
                                 :showNewRecordButton  ="m['showNewRecordButton']"
-                                classCard             ="'my-2 -pr-0 w-[470px]'" />
+                                classCard             ="'my-2 -pr-0 w-[470px]'" /> -->
                         </div>
 
                         <!-- RelatedListNative -->

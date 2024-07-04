@@ -17,8 +17,16 @@ class Category extends Model
         'icon',
         'parent_id',
         'created_by',
-        'updated_by'
+        'updated_by',
+        'created_at',
+        'updated_at'
     ];
+
+    protected $casts = [
+        'created_at'  => 'datetime:Y-m-d H:i',
+        'updated_at' => 'datetime:Y-m-d H:i'
+    ];
+
 
     public function parent()
     {

@@ -28,6 +28,8 @@ class LineAnyItem extends Model
         'box_id',
         'category_id',
         'orders_id',
+        'product_id',
+        'stock_id'
     ];
 
     public function updatedBy() : BelongsTo
@@ -73,5 +75,10 @@ class LineAnyItem extends Model
     public function orders() : BelongsTo
     {
         return $this->belongsTo(PurchaseOrder::class, 'orders_id');
+    }
+
+    public function products() : BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

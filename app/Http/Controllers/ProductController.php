@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\ProductLineItem;
 use App\Models\Sales;
-use App\Models\Price;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -20,15 +20,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::get();
+        $products = Product::select('id', 'name', 'folio', 'Description', 'price_list', 'price_customer', 'updated_at')->get();
 
-        for ($i=0; $i < $products->count(); $i++) { 
-            $products[$i]->price_list   = '$' . $products[$i]->price_list . ' MXN'; 
-            $products[$i]->price_customer   = '$' . $products[$i]->price_customer . ' MXN'; 
-            $products[$i]->profit_percentage    = $products[$i]->profit_percentage . ' %'; 
-        }
-
-        return Inertia::render('Products/Index', [
+        return Inertia::render('Products2/Index', [
             'products' => $products,
         ]);
     }
@@ -88,7 +82,7 @@ class ProductController extends Controller
     public function create()
     {
         
-        return Inertia::render('Products/Create');
+        return Inertia::render('Products2/Create');
     }
 
     
@@ -111,32 +105,45 @@ class ProductController extends Controller
         $producto['profit_percentage'] = $valorFinal;
         $producto['created_by_id'] = Auth::id();
         $producto['edited_by_id'] = Auth::id();
+        $producto['created_at'] = Carbon::now();
+        $producto['updated_at'] = Carbon::now();
+        $item = Product::create($producto);
+        
 
-        Product::create($producto);
-        return redirect()->route('products.index');
+        return Inertia::render('Products2/Show', [
+            'customRecord' => Product::with('createdBy', 'editedBy', 'ProductLineItems', 'prices', 'stocks')->find($item->id)
+        ] );
     }
     
+    public function storeStock(Request $request){
+
+        $Stock = Stock::updateOrCreate(
+            ['folio' => $request->get('folio'), 'product_id' => $request->get('product_id'), 'store_id' => $request->get('store_id')],
+            [
+                'name' => $request->get('name'),
+                'folio' => $request->get('folio'),
+                'description' => $request->get('description'),
+                'quantity' => intval($request->get('counterProducts')),
+                'investment' => intval($request->get('counterProducts'))*floatval($request->get('price_list')),
+                'store_id' => $request->get('store_id'),
+                'product_id' => $request->get('product_id'),
+                'created_by_id' => Auth::id(),
+                'edited_by_id' => Auth::id()
+            ]
+        );
+
+
+        return response()->json($Stock);
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(Product $product)
     {
-        $product = Product::with('createdBy', 'editedBy', 'ProductLineItems', 'prices')->find($product->id);
-
-        $product->ProductLineItems = ProductLineItem::where('product_id', $product->id)->get();
-        $product->totalVentas = count($product->ProductLineItems);
-        $product->totalPrecioCliente = 0;
-        $product->totalPrecioList = 0;
-        $product->salesList = array();
-
-        for ($i=0; $i < count($product->ProductLineItems); $i++) { 
-            $product->ProductLineItems[$i]->sale = Sales::where('id', $product->ProductLineItems[$i]->sale_id)->get()->toArray();
-            $product->totalPrecioCliente = $product->totalPrecioCliente + floatval($product->price_customer);
-            $product->totalPrecioList = $product->totalPrecioList + floatval($product->price_list);
-        }       
-        
-        
-        return Inertia::render('Products/Show', compact('product') );
+        return Inertia::render('Products2/Show', [
+            'customRecord' => Product::with('createdBy', 'editedBy', 'ProductLineItems', 'prices', 'stocks')->find($product->id)
+        ] );
     }
 
     /**
@@ -144,7 +151,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return Inertia::render('Products/Edit', compact('product'));
+        return Inertia::render('Products2/Edit', compact('product'));
     }
 
     /**
@@ -152,27 +159,20 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-
-        
-        $request->validate([
-            'name'          => 'required',
-            'Description' => 'required',
-            'unit_measure' => 'required',
-            'price_list' => 'required',
-            'price_customer' => 'required',
-            'expiry_date' => 'required'
-        ]);
-        
+ 
         $producto = $request->all();
         $valor = doubleval($producto["price_customer"]) - doubleval($producto["price_list"]);
         $valorFinal = ($valor / doubleval($producto["price_customer"])) * 100;
 
         
         $producto['profit_percentage'] = $valorFinal;
+        $producto['updated_at'] = Carbon::now();
 
 
         $product->update($producto);
-        return redirect()->route('products.index');
+        return Inertia::render('Products2/Show', [
+            'customRecord' => Product::with('createdBy', 'editedBy', 'ProductLineItems', 'prices')->find($product->id)
+        ] );
     }
 
     /**

@@ -18,7 +18,7 @@
         </div>
       </div>
     </template>
-    <el-table :data="filterTableData" class="shadow-lg -m-5" stripe >
+    <el-table :data="filterTableData" class="shadow-lg -m-5" stripe style="width: 100%; height: 400px;" v-loading="loading">
         <el-table-column align="left" width="70" fixed="left">
             <template #default="scope">
                 <inertia-link :href="route(table+'.show', scope.row.id)" >
@@ -55,18 +55,18 @@
             </el-collapse-item>
             <el-collapse-item title="Buscar y relacionar registro" name="2">
                 <br/>
-                <LookupField :firstLine="'company'" 
-                             :secondLine="'representative'" 
-                             :lastLine="'whatsapp'" 
+                <LookupField :firstLine="searchIn" 
+                             :secondLine="secondLine" 
+                             :lastLine="lastLine" 
                              ref="lookupProvider" 
                              :likeDataFx="{
                                 fields: detailToRelate,
-                                table: 'providers',
+                                table: table,
                                 limit: 50,
                                 orderBy: 'created_at',
                                 order: 'asc',
                                 where: {
-                                    field: 'company',
+                                    field: searchIn,
                                     operator: 'LIKE',
                                 }
                             }" style="width: 100%"
@@ -75,7 +75,13 @@
                                 this.renderDetails = true;
                                 this.justCreateRelationship = true;
                             }"/>
-            <br/><br/>
+            <br/>
+            <br/>
+            <div class="dialog-footer">
+                <el-button type="primary" @click="confirmFormDialog" color="#dc2626">Confirm</el-button>
+                <el-button @click="closeFormDialog">Cancel</el-button>
+            </div>
+            <br/>
             <el-descriptions title="Detalles " :column="1" border v-if="renderDetails" >
                 <div v-for="field in formFields">
                     <el-descriptions-item :label="field.label" label-align="right" align="left"  width="80px">
@@ -84,11 +90,6 @@
                 </div>
                 
             </el-descriptions>
-            <br/>
-            <div class="dialog-footer">
-                    <el-button type="primary" @click="confirmFormDialog" color="#dc2626">Confirm</el-button>
-                    <el-button @click="closeFormDialog">Cancel</el-button>
-                </div>
             </el-collapse-item>
         </el-collapse>
         
@@ -175,16 +176,26 @@ export default {
         },
         currentRecordId:{
             type: Number
+        },
+        searchIn: {
+            type: String
+        },
+        secondLine: {
+            type: String
+        },
+        lastLine: {
+            type: String
         }
     },
     data() {
         return {
+            loading: true,
             showPosts: false,
             dialogFormVisible: false,
             search: '',
             toRenderValues: [],
             formLabelWidth: '140px',
-            activeAction: ['1'],
+            activeAction: ['2'],
             form: [],
             recordToRelate: null,
             detailToRelate:[],
@@ -197,8 +208,8 @@ export default {
         this.dialogFormVisible = false;
         },
         confirmFormDialog() {
-            
-
+            console.log(this.form);
+            this.loading = true;
             let record = {};
             for (let i = 0; i < this.form.length; i++) {
                 record[this.form[i].prop] = this.form[i].value;
@@ -228,7 +239,8 @@ export default {
                 })
 
                 this.toRenderValues.push(response.data[0]);
-
+                // this.recordToRelate = null;
+                this.loading = false;
             }).catch(error => {
                 console.log(error)
             });
@@ -267,7 +279,7 @@ export default {
                     this.toRenderValues.push(this.customRecordsRelated[i]);
                 }
             }
-            
+            this.loading = false;
         }, 2000);
     }
 }

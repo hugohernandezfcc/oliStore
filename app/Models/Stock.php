@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Stock extends Model
 {
     use HasFactory;
+    protected $table = 'stocks';
     protected $fillable = [
         'name',
         'folio',
@@ -25,12 +26,12 @@ class Stock extends Model
 
     public function lastTicketItemApplied()
     {
-        return $this->belongsTo(Ticket::class, 'last_ticket_item_applied_id');
+        return $this->belongsTo(Tickets::class, 'last_ticket_item_applied_id');
     }
 
     public function provider()
     {
-        return $this->belongsTo(Provider::class);
+        return $this->belongsTo(Providers::class);
     }
 
     public function store()

@@ -34,6 +34,7 @@ class ProcessSalesIntoStock implements ShouldQueue
         
 
         $productos = ProductLineItem::with("productId")
+            ->with("saleId")
             ->where("sale_id", $this->saleLocalId)
             ->get();
 
@@ -41,7 +42,7 @@ class ProcessSalesIntoStock implements ShouldQueue
             $productSubtracted = [];
             for ($i = 0; $i < count($productos); $i++) {
             $pIdLocal =
-                $productos[$i]->productId->id . "@" . $productos[$i]->productId->folio;
+                $productos[$i]->productId->id . "@" . $productos[$i]->productId->folio . '@' . $productos[$i]->saleId->store;
             if (isset($productSubtracted[$pIdLocal])) {
                 $productSubtracted[$pIdLocal]++;
             } else {
@@ -57,7 +58,8 @@ class ProcessSalesIntoStock implements ShouldQueue
 
                     $product = Stock::where([
                         ["product_id", $productKey[0]],
-                        ["folio", $productKey[1]]
+                        ["folio", $productKey[1]],
+                        ["store_id", $productKey[2]],
                     ])->first();
                     $product->quantity = $product->quantity - $value;
 
@@ -73,8 +75,7 @@ class ProcessSalesIntoStock implements ShouldQueue
                     $product->quantity = 0 - $value;
                     $product->created_by_id = $producto->created_by_id;
                     $product->edited_by_id = $producto->edited_by_id;
-                    $product->store_id = 3;
-                    $product->provider_id = 2;
+                    $product->store_id = $productKey[2];
                     $product->profit = 0;
                     $product->investment = 0;
                     $product->save();

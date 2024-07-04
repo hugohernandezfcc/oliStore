@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class tickets extends Model
+class Tickets extends Model
 {
     use HasFactory;
+    protected $table = 'tickets';
 
     protected $fillable = [
         'noTicket',
@@ -34,6 +35,11 @@ class tickets extends Model
     public function ticketItems(): HasMany
     {
         return $this->hasMany(ticketItems::class, 'ticket_id');
+    }
+
+    public function provider()  
+    {
+        return $this->belongsTo(Providers::class, 'provider_id');
     }
 }
 

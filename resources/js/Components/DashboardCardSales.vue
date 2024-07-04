@@ -58,32 +58,22 @@ export default {
 
 
     axios.post(route('card.sales')).then((res) => {
-    //   console.log(res);
       res.data['stores'].forEach((element) => {
           this.options.push({label: element.name, value: element.name});
-          
-          
           this.paramLink[element.name] = element.id;
-
       });
-      
+
       res.data['sales'].forEach((element) => {
         if(this.salesByStore[element.store] == undefined)
             this.salesByStore[element.store] = parseFloat(element.total);
         else
             this.salesByStore[element.store] += parseFloat(element.total);
-
+            
         this.salesByStore['total'] += parseFloat(element.total);
       });
-
-      
-    }).catch((error) => {
-      console.log(error);
-    });
+    }).catch((error) => { console.log(error); });
 
     this.link = '/sales/' + this.titleFooter.start+'/'+this.titleFooter.end+'/results/'+this.paramLink[this.store_str];
-    console.log(this.titleFooter);
-    console.log(this.link);
   }
 }
 </script>

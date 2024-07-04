@@ -18,11 +18,14 @@ use App\Models\LineAnyItem;
 class StoreController extends Controller
 {
     public function index(){
-        $tiendas = Store::get();
-
-        return Inertia::render('Stores/Index', [
-            'stores' => $tiendas,
-        ]);
+        return Inertia::render('Stores/Index', 
+            [ 
+                'stores' => Store::get() 
+            ]
+        );
+    }
+    public function index2(){
+        return response()->json(Store::get());
     }
 
     public function create(){
@@ -90,7 +93,10 @@ class StoreController extends Controller
                     'origin'         => 'stores',
                     'origin_field'   => 'store_id',
                     'target_field'   => 'provider_id',
-                    'currentRecordId'=> $store->id
+                    'currentRecordId'=> $store->id,
+                    'searchIn'       => 'company',
+                    'secondLine'     => 'representative',
+                    'lastLine'       => 'whatsapp'
                 ],
             ],
             'relatedList'            => [

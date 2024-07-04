@@ -58,7 +58,7 @@ export default {
         }else{
           cb(results);
         }
-      }, 1000);
+      }, 500);
     },
     createFilter(queryString) {
       return (record) => {

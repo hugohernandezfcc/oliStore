@@ -16,6 +16,39 @@ class Product extends Model
 
     //Make it available in the json response
     protected $appends = ['bar_code'];
+    public const RELATED_LIST_COLUMNS = [
+        ['prop' => 'id',    'label' => 'id',              'width' => '50', 'type' => 'text'],
+        ['prop' => 'name',    'label' => 'Nombre',              'width' => '120', 'type' => 'text'],
+        ['prop' => 'folio',   'label' => 'Código de barras',    'width' => '160', 'type' => 'text'],
+        ['prop' => 'Description', 'label' => 'Descripción',     'width' => '120', 'type' => 'text'],
+        ['prop' => 'unit_measure', 'label' => 'Unidad de medida', 'width' => '150', 'type' => 'text'],
+        ['prop' => 'price_list', 'label' => 'Precio de lista',  'width' => '120', 'type' => 'text'],
+        ['prop' => 'price_customer', 'label' => 'Precio al cliente', 'width' => '120', 'type' => 'text'],
+        ['prop' => 'profit_percentage', 'label' => 'Porcentaje de ganancia', 'width' => '120', 'type' => 'text'],
+        ['prop' => 'expiry_date', 'label' => 'Fecha de caducidad', 'width' => '120', 'type' => 'text'],
+        ['prop' => 'created_by_id', 'label' => 'Creado por', 'width' => '120', 'type' => 'text'],
+        ['prop' => 'edited_by_id', 'label' => 'Editado por', 'width' => '120', 'type' => 'text'],
+        ['prop' => 'take_portion', 'label' => 'Tomar porción', 'width' => '120', 'type' => 'text'],
+        ['prop' => 'express_creation', 'label' => 'Creación express', 'width' => '120', 'type' => 'text'],
+        ['prop' => 'visible_product', 'label' => 'Producto visible', 'width' => '120', 'type' => 'text'],
+        
+    ];
+    public const MODAL_FORM_FIELDS = [
+        ['prop' => 'id',              'label' => 'id',                'type' => 'text'],
+        ['prop' => 'name',            'label' => 'Nombre',            'type' => 'text'],
+        ['prop' => 'folio',           'label' => 'Código de barras',  'type' => 'text'],
+        ['prop' => 'Description',     'label' => 'Descripción',       'type' => 'text'],
+        ['prop' => 'unit_measure',    'label' => 'Unidad de medida',  'type' => 'text'],
+        ['prop' => 'price_list',      'label' => 'Precio de lista',   'type' => 'text'],
+        ['prop' => 'price_customer',  'label' => 'Precio al cliente', 'type' => 'text'],
+        ['prop' => 'profit_percentage','label' => 'Porcentaje de ganancia', 'type' => 'text'],
+        ['prop' => 'expiry_date',     'label' => 'Fecha de caducidad', 'type' => 'date'],
+        ['prop' => 'created_by_id',   'label' => 'Creado por',        'type' => 'text'],
+        ['prop' => 'edited_by_id',    'label' => 'Editado por',       'type' => 'text'],
+        ['prop' => 'take_portion',    'label' => 'Tomar porción',     'type' => 'text'],
+        ['prop' => 'express_creation','label' => 'Creación express',  'type' => 'text'],
+        ['prop' => 'visible_product', 'label' => 'Producto visible',  'type' => 'text'],
+    ];
 
     protected $fillable = [
         'name',
@@ -32,7 +65,13 @@ class Product extends Model
         'express_creation',
         'visible_product',
         'category_id',
-        'sub_category_id'
+        'sub_category_id',
+        'expiry_date_range',
+        'is_public',
+        'is_private',
+        'public_description',
+        'public_name',
+        'image'
     ];
     
     protected $casts = [
@@ -61,7 +100,8 @@ class Product extends Model
         return $this->belongsTo(User::class, 'edited_by_id');
     }
 
-    
+
+
     public function ProductLineItems(): HasMany
     {
         return $this->hasMany(ProductLineItem::class);

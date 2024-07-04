@@ -15,11 +15,16 @@ use Inertia\Inertia;
 |
 */
 
+Route::get('/welcome', function () {
+    return Inertia::render('Welcome');
+})->name('welcome');
+
 Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
 
 Route::resource('boxcut',           App\Http\Controllers\BoxCutController::class        )->middleware('auth:sanctum');
 Route::resource('box',              App\Http\Controllers\BoxController::class        )->middleware('auth:sanctum');
@@ -36,8 +41,11 @@ Route::resource('providers',        App\Http\Controllers\ProvidersController::cl
 Route::resource('stocks',           App\Http\Controllers\StockController::class         )->middleware('auth:sanctum');
 Route::resource('barcodes',         App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
 Route::resource('prices',           App\Http\Controllers\BarCodeController::class       )->middleware('auth:sanctum');
+Route::resource('categories',       App\Http\Controllers\CategoryController::class      )->middleware('auth:sanctum');
 
 Route::post('/lookup/field/', [App\Http\Controllers\CoreController::class,          'lookupField' ])->name('lookup.field');
+
+Route::post('/upload',            [App\Http\Controllers\FileUploadController::class,          'store']);
 
 
 Route::get('/sales/retrieveproduct/{folio}',            [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
@@ -55,6 +63,18 @@ Route::get('tickets/destroy/{id}',           [App\Http\Controllers\TicketsContro
 Route::get('tickets/destroyItem/{id}',       [App\Http\Controllers\TicketsController::class, 'destroyItem'])->middleware('auth:sanctum');
 Route::get('ticketItem/show/{id}',           [App\Http\Controllers\TicketsController::class, 'ticketItemShow'])->middleware('auth:sanctum');
 Route::post('ticketItem/update/{id}',         [App\Http\Controllers\TicketsController::class, 'ticketItemUpdate'])->middleware('auth:sanctum');
+
+/**
+ * Core routes
+ */
+Route::group(['prefix' => 'app' ], function () {
+
+        /**
+         * Routes for users
+         */
+        Route::get('/order/{sessionId}', [App\Http\Controllers\AppController::class, 'index']  );
+
+});
 
 /**
  * Core routes
@@ -88,8 +108,20 @@ Route::group(
         Route::get('/manager/task',                 [App\Http\Controllers\CoreController::class,    'taskManager']  )->name('core.task.manager');
 });
 
+Route::group(
+    [
+        'prefix' => 'frontend',
+        'middleware' => ['auth:sanctum']
+    ], function () {
+
+    Route::get('/frontend/stores',          [App\Http\Controllers\StoreController::class, 'index2']      )->name('stores.index2');
+    Route::post('/frontend/storeStock',     [App\Http\Controllers\ProductController::class, 'storeStock'])->name('store.stock.product');
+    
+
+});
+
 /**
- * related list routes
+ * related list routes 
  */
 Route::group(
     [

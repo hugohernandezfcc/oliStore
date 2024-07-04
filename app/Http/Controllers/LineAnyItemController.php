@@ -15,6 +15,7 @@ use App\Models\ProductLineItem;
 use App\Models\Sales;
 use App\Models\tickets;
 
+
 class LineAnyItemController extends Controller
 {
     public $nativeRecord;
@@ -74,12 +75,34 @@ class LineAnyItemController extends Controller
 
         
         return response()->json([
-            (!$request->justCreateRelationship) ? $this->nativeRecord : Providers::find($this->targetId),
+            (!$request->justCreateRelationship) ? $this->nativeRecord : self::callerFx($request->table, $this->targetId),
             LineAnyItem::create(
                 $this->lineAnyItemRecord
             )
         ]);
 
+    }
+
+    public static function callerFx(String $table, Int $target_Id){
+        switch ($table) {
+            case 'products':
+                return Product::find($target_Id);
+                break;
+            case 'providers':
+                return Providers::find($target_Id);
+                break;
+        }
+    }
+
+    public static function products(Request $request){
+        return Product::create([
+            'name'          => $request->name,
+            'description'   => $request->Description,
+            'price_list'    => $request->price_list,
+            'created_by_id' => Auth::id(),
+            'edited_by_id'  => Auth::id(),
+            'store_id'      => $request->currentRecordId
+        ]);
     }
 
     public static function provider(Request $request){

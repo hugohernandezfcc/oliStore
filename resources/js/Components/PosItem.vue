@@ -32,11 +32,11 @@
 </template>
 <style >
     .el-input-number__decrease, .el-input-number__increase {
-        background: #dc2626 !important;
+        background: red !important;
         color: white !important;
     }
     .el-input-group--append .el-input-group__append .el-select .el-input .el-input__wrapper {
-        background-color: #dc2626 !important;
+        background-color: red !important;
         color: white !important;
     }
 </style>
