@@ -7,6 +7,8 @@ import moment           from 'moment';
 import FormSection      from '@/Components/FormSection.vue';
 import StockIndicator   from '@/Components/StockIndicator.vue';
 import { ArrowLeftBold } from '@element-plus/icons-vue';
+
+
 export default{
     components:{
         AppLayout,
@@ -15,7 +17,8 @@ export default{
         Footer,
         FormSection,
         StockIndicator,
-        ArrowLeftBold
+        ArrowLeftBold,
+
     },
 
     props:{
@@ -42,6 +45,7 @@ export default{
     mounted(){
         let globalResults = [];
         console.log('componente montado', this.customRecord)
+
     },
     computed: {
         filterTableData() {

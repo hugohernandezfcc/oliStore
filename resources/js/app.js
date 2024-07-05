@@ -12,7 +12,9 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import { Search, Edit } from '@element-plus/icons-vue';
 
+
 DataTable.use(DataTablesLib);
+
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -24,6 +26,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(ElementPlus)
+
             .component('DataTable', DataTable)
             .component('search', Search)
             .component('edit', Edit)

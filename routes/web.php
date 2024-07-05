@@ -114,8 +114,9 @@ Route::group(
         'middleware' => ['auth:sanctum']
     ], function () {
 
-    Route::get('/frontend/stores',          [App\Http\Controllers\StoreController::class, 'index2']      )->name('stores.index2');
-    Route::post('/frontend/storeStock',     [App\Http\Controllers\ProductController::class, 'storeStock'])->name('store.stock.product');
+    Route::get('/frontend/stores',          [App\Http\Controllers\StoreController::class, 'index2']       )->name('stores.index2');
+    Route::post('/frontend/storeStock',     [App\Http\Controllers\ProductController::class, 'storeStock'] )->name('store.stock.product');
+    Route::post('/frontend/search/product', [App\Http\Controllers\ProductController::class, 'searchRecord'])->name('search.product');
     
 
 });

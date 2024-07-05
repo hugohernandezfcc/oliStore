@@ -21,18 +21,44 @@ export default{
         return {
             rowCollectionSelected: new Array(),
             search:'',
-
+            localProducts: {},
+            loading:false
         }
     },
     mounted(){
+        this.localProducts = this.products;
         console.log('mounted',this.products);
     },
     computed: {
         filterTableData() {
-            return this.products.filter(
+
+            let beforeReturn = Object.values(this.localProducts).filter(
                 (data) =>
                 !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
             );
+            
+            console.log('filterTableData', beforeReturn.length)
+
+            if(beforeReturn.length == 0 && this.search.length > 1)
+                {
+                    this.loading = true;
+
+                    axios.post(route('search.product'), {search: this.search}).then((res) => {
+                        console.log(res);
+                        this.localProducts = {
+                            ...this.localProducts,
+                            ...res.data
+                        };
+                        this.loading = false;
+                    }).catch((error) => { console.log(error); });
+
+                }
+            else
+                this.loading = false;
+
+
+            return beforeReturn;
+            
         },
     }
 
@@ -62,7 +88,7 @@ export default{
             </div>
 
             <br/>
-            <el-table :data="filterTableData" height="600" class="shadow-lg m-1"  stripe :default-sort="{ prop: 'updated_at', order: 'descending' }" >
+            <el-table v-loading="loading" :data="filterTableData" height="600" class="shadow-lg m-1"  stripe :default-sort="{ prop: 'updated_at', order: 'descending' }" >
                 <el-table-column align="left" width="70" fixed="left">
                     <template #default="scope">
                         <inertia-link :href="route('products.show', scope.row.id)" >

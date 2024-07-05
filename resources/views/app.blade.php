@@ -18,4 +18,9 @@
     <body class="font-sans antialiased">
         @inertia
     </body>
+    <style>
+        button {
+            touch-action: manipulation !important;
+        }
+    </style>
 </html>

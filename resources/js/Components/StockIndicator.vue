@@ -27,7 +27,14 @@
             </div>
 
         </el-tab-pane>
-        <el-tab-pane label="Ventas" name="second">Config</el-tab-pane>
+        <el-tab-pane label="Ventas" name="second">
+            <el-tree
+                style="max-width: 600px"
+                :data="salesTree"
+                :props="defaultProps"
+                @node-click="handleNodeClick"
+            />
+        </el-tab-pane>
 
     </el-tabs>
 </template>
@@ -54,11 +61,20 @@
                 stockConfig: {
                     precision: 0,
                     step: 1
-                }
+                },
+                renderSalesTree : false,
+                defaultProps : {
+                    children: 'children',
+                    label: 'label',
+                },
+                salesTree: []
             }
         },
         
         methods:{
+            handleNodeClick(data) {
+                console.log(data);
+            },
             submitStock(productStock, index){
                 console.log(productStock);
                 axios.post(route('store.stock.product'), productStock).then((res) => {
@@ -80,17 +96,18 @@
                 axios.get(route('stores.index2')).then((res) => {
                     this.stores = res.data;
 
-                    for (let index = 0; index < this.customRecord.stocks.length; index++) {
-                        for (let o = 0; o < this.stores.length; o++) {
-                            
+                    for (let o = 0; o < this.stores.length; o++) {
+                        this.stores[o].buttonConfig = {disabledButton: true, labelButton: '...'}
+                        for (let index = 0; index < this.customRecord.stocks.length; index++) {
+
                             if(this.stores[o].id == this.customRecord.stocks[index].store_id){
                                 this.customRecord.stocks[index].quantity = parseFloat(this.customRecord.stocks[index].quantity);
-                                this.stores[o].stock = this.customRecord.stocks[index]
+                                this.stores[o].stock = this.customRecord.stocks[index];
                             }
-                            this.stores[o].buttonConfig = {disabledButton: true, labelButton: '...'}
-                            if(this.stores[o].stock == undefined)
-                                this.stores[o].stock = {quantity: 0};
+                            
                         }
+                        if(this.stores[o].stock == undefined)
+                            this.stores[o].stock = {quantity: 0};
                     }
                     this.product = { ...this.customRecord, stores: this.stores };
 
@@ -105,7 +122,65 @@
         },
         mounted(){
             this.getStores();
-            // console.log(this.customRecord);
+
+            if(this.customRecord.product_line_items.length > 0)
+                this.renderSalesTree = true;
+
+                let years = {};
+                let months = {
+                    '01': 'Enero',
+                    '02': 'Febrero',
+                    '03': 'Marzo',
+                    '04': 'Abril',
+                    '05': 'Mayo',
+                    '06': 'Junio',
+                    '07': 'Julio',
+                    '08': 'Agosto',
+                    '09': 'Septiembre',
+                    '10': 'Octubre',
+                    '11': 'Noviembre',
+                    '12': 'Diciembre'
+                }
+            
+                // this.customRecord.product_line_items.forEach((element) => {
+                //     years[element.created_at.split(' ')[0].split('-')[0]] = element.created_at.split(' ')[0].split('-')[0];
+                // });
+
+                this.customRecord.product_line_items.forEach((element) => {
+                    if(years[element.created_at.split(' ')[0].split('-')[0]] == undefined)
+                        years[element.created_at.split(' ')[0].split('-')[0]] = [];
+
+                    if(years[element.created_at.split(' ')[0].split('-')[0]][months[element.created_at.split(' ')[0].split('-')[1]]] == undefined)
+                        years[element.created_at.split(' ')[0].split('-')[0]][months[element.created_at.split(' ')[0].split('-')[1]]] = 0;
+
+                    years[element.created_at.split(' ')[0].split('-')[0]][months[element.created_at.split(' ')[0].split('-')[1]]]++;
+                });
+
+
+                console.log(years);
+
+                Object.keys(years).forEach(
+                    year => {
+                        console.log(Object.values(years[year]));
+                        this.salesTree.push({
+                            label: year,
+                            children: Object.keys(years[year]).map(
+                                month => {
+                                    return {
+                                        label: month + ' (' + years[year][month] + ')',
+                                        children: [
+                                            {
+                                                label: 'Ventas: $' + (years[year][month]*parseFloat(this.customRecord.price_customer)) 
+                                            }
+                                        ]
+                                    }
+                                }
+                            )
+                        });
+                });
+
+
+            console.log(this.salesTree);
         }
     }
 </script>

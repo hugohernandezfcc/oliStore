@@ -20,11 +20,55 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::select('id', 'name', 'folio', 'Description', 'price_list', 'price_customer', 'updated_at')->get();
+    
 
+        $products = Product::select(
+            "id",
+            "name",
+            "folio",
+            "Description",
+            "price_list",
+            "price_customer",
+            "updated_at"
+          )
+            ->orderBy("updated_at", "desc")
+            ->limit(30)
+            ->get();
+
+          $toReturn = [];
+          foreach ($products as $product) 
+            $toReturn[$product->id] = $product;
+          
+
+            
         return Inertia::render('Products2/Index', [
-            'products' => $products,
+            'products' => $toReturn
         ]);
+    }
+
+    public function searchRecord(Request $productSearch){
+        
+
+        $products = Product::select(
+            "id",
+            "name",
+            "folio",
+            "Description",
+            "price_list",
+            "price_customer",
+            "updated_at"
+          )
+            ->where('name', 'LIKE', '%'.strtoupper($productSearch->get('search')).'%')
+            ->orWhere('Description', 'LIKE', '%' . strtoupper($productSearch->get('search')) . '%') 
+            ->orWhere('folio', 'LIKE', '%' . strtoupper($productSearch->get('search')) . '%') 
+            ->orderBy("updated_at", "desc")
+            ->limit(1000)
+            ->get();
+        $toReturn = [];
+        foreach ($products as $product) 
+            $toReturn[$product->id] = $product;
+
+        return response()->json($toReturn);
     }
 
     /**
