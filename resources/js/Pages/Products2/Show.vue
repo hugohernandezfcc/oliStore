@@ -58,6 +58,11 @@ export default{
 
 }
 </script>
+<style>
+button {
+    touch-action: manipulation !important;
+}
+</style>
 <template>
     <AppLayout title="Dashboard">
         <template #header>
