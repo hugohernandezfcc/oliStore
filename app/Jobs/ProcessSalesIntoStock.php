@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\ProductLineItem;
 use App\Models\Stock;
 use App\Models\Product;
+use App\Models\Store;
 
 class ProcessSalesIntoStock implements ShouldQueue
 {
@@ -32,6 +33,11 @@ class ProcessSalesIntoStock implements ShouldQueue
     public function handle(): void
     {
         
+        $tiendas = Store::get();
+        $matchStore =  [];
+        for ($i=0; $i < count($tiendas); $i++) { 
+            $matchStore[$tiendas[$i]->name] = $tiendas[$i]->id;
+        }
 
         $productos = ProductLineItem::with("productId")
             ->with("saleId")
@@ -42,7 +48,7 @@ class ProcessSalesIntoStock implements ShouldQueue
             $productSubtracted = [];
             for ($i = 0; $i < count($productos); $i++) {
             $pIdLocal =
-                $productos[$i]->productId->id . "@" . $productos[$i]->productId->folio . '@' . $productos[$i]->saleId->store;
+                $productos[$i]->productId->id . "@" . $productos[$i]->productId->folio . '@' . $matchStore[$productos[$i]->saleId->store];
             if (isset($productSubtracted[$pIdLocal])) {
                 $productSubtracted[$pIdLocal]++;
             } else {
