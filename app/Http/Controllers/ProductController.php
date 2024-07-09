@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\ProductLineItem;
-use App\Models\Sales;
+use App\Models\LineAnyItem;
 use App\Models\Stock;
+use App\Models\Providers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -46,6 +47,12 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * Search records
+     * @param Request $productSearch
+     * This method is used to search records in the database based on name, folio or description.
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function searchRecord(Request $productSearch){
         
 
@@ -69,6 +76,30 @@ class ProductController extends Controller
             $toReturn[$product->id] = $product;
 
         return response()->json($toReturn);
+    }
+
+    public function assignProviderToProducts(Request $request){
+        $lineAnyItemRecordList = [];
+        foreach ($request->get('assignments') as $assignment) {
+            $lineAnyItemRecord =  [
+                'type'          => $assignment['type'],
+                'origin'        => $assignment['origin'],
+                'target'        => $assignment['target'],
+                'origin_id'     => $assignment['origin_field'],
+                'target_id'     => $assignment['target_field'],
+                'updated_by_id' => Auth::id(),
+                'created_by_id' => Auth::id()
+            ];
+            $lineAnyItemRecord[$assignment['origin_field']] = $assignment[$assignment['origin_field']];
+            $lineAnyItemRecord[$assignment['target_field']] = $assignment[$assignment['target_field']];
+            $lineAnyItemRecord['created_at'] = Carbon::now();
+            $lineAnyItemRecord['updated_at'] = Carbon::now();
+            $i = LineAnyItem::create($lineAnyItemRecord);
+            
+            array_push($lineAnyItemRecordList, $i);
+        }
+        
+        return response()->json([$lineAnyItemRecordList]);
     }
 
     /**
@@ -160,14 +191,14 @@ class ProductController extends Controller
     }
     
     public function storeStock(Request $request){
-
+        $prod = Product::find($request->get('product_id'));
         $Stock = Stock::updateOrCreate(
-            ['folio' => $request->get('folio'), 'product_id' => $request->get('product_id'), 'store_id' => $request->get('store_id')],
+            ['folio' => $request->get('folio'), 'product_id' => $prod->id, 'store_id' => $request->get('store_id')],
             [
                 'name' => $request->get('name'),
                 'folio' => $request->get('folio'),
                 'description' => $request->get('description'),
-                'quantity' => intval($request->get('counterProducts')),
+                'quantity' => ($prod->take_portion) ? floatval($request->get('counterProducts')) : intval($request->get('counterProducts')),
                 'investment' => intval($request->get('counterProducts'))*floatval($request->get('price_list')),
                 'store_id' => $request->get('store_id'),
                 'product_id' => $request->get('product_id'),
@@ -185,8 +216,32 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product = Product::with('createdBy', 'editedBy', 'ProductLineItems', 'prices', 'stocks')->find($product->id);
+        $product->line_any_items = LineAnyItem::where('origin', 'products')->where('product_id', $product->id)
+                                ->with('updatedBy')
+                                ->with('createdBy')
+                                ->with('provider')
+                                ->with('products')
+                                ->get();
+
         return Inertia::render('Products2/Show', [
-            'customRecord' => Product::with('createdBy', 'editedBy', 'ProductLineItems', 'prices', 'stocks')->find($product->id)
+            'customRecord' => $product,
+            'relatedListConfig' => [
+                'products_providers' => [
+                    'title'          => 'Proveedor del producto',
+                    'titleModel'     => 'Nuevo proveedor de producto',
+                    'visibleColumns' => Providers::RELATED_LIST_COLUMNS,
+                    'formFields'     => Providers::MODAL_FORM_FIELDS,
+                    'origin'         => 'products',
+                    'origin_field'   => 'product_id',
+                    'table'          => 'providers',
+                    'target_field'   => 'provider_id',
+                    'currentRecordId'=> $product->id,
+                    'searchIn'       => 'company',
+                    'secondLine'     => 'representative',
+                    'lastLine'       => 'whatsapp'
+                ],
+            ],
         ] );
     }
 

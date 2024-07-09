@@ -11,7 +11,7 @@ use App\Models\User;
 use App\Models\Store;
 use App\Models\Providers;
 use App\Models\LineAnyItem;
-use App\Models\ProductLineItem;
+use App\Models\WeekDay;
 use App\Models\Sales;
 use App\Models\tickets;
 
@@ -27,7 +27,29 @@ class ProvidersController extends Controller
     }
 
     public function create(){
-        return Inertia::render('Providers/Create');
+        return Inertia::render('Providers2/Create');
+    }
+
+    public function scheduleProviders(){
+        $LineAnyItem = LineAnyItem::where('origin', 'providers')->where('type', 'providers_week_days')->where('target', 'week_days')
+                                    ->with('provider')
+                                    ->with('weekDay')
+                                    ->with('orders')
+                                    ->get();
+
+        $orders = [];                            
+        foreach ($LineAnyItem as $item) {
+            $order = new \stdClass();
+            $order->provider= $item->provider;
+            $order->weekday = $item->weekDay->name;
+            $order->type    = (strpos($item->provider->company, 'V.D.') === false || strpos($item->provider->company, 'E.')) ? 'Venta' : 'preventa';
+            $order->company = $item->provider->company;
+            $order->order   = $item->orders;
+            $order->status  = ($item->orders != null) ? (strpos($item->provider->company, 'V.D.') === false || strpos($item->provider->company, 'E.')) ? 'Entregado' : 'Solicitado' : 'Pendiente';
+            array_push($orders, $order);
+        }
+    
+        return response()->json($orders);
     }
 
     /**
@@ -50,21 +72,51 @@ class ProvidersController extends Controller
      */
     public function show(string $id)
     {
-        $provider = Providers::where('id', $id)->with('createdBy', 'editedBy', 'store')->first();
-        $tickets = tickets::where('provider_id', null)->where('provider', 'LIKE', '%'.$provider->company.'%')->orderBy('created_at', 'desc')->get();
+        $provider = Providers::with('createdBy')
+                                ->with('editedBy')
+                                ->find($id);
 
-        return Inertia::render('Providers/Show', [
-            'provider'    => $provider,
-            'tickets'    => $tickets
+        $provider->line_any_items = LineAnyItem::where('origin', 'providers')->where('provider_id', $provider->id)
+                                ->with('updatedBy')
+                                ->with('createdBy')
+                                ->with('provider')
+                                ->with('weekDay')
+                                ->get();
+        // $tickets = tickets::where('provider_id', null)->where('provider', 'LIKE', '%'.$provider->company.'%')->orderBy('created_at', 'desc')->get();
+
+        return Inertia::render('Providers2/Show', [
+            'customRecord'      => $provider,
+            'relatedListConfig' => [
+                'providers_week_days' => [
+                    'title'          => 'Días de visita',
+                    'titleModel'     => 'Nuevo día de visita',
+                    'visibleColumns' => WeekDay::RELATED_LIST_COLUMNS,
+                    'formFields'     => WeekDay::MODAL_FORM_FIELDS,
+                    'origin'         => 'providers',
+                    'origin_field'   => 'provider_id',
+                    'table'          => 'week_days',
+                    'target_field'   => 'week_day_id',
+                    'currentRecordId'=> $provider->id,
+                    'searchIn'       => 'name',
+                    'secondLine'     => 'description',
+                    'lastLine'       => 'created_at'
+                ],
+            ],
+            'relatedList'            => []
         ]);
     }
     
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(String $id)
     {
-        //
+        $provider = Providers::with('createdBy')
+                                ->with('editedBy')
+                                ->find($id);
+        return Inertia::render('Providers2/Edit', [
+            'provider'      => $provider
+        ]);
     }
 
     /**
@@ -72,7 +124,11 @@ class ProvidersController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $provider = Providers::find($id);
+        $provider->update($request->all());
+        return Inertia::render('Providers2/Show', [
+            'customRecord' => $provider
+        ]);
     }
 
     /**

@@ -41,8 +41,8 @@ export default{
 <template>
     <AppLayout title="Gastos">
         <template #header>
-            <h3 class="text-lg text-gray-900"> Listado de Gastos - # {{ stores.length }}</h3>
-            <p class="text-sm text-gray">Catalogo de gastos registrados recurrentes </p>
+            <h3 class="text-lg text-gray-900"> Listado de Tiendas - # {{ stores.length }}</h3>
+            <p class="text-sm text-gray">Catalogo de Tiendas en activo </p>
         </template>
         
         

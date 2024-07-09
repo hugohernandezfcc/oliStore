@@ -34,7 +34,7 @@ export default{
     
                 if(this.storeId != '' && this.storeId != null){
                     this.sale.store = this.storeId;
-                
+                    console.log('>>>>>>>>>', this.sale);
 
                     axios.post(this.route('sales.store'), this.sale, {
                         headers: {

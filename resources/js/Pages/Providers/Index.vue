@@ -42,6 +42,7 @@ export default{
     },
     computed: {
         filterTableData() {
+            
             return this.providers.filter(
                 (data) =>
                 !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )

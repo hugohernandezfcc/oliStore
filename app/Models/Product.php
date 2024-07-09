@@ -12,7 +12,7 @@ class Product extends Model
     use HasFactory;
 
     //Add extra attribute
-
+    protected $table = 'products';
 
     //Make it available in the json response
     protected $appends = ['bar_code'];

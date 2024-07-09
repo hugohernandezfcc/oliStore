@@ -19,13 +19,16 @@
       </div>
     </template>
     <el-table :data="filterTableData" class="shadow-lg -m-5" stripe style="width: 100%; height: 400px;" v-loading="loading">
-        <el-table-column align="left" width="70" fixed="left">
+        <el-table-column align="left" width="150" fixed="left">
             <template #default="scope">
-                <inertia-link :href="route(table+'.show', scope.row.id)" >
-                    <el-button size="small" color="#dc2626"> 
-                        <svg class="h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 160c320 0 512 352 512 352S832 864 512 864 0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288 52.608 79.872 211.456 288 436.8 288 225.28 0 384.128-208.064 436.8-288-52.608-79.872-211.456-288-436.8-288zm0 64a224 224 0 1 1 0 448 224 224 0 0 1 0-448m0 64a160.192 160.192 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160-71.744-160-160-160"></path></svg>
+                    <inertia-link :href="route(table+'.show', scope.row.id)" >
+                        <el-button size="small" color="#dc2626"> 
+                            <svg class="h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 160c320 0 512 352 512 352S832 864 512 864 0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288 52.608 79.872 211.456 288 436.8 288 225.28 0 384.128-208.064 436.8-288-52.608-79.872-211.456-288-436.8-288zm0 64a224 224 0 1 1 0 448 224 224 0 0 1 0-448m0 64a160.192 160.192 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160-71.744-160-160-160"></path></svg>
+                        </el-button>
+                    </inertia-link>&nbsp;
+                    <el-button size="small" @click="deleteRecord(scope.row._id)" v-if="scope.row._id != null"> 
+                        <svg class="h-5 w-5 text-black " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M352 192V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64H96a32 32 0 0 1 0-64zm64 0h192v-64H416zM192 960a32 32 0 0 1-32-32V256h704v672a32 32 0 0 1-32 32zm224-192a32 32 0 0 0 32-32V416a32 32 0 0 0-64 0v320a32 32 0 0 0 32 32m192 0a32 32 0 0 0 32-32V416a32 32 0 0 0-64 0v320a32 32 0 0 0 32 32"></path></svg>
                     </el-button>
-                </inertia-link>
             </template>
         </el-table-column>
         <el-table-column 
@@ -204,8 +207,21 @@ export default {
         }
     },
     methods: {
+        deleteRecord(id) {
+            this.loading = true;
+
+            axios.delete(route('relatedlist.delete', id)).then(response => {
+                console.log(response.data);
+                setTimeout(() => {
+                    this.loading = false;
+                    window.location.reload();
+                }, 200);
+            }).catch(error => {
+                console.log(error)
+            });
+        },
         closeFormDialog() {
-        this.dialogFormVisible = false;
+            this.dialogFormVisible = false;
         },
         confirmFormDialog() {
             console.log(this.form);

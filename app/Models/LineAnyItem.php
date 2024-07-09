@@ -29,8 +29,19 @@ class LineAnyItem extends Model
         'category_id',
         'orders_id',
         'product_id',
-        'stock_id'
+        'stock_id',
+        'week_day_id'
     ];
+
+    public function weekDay() : BelongsTo
+    {
+        return $this->belongsTo(WeekDay::class, 'week_day_id');
+    }
+
+    public function provider() : BelongsTo
+    {
+        return $this->belongsTo(Providers::class, 'provider_id');
+    }
 
     public function updatedBy() : BelongsTo
     {
@@ -45,11 +56,6 @@ class LineAnyItem extends Model
     public function store() : BelongsTo
     {
         return $this->belongsTo(Store::class, 'store_id');
-    }
-
-    public function provider() : BelongsTo
-    {
-        return $this->belongsTo(Providers::class, 'provider_id');
     }
 
     public function worker() : BelongsTo

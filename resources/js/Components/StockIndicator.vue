@@ -112,7 +112,7 @@
                     this.product = { ...this.customRecord, stores: this.stores };
 
                     if(this.product.take_portion)
-                        this.stockConfig = { precision: 2, step: 0.1}
+                        this.stockConfig = { precision: 3, step: 0.001}
                     else
                         this.stockConfig = { precision: 0, step: 1 }
                     

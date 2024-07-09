@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Providers extends Model
 {
@@ -16,7 +17,7 @@ class Providers extends Model
         ['prop' => 'representative','label' => 'Representante'],
         ['prop' => 'whatsapp',      'label' => 'Whatsapp'],
         ];
-        public const MODAL_FORM_FIELDS = [
+    public const MODAL_FORM_FIELDS = [
         ['prop' => 'id',              'label' => 'Id',                'type' => 'text'],
         ['prop' => 'representative', 'label' => 'Representante',      'type' => 'text'],
         ['prop' => 'description',    'label' => 'Descripción',        'type' => 'text'],
@@ -46,6 +47,11 @@ class Providers extends Model
         'created_at'  => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i'
     ];
+
+    public function lineAnyItems() : HasMany
+    {
+        return $this->hasMany(LineAnyItem::class);
+    }
 
     public function createdBy()
     {

@@ -48,7 +48,7 @@ class ProcessSalesIntoStock implements ShouldQueue
             $productSubtracted = [];
             for ($i = 0; $i < count($productos); $i++) {
             $pIdLocal =
-                $productos[$i]->productId->id . "@" . $productos[$i]->productId->folio . '@' . $matchStore[$productos[$i]->saleId->store];
+                $productos[$i]->productId->id . "@" . $productos[$i]->productId->folio . '@' . $matchStore[$productos[$i]->saleId->store] . '@' .  $productos[$i]->final_price;
             if (isset($productSubtracted[$pIdLocal])) {
                 $productSubtracted[$pIdLocal]++;
             } else {
@@ -59,28 +59,39 @@ class ProcessSalesIntoStock implements ShouldQueue
             $listFinal = [];
 
             foreach ($productSubtracted as $key => $value) {
+
+                $productKey = explode("@", $key);
+                $producto2 = Product::where("id", $productKey[0])->first();
+
                 try {
-                    $productKey = explode("@", $key);
 
                     $product = Stock::where([
-                        ["product_id", $productKey[0]],
+                        ["product_id", $producto2->id],
                         ["folio", $productKey[1]],
                         ["store_id", $productKey[2]],
                     ])->first();
-                    $product->quantity = $product->quantity - $value;
+                    
+                    if($producto2->take_portion == true){
+                            $priceByGr = floatval($producto2->price_customer) / 1000;
+                            $gramos = floatval($productKey[3]) / $priceByGr;
+                            $product->quantity = $product->quantity - floatval($gramos) * 0.001;    
+                    }else{
+
+                        $product->quantity = $product->quantity - $value;
+                    }
 
                     $product->save();
                 } catch (\Throwable $th) {
-                    $producto = Product::where("id", $productKey[0])->first();
+                    
 
                     $product = new Stock();
-                    $product->name = $producto->name;
+                    $product->name = $producto2->name;
                     $product->folio = $productKey[1];
                     $product->product_id = $productKey[0];
-                    $product->description = $producto->Description;
+                    $product->description = $producto2->Description;
                     $product->quantity = 0 - $value;
-                    $product->created_by_id = $producto->created_by_id;
-                    $product->edited_by_id = $producto->edited_by_id;
+                    $product->created_by_id = $producto2->created_by_id;
+                    $product->edited_by_id = $producto2->edited_by_id;
                     $product->store_id = $productKey[2];
                     $product->profit = 0;
                     $product->investment = 0;

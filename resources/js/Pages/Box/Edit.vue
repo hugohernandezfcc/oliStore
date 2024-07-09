@@ -1,182 +1,166 @@
 <script >
-import { ref } from 'vue';
-import { ElNotification } from 'element-plus';
-import AppLayout from '@/Layouts/AppLayout.vue';
-import ActionMessage from '@/Components/ActionMessage.vue';
-import FormSection from '@/Components/FormSection.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import LookupField from '@/Components/LookupField.vue';
- 
+import AppLayout        from '@/Layouts/AppLayout.vue';
+import PrimaryButton    from '@/Components/PrimaryButton.vue';
+import SecondaryButton  from '@/Components/SecondaryButton.vue';
+import Footer           from '@/Components/Footer.vue';
+import moment           from 'moment';
+import FormSection      from '@/Components/FormSection.vue';
+import RelatedListNative from '@/Components/RelatedListNative.vue';
+import InputLabel        from '@/Components/InputLabel.vue';
+import TextInput         from '@/Components/TextInput.vue';
+
 export default{
-
     components:{
-        AppLayout, ElNotification, FormSection, PrimaryButton, InputError, InputLabel, TextInput, SecondaryButton, ActionMessage, LookupField
+        RelatedListNative,
+        AppLayout,
+        PrimaryButton,
+        SecondaryButton,
+        Footer,
+        FormSection,
+        InputLabel,
+        TextInput
     },
-    props:{
-        customRecord: Object   
-    },
-    data(){
 
-        return {
-            form: {
-                name: this.customRecord.name,
-                description: this.customRecord.description,
-                percentage: this.customRecord.percentage,
-                financial_id: this.customRecord.financial.id,
-                id: this.customRecord.id
-            },
-            financial_object: this.customRecord.financial
-        }
+    props:{
+        customRecord: Object,
+        relatedList: Object
     },
     methods:{
-        validForm(){
-            const fields = [
-                'name',
-                'description',
-                'percentage',
-                'financial_id'
-            ];
-
-            let fieldLabels = {
-                'name': 'Concepto del gasto',
-                'description': 'Porcentaje por corte',
-                'percentage': 'Descripción',
-                'financial_id': 'Periodo de financiamiento'
-            };
-
-            for (let field of fields) {
-                if (this.form[field] === null || this.form[field] === '') {
-                    return {
-                        isValid: false,
-                        errorMessage: 'Verifica el valor de ' + fieldLabels[field]
-                    };
-                }
+        eliminar() {
+            if (confirm('¿Estás seguro de eliminar este registro?')) {
+                this.$inertia.delete(route('box.destroy', this.customRecord.id));
             }
-
-            return {
-                isValid: true,
-                errorMessage: 'ok'
-            };
         },
-        submit(){
-            let localValidation = this.validForm();
-            console.log(this.form);
-            if(localValidation.isValid){
-                this.$inertia.put(this.route('liabilities.update', this.customRecord.id), this.form)
-            }else{
-                ElNotification.warning({
-                    title: 'warning',
-                    message: localValidation.errorMessage,
-                    offset: 100,
-                });
-            }
-            
+        update(){
+            axios.post(route('update.stamdard', this.customRecord.id), this.form).then(response => {
+                console.log(response.data)
+
+                setTimeout(() => {
+                    window.location.replace(route('box.show', this.customRecord.id));
+                }, 1000);
+
+            }).catch(error => {
+                console.log(error)
+            });
         }
     },
-    mounted() {
-        console.log(import.meta.env.VITE_DB_CONNECTION)
+    data(){
+        return {
+            reportResults8: new Array(),
+            form:{
+                name:       this.customRecord.name,
+                description:this.customRecord.description,
+                box_date:   this.customRecord.box_date,
+                status:     this.customRecord.status,
+                founds_box: this.customRecord.founds_box,
+                amount:     this.customRecord.amount,
+            },
+            date: new Date()
+        }
+    },
+    mounted(){
+        let globalResults = [];
+
+        console.log('componente montado', this.customRecord)
+
+    },
+    computed: {
+        
     }
+
 }
-
-
-</script> 
-
+</script>
 <template>
-    <AppLayout title="Profile">
+    <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Detalle de gasto
-            </h2>
+            Detalle de la caja 
         </template>
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+
+                <PrimaryButton  @click="update" class="mb-3 ml-3 lg:ml-0"> Actualizar cambios en Caja </PrimaryButton>
+
+
+                
+
                 <FormSection >
+
                     <template #title>
-                        Editar Gasto
+                        {{customRecord.name}}
                     </template>
-
                     <template #description>
-                        Aquí podrás registrar los gastos recurrentes para que por cada corte de caja puedas deducirlos de tus ingresos.
-                    </template>
-                    <template #form>
-                        
-                        <div class="col-span-6 sm:col-span-4">
-                            <InputLabel for="name" value="Concepto del gasto" />
-                            <TextInput
-                                id="name"
-                                v-model="form.name"
-                                type="text"
-                                class="mt-1 block w-full"
-                                autocomplete="name"
-                            />
-                        </div>
-                        <div class="col-span-6 sm:col-span-4">
-                            <InputLabel for="percentage" value="Porcentaje por corte" />
-                            <TextInput
-                                id="percentage"
-                                v-model="form.percentage"
-                                type="number"
-                                class="mt-1 block w-full"
+                        {{customRecord.box_date}}<br/><br/>
+                        {{customRecord.description}}<br/><br/>
+                        <b>Creación: </b>{{customRecord.created_at}}<br/><br/>
+                        <b>Actualización: </b>{{customRecord.updated_at}}<br/><br/>
 
-                            />
+                    </template>
+                    <template #details>
+                        <br/>
+                        <div class="col-span-3 ">
+                            <InputLabel class="py-2" for="name" value="Caja " />
+                            <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" autocomplete="name"/>
                         </div>
-                        
-                        <div class="col-span-6 sm:col-span-4">
-                            <InputLabel for="description" value="Descripción" />
-                            <textarea
-                                id="description"
-                                v-model="form.description"
-                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                autocomplete="Description"
-                            >
+                        <div class="col-span-3 ">
+                            <InputLabel class="py-2" for="Description" value="Descripción" />
+                            <textarea id="Description" v-model="form.description" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" autocomplete="Description" >
                             </textarea>
-                            
                         </div>
-                        <div class="col-span-6 sm:col-span-4">
-                            <InputLabel for="description" value="Periodo de financiamiento" />
-                            <LookupField v-model="financial_object.name" :firstLine="'name'" :secondLine="'description'"  ref="lookupProduct" :likeDataFx="{
-                                fields: ['id', 'name', 'description', 'store_id'],
-                                table: 'financial',
-                                limit: 50,
-                                orderBy: 'updated_at',
-                                order: 'asc',
-                                where: {
-                                    field: 'name',
-                                    operator: 'LIKE',
-                                }
-                            }" style="width: 240px"
-                            @updateValue="(newValue) => {
-                                console.log(newValue)
-                                form.financial_id = newValue.id;
-                            }"/>
+                        <div class="col-span-3 ">
+                            <InputLabel class="py-2" for="name" value="Fecha" />
+                            <TextInput id="name" v-model="form.box_date" type="date" class="mt-1 block w-full" autocomplete="name"/>
+                        </div>
+                        <div class="col-span-3">
+                            <InputLabel for="status" value="Estatus" />
+                            <el-select id="status" v-model="form.unit_measure" placeholder="Seleccionar status" class="mt-1 block w-full " size="large">
+                                <el-option v-for="item in [
+                                        { label: 'Caja abierta', value: 'open' },
+                                        { label: 'Caja cerrada', value: 'close' },
+                                    ]" :key="item.value" :label="item.label" :value="form.status.value"/>
+                            </el-select>
                         </div>
                         
-                    </template>
-                    
+                        <div class="col-span-3 ">
+                            <InputLabel class="py-2" for="name" value="Fondo de caja" />
+                            <TextInput id="name" v-model="form.founds_box" type="number" class="mt-1 block w-full" autocomplete="name"/>
+                        </div>
 
-                    
-                    <template #actions>
-                        <inertia-link :href="route('liabilities.index')" class="m-1">
-                            <el-button :type="'plain'" text bg class="m-2">
-                                Cancelar 
-                            </el-button>
-                        </inertia-link>
-                        <PrimaryButton @click="submit" class="m-2">
-                            Guardar gasto
-                        </PrimaryButton>
-                    </template>
+                        <div class="col-span-3 ">
+                            <InputLabel class="py-2" for="name" value="Monto en caja registradora" />
+                            <TextInput id="name" v-model="form.amount" type="number" class="mt-1 block w-full" autocomplete="name"/>
+                        </div>
 
+                        <div class="col-span-3 ">
+                            <InputLabel class="py-2" for="name" value="Tienda" />
+                            <TextInput id="name" v-model="customRecord.store.name" type="text" disabled="true" class="mt-1 block w-full" autocomplete="name"/>
+                        </div>
+
+                        <div class="col-span-3 ">
+                            <InputLabel class="py-2" for="name" value="Vendedor" />
+                            <TextInput id="name" v-model="customRecord.seller.name" type="text" disabled="true" class="mt-1 block w-full" autocomplete="name"/>
+                        </div>
+
+                    </template>
+                    <template #relatedlist>
+                        <div v-for="(m, o) in relatedList">
+
+                            <RelatedListNative 
+                                :customRecordsRelated ="customRecord.box_cut"
+                                :title                ="m['title']"
+                                :titleModel           ="m['titleModel']"
+                                :visibleColumns       ="m['visibleColumns']"
+                                :formFields           ="m['formFields']" 
+                                :table                ="m['table']"
+                                :origin               ="m['origin']"
+                                :origin_field         ="m['origin_field']"
+                                :currentRecordId      ="m['currentRecordId']"
+                                :showNewRecordButton  ="m['showNewRecordButton']"
+                                classCard             ="'my-2 -pr-0 w-[470px]'" />
+                        </div>
+                    </template>
                 </FormSection>
             </div>
         </div>
+
     </AppLayout>
-   
 </template>
-<style >
-    div.el-autocomplete{ width: 100% !important; } input.el-input__inner{ margin: 5px; font-size:large }
-    
-</style>

@@ -7,7 +7,7 @@ import moment           from 'moment';
 import FormSection      from '@/Components/FormSection.vue';
 import StockIndicator   from '@/Components/StockIndicator.vue';
 import { ArrowLeftBold } from '@element-plus/icons-vue';
-
+import RelatedList      from '@/Components/RelatedList.vue';
 
 export default{
     components:{
@@ -18,11 +18,12 @@ export default{
         FormSection,
         StockIndicator,
         ArrowLeftBold,
-
+        RelatedList
     },
 
     props:{
         customRecord: Object,
+        relatedListConfig: Object
 
     },
     methods:{
@@ -34,16 +35,39 @@ export default{
                 }, 1000);
             }
         },
+        lineItems(){
+
+            for (let i = 0; i < this.customRecord.line_any_items.length; i++) {
+                console.log(this.customRecord.line_any_items[i]);
+
+                if (!this.lineItemsObject[this.customRecord.line_any_items[i].type]) {
+                    this.lineItemsObject[this.customRecord.line_any_items[i].type] = [];
+                }
+                
+
+                this.lineItemsObject[this.customRecord.line_any_items[i].type].push(
+                    this.customRecord.line_any_items[i][this.customRecord.line_any_items[i].target_id.replace('_id', '')]
+                );
+                
+                this.lineItemsObject[this.customRecord.line_any_items[i].type][this.lineItemsObject[this.customRecord.line_any_items[i].type].length-1]['_id'] = this.customRecord.line_any_items[i].id;
+                console.log('>>>>>>>>>>', this.lineItemsObject[this.customRecord.line_any_items[i].type][this.lineItemsObject[this.customRecord.line_any_items[i].type].length-1]);
+            }
+
+            console.log('this.lineItemsObject', this.lineItemsObject);
+        }
     },
     data(){
         return {
             reportResults8: new Array(),
             search:'',
-            date: new Date()
+            date: new Date(),
+            lineItemsObject: new Array()
         }
     },
     mounted(){
         let globalResults = [];
+        this.lineItems();
+
         console.log('componente montado', this.customRecord)
 
     },
@@ -162,6 +186,24 @@ button {
                     </template>
 
                     <template #relatedlist>
+                        <div v-for="(c, i) in relatedListConfig">
+
+                        <RelatedList 
+                            :customRecordsRelated ="lineItemsObject[i]"
+                            :title                ="c['title']"
+                            :titleModel           ="c['titleModel']"
+                            :visibleColumns       ="c['visibleColumns']"
+                            :formFields           ="c['formFields']" 
+                            :table                ="c['table']"
+                            :origin               ="c['origin']"
+                            :origin_field         ="c['origin_field']"
+                            :target_field         ="c['target_field']"
+                            :currentRecordId      ="c['currentRecordId']"
+                            :searchIn             ="c['searchIn']"
+                            :secondLine           ="c['secondLine']"
+                            :lastLine             ="c['lastLine']"
+                            classCard             ="'my-2 -pr-0 w-[470px]'" />
+                        </div>
 
                         <h1>Historial de precios</h1>
                         <el-input v-model="search"  placeholder="Type to search" class="shadow-2xl pb-3"/>

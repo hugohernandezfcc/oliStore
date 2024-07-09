@@ -26,8 +26,12 @@ Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified'
 });
 
 
+Route::resource('week_days',        App\Http\Controllers\WeekDayController::class       )->middleware('auth:sanctum');
 Route::resource('boxcut',           App\Http\Controllers\BoxCutController::class        )->middleware('auth:sanctum');
 Route::resource('box',              App\Http\Controllers\BoxController::class        )->middleware('auth:sanctum');
+Route::post('/boxupdate/{id}',          [App\Http\Controllers\BoxController::class,          'updateStandard' ])->name('update.stamdard');
+
+
 Route::resource('financials',       App\Http\Controllers\FinancialController::class     )->middleware('auth:sanctum');
 Route::resource('products',         App\Http\Controllers\ProductController::class       )->middleware('auth:sanctum');
 Route::resource('liabilities',      App\Http\Controllers\LiabilitiesController::class   )->middleware('auth:sanctum');
@@ -114,9 +118,11 @@ Route::group(
         'middleware' => ['auth:sanctum']
     ], function () {
 
-    Route::get('/frontend/stores',          [App\Http\Controllers\StoreController::class, 'index2']       )->name('stores.index2');
-    Route::post('/frontend/storeStock',     [App\Http\Controllers\ProductController::class, 'storeStock'] )->name('store.stock.product');
-    Route::post('/frontend/search/product', [App\Http\Controllers\ProductController::class, 'searchRecord'])->name('search.product');
+    Route::get('/frontend/stores',          [App\Http\Controllers\StoreController::class,       'index2']           )->name('stores.index2');
+    Route::post('/frontend/storeStock',     [App\Http\Controllers\ProductController::class,     'storeStock']       )->name('store.stock.product');
+    Route::post('/frontend/search/product', [App\Http\Controllers\ProductController::class,     'searchRecord']     )->name('search.product');
+    Route::get('/frontend/orders',          [App\Http\Controllers\ProvidersController::class,   'scheduleProviders'])->name('schedule.orders');
+    Route::post('/frontend/providers',       [App\Http\Controllers\ProductController::class,   'assignProviderToProducts'])->name('products.assign.providers');
     
 
 });
@@ -131,7 +137,7 @@ Route::group(
     ], function () {
 
         Route::post('/store', [App\Http\Controllers\LineAnyItemController::class, 'storeFromRelatedList'])->name('relatedlist.store');
-        Route::post('/delete', [App\Http\Controllers\LineAnyItemController::class, 'delete'])->name('relatedlist.delete');
+        Route::delete('/delete/{id}', [App\Http\Controllers\LineAnyItemController::class, 'destroy'])->name('relatedlist.delete');
         Route::post('/update', [App\Http\Controllers\LineAnyItemController::class, 'update'])->name('relatedlist.update');
 
 });

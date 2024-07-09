@@ -216,7 +216,7 @@ export default{
                             <TextInput id="price_customer" v-model="form.price_customer" type="number" step="0.01" class="mt-1 block w-full" autocomplete="price_customer"/>
                         </div>
                         <div class="col-span-8 sm:col-span-4">
-                            <el-switch v-model="form.is_public" class="mb-2" active-text="Producto Público" inactive-text=" "/>
+                            <el-switch v-model="form.is_public" class="mb-2" active-text="Producto Público" inactive-text=" "/><el-switch v-model="form.visible_product" class="mb-2" active-text="Producto visible" inactive-text=" "/>
                         </div>
 
                         <div class="col-span-6 " v-if="form.is_public">

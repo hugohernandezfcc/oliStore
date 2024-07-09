@@ -5,8 +5,9 @@ import SecondaryButton  from '@/Components/SecondaryButton.vue';
 import Footer           from '@/Components/Footer.vue';
 import moment           from 'moment';
 import FormSection      from '@/Components/FormSection.vue';
-import RelatedList      from '@/Components/RelatedList.vue';
+import StockIndicator   from '@/Components/StockIndicator.vue';
 import { ArrowLeftBold } from '@element-plus/icons-vue';
+
 
 export default{
     components:{
@@ -15,77 +16,66 @@ export default{
         SecondaryButton,
         Footer,
         FormSection,
-        RelatedList,
-        ArrowLeftBold
+        StockIndicator,
+        ArrowLeftBold,
+
     },
 
     props:{
         customRecord: Object,
-        relatedListConfig: Object
+
     },
     methods:{
         eliminar() {
             if (confirm('¿Estás seguro de eliminar este registro?')) {
-                this.$inertia.delete(route('providers.destroy', this.customRecord.id));
+                this.$inertia.delete(route('week_days.destroy', this.customRecord.id));
                 setTimeout(() => {
-                    this.$inertia.visit(route('providers.index'));
+                    this.$inertia.visit(route('week_days.index'));
                 }, 1000);
             }
         },
-        lineItems(){
-
-            for (let i = 0; i < this.customRecord.line_any_items.length; i++) {
-                console.log(this.customRecord.line_any_items[i]);
-
-                if (!this.lineItemsObject[this.customRecord.line_any_items[i].type]) {
-                    this.lineItemsObject[this.customRecord.line_any_items[i].type] = [];
-                }
-                
-
-
-                this.lineItemsObject[this.customRecord.line_any_items[i].type].push(
-                    this.customRecord.line_any_items[i][this.customRecord.line_any_items[i].target_id.replace('_id', '')]
-                );
-                
-            }
-
-            console.log('this.lineItemsObject', this.lineItemsObject);
-        }
     },
     data(){
         return {
-            lineItemsObject: new Array(),
+            reportResults8: new Array(),
             search:'',
             date: new Date()
         }
     },
     mounted(){
         let globalResults = [];
-        this.lineItems();
         console.log('componente montado', this.customRecord)
+
     },
     computed: {
-        // filterTableData() {
-        //     return this.customRecord.prices.filter(
-        //         (data) =>
-        //         !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
-        //     );
-        // }
+        filterTableData() {
+            return this.customRecord.prices.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        }
     }
 
 }
 </script>
+<style>
+button {
+    touch-action: manipulation !important;
+}
+</style>
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <PrimaryButton  class="mb-3 ml-3 lg:ml-0" @click="$inertia.visit(route('providers.index'))"> 
+
+            <PrimaryButton  class="mb-3 ml-3 lg:ml-0" @click="$inertia.visit(route('week_days.index'))"> 
                 <el-icon><ArrowLeftBold /></el-icon>
-            </PrimaryButton>&nbsp;Detalle de Proveedor 
+            </PrimaryButton>&nbsp;
+            Detalle de día {{customRecord.name}} 
         </template>
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <inertia-link :href="route('providers.edit', customRecord.id)">
-                    <PrimaryButton  class="mb-3 ml-3 lg:ml-0"> Editar Proveedor </PrimaryButton>
+                <inertia-link :href="route('week_days.edit', customRecord.id)">
+                    <PrimaryButton  class="mb-3 ml-3 lg:ml-0"> Editar días </PrimaryButton>
                 </inertia-link>
 
                 <PrimaryButton @click="eliminar" class="mb-3 ml-3 lg:ml-1"> 
@@ -95,25 +85,26 @@ export default{
                 <FormSection >
 
                     <template #title>
-                        {{customRecord.representative}}
+                        {{customRecord.name}}
                     </template>
-                    <template #description>
-                        {{customRecord.description}}
+                    <template #description >
+                        <div class="w-[70%]">
+                            {{customRecord.Description}}
+                        </div>
+                        <br/>
+                        
                     </template>
                     <template #details>
                         <br/>
-                        
-                        <el-descriptions :title="'Detalle del Proveedor >> ' + customRecord.company" :column="1" border>
-                        
-                            <el-descriptions-item label="Representante" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.representative}}</span>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="Compañía" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.company}}</span>
+
+                        <el-descriptions :title="'Detalle del registro '" :column="1" border>
+                            <el-descriptions-item label="Día" label-align="right" align="left" width="80px">
+                                <span > {{customRecord.name}} </span>
                             </el-descriptions-item>
                             <el-descriptions-item label="Descripción" label-align="right" align="left" width="80px">
-                                <span >{{customRecord.description}}</span>
+                                <span > {{customRecord.description}} </span>
                             </el-descriptions-item>
+                            
                         </el-descriptions>
                         
                         <br/>
@@ -132,31 +123,14 @@ export default{
                                 <span >{{customRecord.created_by.name}}</span>
                             </el-descriptions-item>
                             <el-descriptions-item label="Editado por" label-align="right" align="left" width="150px">
-                                <span >{{customRecord.edited_by.name}}</span>
+                                <span >{{customRecord.updated_by.name}}</span>
                             </el-descriptions-item>
                         </el-descriptions>
                         
                     </template>
 
                     <template #relatedlist>
-                        <div v-for="(c, i) in relatedListConfig">
-
-                        <RelatedList 
-                            :customRecordsRelated ="lineItemsObject[i]"
-                            :title                ="c['title']"
-                            :titleModel           ="c['titleModel']"
-                            :visibleColumns       ="c['visibleColumns']"
-                            :formFields           ="c['formFields']" 
-                            :table                ="c['table']"
-                            :origin               ="c['origin']"
-                            :origin_field         ="c['origin_field']"
-                            :target_field         ="c['target_field']"
-                            :currentRecordId      ="c['currentRecordId']"
-                            :searchIn             ="c['searchIn']"
-                            :secondLine           ="c['secondLine']"
-                            :lastLine             ="c['lastLine']"
-                            classCard             ="'my-2 -pr-0 w-[470px]'" />
-                        </div>
+                        -
                     </template>
 
                 </FormSection>

@@ -11,7 +11,7 @@ use App\Models\User;
 use App\Models\Store;
 use App\Models\Providers;
 use App\Models\LineAnyItem;
-use App\Models\ProductLineItem;
+use App\Models\WeekDay;
 use App\Models\Sales;
 use App\Models\tickets;
 
@@ -91,6 +91,9 @@ class LineAnyItemController extends Controller
             case 'providers':
                 return Providers::find($target_Id);
                 break;
+            case 'week_days':
+                return WeekDay::find($target_Id);
+                break;
         }
     }
 
@@ -148,8 +151,13 @@ class LineAnyItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(String $id)
     {
-        //
+        LineAnyItem::where('id', $id)->delete();
+        return response()->json([
+            $id,
+            'LineAnyItem eliminado'
+        ]);
+        
     }
 }

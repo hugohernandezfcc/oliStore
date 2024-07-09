@@ -64,14 +64,14 @@ console.log(router.page.url.indexOf("tickets"));
                                     <div class="relative">
                                         <Dropdown align="right" width="48" >
                                             <template #trigger>
-                                                    <span class="inline-flex rounded-md ">
-                                                        <button type="button" class=" hover:bg-red-100  inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
-                                                            Productos e Inventarios 
-                                                            
-                                                            <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="m801.728 349.184 4.48 4.48a128 128 0 0 1 0 180.992L534.656 806.144a128 128 0 0 1-181.056 0l-4.48-4.48-19.392 109.696a64 64 0 0 1-108.288 34.176L78.464 802.56a64 64 0 0 1 34.176-108.288l109.76-19.328-4.544-4.544a128 128 0 0 1 0-181.056l271.488-271.488a128 128 0 0 1 181.056 0l4.48 4.48 19.392-109.504a64 64 0 0 1 108.352-34.048l142.592 143.04a64 64 0 0 1-34.24 108.16l-109.248 19.2zm-548.8 198.72h447.168v2.24l60.8-60.8a63.808 63.808 0 0 0 18.752-44.416h-426.88l-89.664 89.728a64.064 64.064 0 0 0-10.24 13.248zm0 64c2.752 4.736 6.144 9.152 10.176 13.248l135.744 135.744a64 64 0 0 0 90.496 0L638.4 611.904zm490.048-230.976L625.152 263.104a64 64 0 0 0-90.496 0L416.768 380.928zM123.712 757.312l142.976 142.976 24.32-137.6a25.6 25.6 0 0 0-29.696-29.632l-137.6 24.256zm633.6-633.344-24.32 137.472a25.6 25.6 0 0 0 29.632 29.632l137.28-24.064-142.656-143.04z"></path></svg>
-                                                        </button>
-                                                    </span>
-                                                </template> 
+                                                <span class="inline-flex rounded-md ">
+                                                    <button type="button" class=" hover:bg-red-100  inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+                                                        Productos e Inventarios 
+                                                        
+                                                        <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="m801.728 349.184 4.48 4.48a128 128 0 0 1 0 180.992L534.656 806.144a128 128 0 0 1-181.056 0l-4.48-4.48-19.392 109.696a64 64 0 0 1-108.288 34.176L78.464 802.56a64 64 0 0 1 34.176-108.288l109.76-19.328-4.544-4.544a128 128 0 0 1 0-181.056l271.488-271.488a128 128 0 0 1 181.056 0l4.48 4.48 19.392-109.504a64 64 0 0 1 108.352-34.048l142.592 143.04a64 64 0 0 1-34.24 108.16l-109.248 19.2zm-548.8 198.72h447.168v2.24l60.8-60.8a63.808 63.808 0 0 0 18.752-44.416h-426.88l-89.664 89.728a64.064 64.064 0 0 0-10.24 13.248zm0 64c2.752 4.736 6.144 9.152 10.176 13.248l135.744 135.744a64 64 0 0 0 90.496 0L638.4 611.904zm490.048-230.976L625.152 263.104a64 64 0 0 0-90.496 0L416.768 380.928zM123.712 757.312l142.976 142.976 24.32-137.6a25.6 25.6 0 0 0-29.696-29.632l-137.6 24.256zm633.6-633.344-24.32 137.472a25.6 25.6 0 0 0 29.632 29.632l137.28-24.064-142.656-143.04z"></path></svg>
+                                                    </button>
+                                                </span>
+                                            </template> 
                                             <template #content>
                                                 <!-- Account Management -->
                                                 <div class="block px-4 py-2 text-xs text-gray-400">
@@ -103,9 +103,34 @@ console.log(router.page.url.indexOf("tickets"));
                                     Ordenes de compra <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M480 320h192c21.33 0 32-10.67 32-32s-10.67-32-32-32H480c-21.33 0-32 10.67-32 32s10.67 32 32 32"></path><path fill="currentColor" d="M887.01 72.99C881.01 67 873.34 64 864 64H160c-9.35 0-17.02 3-23.01 8.99C131 78.99 128 86.66 128 96v832c0 9.35 2.99 17.02 8.99 23.01S150.66 960 160 960h704c9.35 0 17.02-2.99 23.01-8.99S896 937.34 896 928V96c0-9.35-3-17.02-8.99-23.01M192 896V128h96v768zm640 0H352V128h480z"></path><path fill="currentColor" d="M480 512h192c21.33 0 32-10.67 32-32s-10.67-32-32-32H480c-21.33 0-32 10.67-32 32s10.67 32 32 32m0 192h192c21.33 0 32-10.67 32-32s-10.67-32-32-32H480c-21.33 0-32 10.67-32 32s10.67 32 32 32"></path></svg>
                                 </NavLink>
 
-                                <NavLink :href="route('stores.index')" :active="router.page.url.indexOf('stores') >= 0">
-                                    Tiendas <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 128 128 447.936V896h255.936V640H640v256h255.936V447.936z"></path></svg>
-                                </NavLink>
+                                <div class="hidden sm:flex sm:items-center sm:ms-6">
+                                    <div class="relative">
+                                        <Dropdown align="right" width="48" >
+                                            <template #trigger>
+                                                <span class="inline-flex rounded-md ">
+                                                    <button type="button" class=" hover:bg-red-100  inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+                                                        Tiendas
+                                                        <svg class="ms-2 -me-0.5 h-5 w-5 text-red-600 " viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 128 128 447.936V896h255.936V640H640v256h255.936V447.936z"></path></svg>
+                                                    </button>
+                                                </span>
+                                            </template> 
+                                            <template #content>
+                                                <!-- Account Management -->
+                                                <div class="block px-4 py-2 text-xs text-gray-400">
+                                                    Listas
+                                                </div>
+                                                
+                                                <DropdownLink :href="route('stores.index')" :active="router.page.url.indexOf('stores') >= 0" v-if="$page.props.auth.user.is_admin">
+                                                    Tienda
+                                                </DropdownLink>
+                                                <DropdownLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0" v-if="$page.props.auth.user.is_admin">
+                                                    Actividades de tienda
+                                                </DropdownLink>
+                                            </template>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+
 
                                 
                                 

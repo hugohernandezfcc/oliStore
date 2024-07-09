@@ -109,6 +109,49 @@ class BoxController extends Controller
         ] );
     }
     
+    public function edit(Box $box)
+    {
+        $box = Box::with('seller')
+                    ->with('createdBy')
+                    ->with('editedBy')
+                    ->with('store')
+                    ->with('boxCut')
+                    ->find($box->id);
+
+        return Inertia::render('Box/Edit', [
+            'customRecord' => $box,
+            'relatedList'            => [
+                'box_cut' => [
+                    'title'               => 'Cortes de caja',
+                    'titleModel'          => 'Nueva relación de corte de caja',
+                    'visibleColumns'      => BoxCut::RELATED_LIST_COLUMNS,
+                    'formFields'          => BoxCut::MODAL_FORM_FIELDS,
+                    'table'               => 'boxcut',
+                    'origin'              => 'box',
+                    'origin_field'        => 'store_id',
+                    'currentRecordId'     => $box->id,
+                    'showNewRecordButton' => false
+                ]
+            ]
+        ] );
+    }
+
+    public function updateStandard(Request $request, string $id){
+        $box = Box::find($id);
+        $box->amount        = floatval($request->amount);
+        $box->status        = $request->status;
+        $box->founds_box    = floatval($request->founds_box);
+        $box->description   = $request->description;
+        $box->edited_by_id  = Auth::id();
+        $box->save();
+
+        return response()->json(
+            [
+                'message' => 'Caja actualizada',
+                'box' => $box
+            ]
+        );
+    }
 
     /**
      * Update the specified resource in storage.
@@ -121,7 +164,7 @@ class BoxController extends Controller
         $box->status        = 'close';
         $box->amount        = floatval($request->amount);
         $box->founds_box    = floatval($request->founds_box);
-        $box->description   = 'Caja cerrada por ' . Auth::user()->name . ' - ' . strval(Carbon::now()) . ' en la tienda ' . $tienda->name . 'MONTO TOTAL: $ '. strval(floatval($box->amount) + floatval($box->founds_box)) . ' MXN';
+        $box->description   = 'Caja cerrada por ' . Auth::user()->name . ' - ' . strval(Carbon::now()) . ' en la tienda ' . $tienda->name . ' MONTO TOTAL: $ '. strval(floatval($box->amount) + floatval($box->founds_box)) . ' MXN';
         $box->edited_by_id  = Auth::id();
         $box->save();
 

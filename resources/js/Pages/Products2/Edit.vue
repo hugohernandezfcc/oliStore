@@ -38,6 +38,7 @@ export default{
                 is_private: this.product.is_private,
                 public_description: this.product.public_description,
                 public_name: this.product.public_name,
+                visible_product: this.product.visible_product,
                 image: this.product.image
             },
             dialogImageUrl: '',
@@ -140,6 +141,7 @@ export default{
     },
     mounted() {
         console.log(import.meta.env.VITE_DB_CONNECTION)
+        console.log(this.product)
     }
 }
 
@@ -158,7 +160,7 @@ export default{
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <FormSection >
                     <template #title>
-                        Crear Prodcuto
+                        Editar Prodcuto
                     </template>
                     <template #description>
                         Detalla el producto con precios, nombres y descripciones
@@ -216,7 +218,7 @@ export default{
                             <TextInput id="price_customer" v-model="form.price_customer" type="number" step="0.01" class="mt-1 block w-full" autocomplete="price_customer"/>
                         </div>
                         <div class="col-span-8 sm:col-span-4">
-                            <el-switch v-model="form.is_public" class="mb-2" active-text="Producto Público" inactive-text=" "/>
+                            <el-switch v-model="form.is_public" class="mb-2" active-text="Producto Público" inactive-text=" "/><el-switch v-model="form.visible_product" class="mb-2" active-text="Producto visible" inactive-text=" "/>
                         </div>
 
                         <div class="col-span-6 " v-if="form.is_public">
@@ -252,7 +254,7 @@ export default{
                     </template>
                     <template #actions>
                         <PrimaryButton @click="submit">
-                            create
+                            Actualizar
                         </PrimaryButton>
                     </template>
                 </FormSection>

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\WeekDay;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Carbon\Carbon;
+
 
 class WeekDayController extends Controller
 {
@@ -28,7 +31,7 @@ class WeekDayController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -36,7 +39,9 @@ class WeekDayController extends Controller
      */
     public function show(WeekDay $weekDay)
     {
-        //
+        return Inertia::render('Weekdays/Show', [
+            'customRecord' => WeekDay::with('createdBy', 'updatedBy')->find($weekDay->id)
+        ] );
     }
 
     /**
@@ -46,7 +51,7 @@ class WeekDayController extends Controller
     {
         //
     }
-
+ 
     /**
      * Update the specified resource in storage.
      */

@@ -64,6 +64,8 @@ export default {
       });
 
       res.data['sales'].forEach((element) => {
+
+
         if(this.salesByStore[element.store] == undefined)
             this.salesByStore[element.store] = parseFloat(element.total);
         else
@@ -72,6 +74,9 @@ export default {
         this.salesByStore['total'] += parseFloat(element.total);
       });
     }).catch((error) => { console.log(error); });
+    setTimeout(() => {
+      console.log('xxxx',this.salesByStore);
+    }, 1500);
 
     this.link = '/sales/' + this.titleFooter.start+'/'+this.titleFooter.end+'/results/'+this.paramLink[this.store_str];
   }

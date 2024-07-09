@@ -75,7 +75,7 @@ export default{
                 status: 'open',
                 no_products: '',
                 note: '',
-                store: 'Oli Store 1',
+                store: this.storeId,
                 inbound_amount: '',
                 outbound_amount: '',
                 subtotal: 0,
@@ -137,7 +137,7 @@ export default{
             this.form.status = 'open';
             this.form.no_products = '';
             this.form.note = '';
-            this.form.store = 'Oli Store 1';
+            this.form.store = this.storeId;
             this.form.inbound_amount = '';
             this.form.outbound_amount = '';
             this.form.subtotal = 0;
