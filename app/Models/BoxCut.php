@@ -11,11 +11,11 @@ class BoxCut extends Model
 
     protected $table = 'box_cut';
     public const RELATED_LIST_COLUMNS = [
-        ['prop' => 'cash_calculated',    'label' => 'Calculado',         'width' => '120', 'type' => 'currency'],
-        ['prop' => 'cash_diff',          'label' => 'Diferencia',        'width' => '120', 'type' => 'currency'],
-        ['prop' => 'cash_withdrawal',    'label' => 'Retiro',            'width' => '120', 'type' => 'currency'],
-        ['prop' => 'name',               'label' => 'Concepto',            'width' => '150', 'type' => 'text'],
-        ['prop' => 'box_id',             'label' => 'Caja',              'type' => 'text']
+        ['prop' => 'created_at',         'label' => 'Momento',           'width' => '150', 'type' => 'text'],
+        ['prop' => 'cash_calculated',    'label' => 'Monto Inicial',     'width' => '150', 'type' => 'currency'],
+        ['prop' => 'cash_withdrawal',    'label' => 'Retiro',            'width' => '130', 'type' => 'currency'],
+        ['prop' => 'cash_diff',          'label' => 'Monto Posterior',   'width' => '170', 'type' => 'currency'],
+        ['prop' => 'name',               'label' => 'Concepto',          'width' => '150', 'type' => 'text']
     ];
     public const MODAL_FORM_FIELDS = [
         ['prop' => 'cash_box',           'label' => 'Caja',              'type' => 'text'],
