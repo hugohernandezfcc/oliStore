@@ -76,12 +76,20 @@ class ProvidersController extends Controller
                                 ->with('editedBy')
                                 ->find($id);
 
-        $provider->line_any_items = LineAnyItem::where('origin', 'providers')->where('provider_id', $provider->id)
+        $provider->line_any_items = array_merge(
+            LineAnyItem::where('type', 'providers_week_days')->where('provider_id', $provider->id)
                                 ->with('updatedBy')
                                 ->with('createdBy')
                                 ->with('provider')
                                 ->with('weekDay')
-                                ->get();
+                                ->get()->toArray(),
+            LineAnyItem::where('type', 'stores_providers')->where('provider_id', $provider->id)
+                                ->with('updatedBy')
+                                ->with('createdBy')
+                                ->with('provider')
+                                ->with('store')
+                                ->get()->toArray()
+        );
         // $tickets = tickets::where('provider_id', null)->where('provider', 'LIKE', '%'.$provider->company.'%')->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Providers2/Show', [
@@ -100,6 +108,20 @@ class ProvidersController extends Controller
                     'searchIn'       => 'name',
                     'secondLine'     => 'description',
                     'lastLine'       => 'created_at'
+                ],
+                'stores_providers' => [
+                    'title'          => 'Tiendas',
+                    'titleModel'     => 'Nueva relación de proveedor',
+                    'visibleColumns' => Store::RELATED_LIST_COLUMNS,
+                    'formFields'     => Store::MODAL_FORM_FIELDS,
+                    'origin'         => 'providers',
+                    'table'          => 'stores',
+                    'origin_field'   => 'provider_id',
+                    'target_field'   => 'store_id',
+                    'currentRecordId'=> $provider->id,
+                    'searchIn'       => 'name',
+                    'secondLine'     => 'street',
+                    'lastLine'       => 'workin_hours'
                 ],
             ],
             'relatedList'            => []

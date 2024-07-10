@@ -37,6 +37,8 @@ export default{
             for (let i = 0; i < this.customRecord.line_any_items.length; i++) {
                 console.log(this.customRecord.line_any_items[i]);
 
+                let inverse = (this.customRecord.line_any_items[i].type.split("_")[1] == 'providers') ? true : false;
+
                 if (!this.lineItemsObject[this.customRecord.line_any_items[i].type]) {
                     this.lineItemsObject[this.customRecord.line_any_items[i].type] = [];
                 }
@@ -44,7 +46,7 @@ export default{
 
 
                 this.lineItemsObject[this.customRecord.line_any_items[i].type].push(
-                    this.customRecord.line_any_items[i][this.customRecord.line_any_items[i].target_id.replace('_id', '')]
+                    this.customRecord.line_any_items[i][this.customRecord.line_any_items[i][(inverse) ? 'origin_id' : 'target_id'].replace('_id', '')]
                 );
                 
             }
@@ -53,7 +55,7 @@ export default{
         }
     },
     data(){
-        return {
+        return { 
             lineItemsObject: new Array(),
             search:'',
             date: new Date()
@@ -78,17 +80,17 @@ export default{
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <PrimaryButton  class="mb-3 ml-3 lg:ml-0" @click="$inertia.visit(route('providers.index'))"> 
+            <PrimaryButton  class="mb-3 ml-3 lg:ml-0 transition transform hover:scale-105 focus:scale-95 active:scale-90" @click="$inertia.visit(route('providers.index'))"> 
                 <el-icon><ArrowLeftBold /></el-icon>
             </PrimaryButton>&nbsp;Detalle de Proveedor 
         </template>
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <inertia-link :href="route('providers.edit', customRecord.id)">
-                    <PrimaryButton  class="mb-3 ml-3 lg:ml-0"> Editar Proveedor </PrimaryButton>
+                    <PrimaryButton  class="mb-3 ml-3 lg:ml-0 transition transform hover:scale-105 focus:scale-95 active:scale-90"> Editar Proveedor </PrimaryButton>
                 </inertia-link>
 
-                <PrimaryButton @click="eliminar" class="mb-3 ml-3 lg:ml-1"> 
+                <PrimaryButton @click="eliminar" class="mb-3 ml-3 lg:ml-1 transition transform hover:scale-105 focus:scale-95 active:scale-90"> 
                     Eliminar <svg class="ml-1 -mt-0.5 h-4 w-4 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M352 192V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64H96a32 32 0 0 1 0-64zm64 0h192v-64H416zM192 960a32 32 0 0 1-32-32V256h704v672a32 32 0 0 1-32 32zm224-192a32 32 0 0 0 32-32V416a32 32 0 0 0-64 0v320a32 32 0 0 0 32 32m192 0a32 32 0 0 0 32-32V416a32 32 0 0 0-64 0v320a32 32 0 0 0 32 32"></path></svg>
                 </PrimaryButton>
 

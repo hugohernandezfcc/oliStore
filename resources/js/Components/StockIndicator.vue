@@ -22,7 +22,7 @@
                     </span> 
                 </div>
                 <div class="bg-white rounded-b-lg border p-2 border-red-600 " id="body">
-                    <el-input-number @change="handleChange(s, i)" v-model="s.stock.quantity" :min="s.stock.quantity" :precision="stockConfig.precision" :step="stockConfig.step" />
+                    <el-input-number @change="handleChange(s, i)" v-model="s.stock.quantity" :min="0" :precision="stockConfig.precision" :step="stockConfig.step" />
                 </div>
             </div>
 

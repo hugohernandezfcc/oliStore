@@ -22,7 +22,7 @@
         <el-table-column align="left" width="150" fixed="left">
             <template #default="scope">
                     <inertia-link :href="route(table+'.show', scope.row.id)" >
-                        <el-button size="small" color="#dc2626"> 
+                        <el-button size="small" color="#dc2626" class="transition transform hover:scale-105 focus:scale-95 active:scale-90"> 
                             <svg class="h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 160c320 0 512 352 512 352S832 864 512 864 0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288 52.608 79.872 211.456 288 436.8 288 225.28 0 384.128-208.064 436.8-288-52.608-79.872-211.456-288-436.8-288zm0 64a224 224 0 1 1 0 448 224 224 0 0 1 0-448m0 64a160.192 160.192 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160-71.744-160-160-160"></path></svg>
                         </el-button>
                     </inertia-link>&nbsp;
@@ -36,9 +36,10 @@
                 :prop="field.prop" 
                 :label="field.label" 
                 :key="field.prop"
-                width="145" sortable/>                          
+                :width="field.width" sortable/>                          
 
     </el-table>
+    
   </el-card>
 
     <el-dialog v-model="dialogFormVisible" :title="titleModel" width="600">

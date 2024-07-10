@@ -12,7 +12,7 @@ class WeekDay extends Model
     // Define the table associated with the model
     protected $table = 'week_days';
     public const RELATED_LIST_COLUMNS = [
-        ['prop' => 'id',            'label' => 'id',         'width' => '50',  'type' => 'text'],
+        ['prop' => 'id',            'label' => 'id',         'width' => '100',  'type' => 'text'],
         ['prop' => 'name',          'label' => 'Nombre',     'width' => '200', 'type' => 'text'],
         ['prop' => 'description',   'label' => 'Descripción','width' => '200', 'type' => 'text'],
     ];
