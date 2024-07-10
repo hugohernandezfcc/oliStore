@@ -59,6 +59,8 @@ class BoxController extends Controller
         $box->box_date          = Carbon::now();
         $box->name              = 'Caja de '.$usuario->name;
         $box->status            = 'open';
+        $box->open_amount       = floatval($request->amount);
+        $box->open_foundbox     = floatval($request->founds_box);
         $box->amount            = floatval($request->amount);
         $box->founds_box        = floatval($request->founds_box);
         $box->description       = 'Caja abierta por ' . $usuario->name . ' - ' . strval(Carbon::now()) . ' en la tienda ' . $tienda->name . ' MONTO TOTAL: $ '. strval(floatval($box->amount) + floatval($box->founds_box)) . ' MXN';
@@ -161,11 +163,13 @@ class BoxController extends Controller
         $usuario = User::find(Auth::id());
         $tienda = Store::find($usuario->store_id);
         $box = Box::find($id);
-        $box->status        = 'close';
-        $box->amount        = floatval($request->amount);
-        $box->founds_box    = floatval($request->founds_box);
-        $box->description   = 'Caja cerrada por ' . Auth::user()->name . ' - ' . strval(Carbon::now()) . ' en la tienda ' . $tienda->name . ' MONTO TOTAL: $ '. strval(floatval($box->amount) + floatval($box->founds_box)) . ' MXN';
-        $box->edited_by_id  = Auth::id();
+        $box->status         = 'close';
+        $box->close_amount   = floatval($request->amount);
+        $box->close_foundbox = floatval($request->founds_box);
+        $box->amount         = floatval($request->amount);
+        $box->founds_box     = floatval($request->founds_box);
+        $box->description    = $box->description . ' - Caja cerrada por ' . Auth::user()->name . ' - ' . strval(Carbon::now()) . ' en la tienda ' . $tienda->name . ' MONTO TOTAL: $ '. strval(floatval($box->amount) + floatval($box->founds_box)) . ' MXN';
+        $box->edited_by_id   = Auth::id();
         $box->save();
 
         return  response()->json(

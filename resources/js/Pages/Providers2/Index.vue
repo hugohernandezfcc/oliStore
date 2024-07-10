@@ -4,6 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { Calendar } from '@element-plus/icons-vue';
 import Field from '@/Components/Field.vue';
+import InputLabel from '@/Components/InputLabel.vue';
 
 export default{
     components:{
@@ -11,7 +12,8 @@ export default{
         PrimaryButton,
         SecondaryButton,
         Calendar,
-        Field
+        Field,
+        InputLabel
     },
 
     props:{
@@ -30,9 +32,10 @@ export default{
             axios.get(route('schedule.orders')).then(response => {
                 console.log(response.data);
 
-
-                for (let index = 0; index < response.data.length; index++) {
-                    const element = response.data[index];
+                this.storeObject = response.data.stores;
+                this.storeType = Object.keys(response.data.stores)[0];
+                for (let index = 0; index < response.data.orders.length; index++) {
+                    const element = response.data.orders[index];
                     
                     if(element.weekday.indexOf('LUNES') > -1){
                         this.weekDays[0].orders.push(element);
@@ -84,6 +87,8 @@ export default{
                 name: '',
                 description: ''
             },
+            storeObject: {},
+            storeType: '',
             localOrder: {},
             dialog: false,
             rowCollectionSelected: new Array(),
@@ -166,9 +171,11 @@ export default{
 
                 </div>
                 <div class="basis-1/2">
-                    <el-input v-model="search"  placeholder="Buscar proveedor" class="shadow-2xl" v-if="!showSchedule" />
+                    <el-input v-model="search"  placeholder="Buscar proveedor" class="shadow-2xl mt-1 block w-full" v-if="!showSchedule" />
+                    <el-select id="status" v-model="storeType" placeholder="Seleccionar tipo de unidad ..." class="mt-1 block w-full " size="large" v-if="showSchedule">
+                        <el-option v-for="(name, id) in storeObject" :key="id" :label="name" :value="id"/>
+                    </el-select>
 
-                    <el-input v-model="search"  placeholder="Buscar en la programación" class="shadow-2xl" v-if="showSchedule"/>
                 </div>
             </div>
 
@@ -177,7 +184,7 @@ export default{
                 <el-table-column align="left" width="70" fixed="left">
                     <template #default="scope">
                         <inertia-link :href="route('providers.show', scope.row.id)" >
-                            <el-button size="small" color="#dc2626"> 
+                            <el-button size="small" color="#dc2626" class="transition transform hover:scale-105 focus:scale-95 active:scale-90"> 
                                 <svg class="h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 160c320 0 512 352 512 352S832 864 512 864 0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288 52.608 79.872 211.456 288 436.8 288 225.28 0 384.128-208.064 436.8-288-52.608-79.872-211.456-288-436.8-288zm0 64a224 224 0 1 1 0 448 224 224 0 0 1 0-448m0 64a160.192 160.192 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160-71.744-160-160-160"></path></svg>
                             </el-button>
                         </inertia-link>
@@ -194,20 +201,22 @@ export default{
                
             </el-table>
             <div v-if="showSchedule" class="flex flex-wrap gap-1 font-mono text-white text-sm font-bold leading-6 bg-stripes-indigo rounded-lg ">
-                <div v-for="item in weekDays" class="w-full sm:w-full md:w-full lg:w-44 rounded-lg bg-gray-700 shadow-lg px-1">
+                <div v-for="item in weekDays" class="w-full sm:w-full md:w-full lg:w-44 rounded-lg bg-gray-700 shadow-lg px-2 py-2 mt-2 ">
                     <div class="text-white bold px-4"> {{item.day}} </div>
                     <div v-for="order in item.orders" >
-                        <div :class="(order.type == 'Venta') ? ventaCSS : preventaCSS  " id="header">
+
+                        <div :class="(order.type == 'Venta') ? ventaCSS : preventaCSS  " id="header" v-if="order.store == storeType">
                             {{ order.company }}
                         </div>
-                        <div class="bg-white rounded-b-lg border p-2 border-red-600 text-black mb-1 " id="body">
+                        <div class="bg-white rounded-b-lg border p-2 border-red-600 text-black mb-1 " id="body" v-if="order.store == storeType">
                             {{ (order.status == 'Pendiente') ? order.order : 'Entregado' }}
                             <center>
-                                <el-button size="small" color="#dc2626" @click="openModal(order)">
+                                <el-button size="small" color="#dc2626" @click="openModal(order)" class="transition transform hover:scale-105 focus:scale-95 active:scale-90">
                                     <svg class="h-4 w-4 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M352 480h320a32 32 0 1 1 0 64H352a32 32 0 0 1 0-64"></path><path fill="currentColor" d="M480 672V352a32 32 0 1 1 64 0v320a32 32 0 0 1-64 0"></path><path fill="currentColor" d="M512 896a384 384 0 1 0 0-768 384 384 0 0 0 0 768m0 64a448 448 0 1 1 0-896 448 448 0 0 1 0 896"></path></svg>
                                 </el-button>
                             </center>
                         </div>
+
                     </div>
                 </div>
             </div>

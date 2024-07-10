@@ -36,20 +36,46 @@ class ProvidersController extends Controller
                                     ->with('weekDay')
                                     ->with('orders')
                                     ->get();
+        $prepareStore = [];  
+        foreach ($LineAnyItem as $item){
+            array_push($prepareStore, $item->provider->id);
+        }
+        $providersArray = [];
+        $prods = LineAnyItem::where("type", "stores_providers")
+                            ->whereIn("provider_id", $prepareStore)
+                            ->with("provider")
+                            ->with("store")
+                            ->get();
+
+        $storeToReturn = [];
+        foreach ($prods as $item) {
+            $providersArray[$item->provider->id] = $item->store->id;
+            $storeToReturn[$item->store->id] = $item->store->name;
+        }
+        
 
         $orders = [];                            
         foreach ($LineAnyItem as $item) {
             $order = new \stdClass();
-            $order->provider= $item->provider;
-            $order->weekday = $item->weekDay->name;
-            $order->type    = (strpos($item->provider->company, 'V.D.') === false || strpos($item->provider->company, 'E.')) ? 'Venta' : 'preventa';
-            $order->company = $item->provider->company;
-            $order->order   = $item->orders;
-            $order->status  = ($item->orders != null) ? (strpos($item->provider->company, 'V.D.') === false || strpos($item->provider->company, 'E.')) ? 'Entregado' : 'Solicitado' : 'Pendiente';
+            $order->provider = $item->provider;
+            $order->weekday  = $item->weekDay->name;
+            $order->type     = (strpos($item->provider->company, 'V.D.') == false || strpos($item->provider->company, 'E.')) ? 'Venta' : 'preventa';
+            $order->company  = $item->provider->company;
+            
+            if(isset($providersArray[$item->provider->id]))
+                $order->store = $providersArray[$item->provider->id];
+            else
+                $order->store = null;
+
+            $order->order    = $item->orders;
+            $order->status   = ($item->orders != null) ? (strpos($item->provider->company, 'V.D.') === false || strpos($item->provider->company, 'E.')) ? 'Entregado' : 'Solicitado' : 'Pendiente';
             array_push($orders, $order);
         }
     
-        return response()->json($orders);
+        return response()->json([
+            'orders' => $orders,
+            'stores' => $storeToReturn
+        ]);
     }
 
     /**

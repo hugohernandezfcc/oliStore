@@ -42,6 +42,10 @@ class Box extends Model
         'created_by_id',
         'edited_by_id',
         'store_id',
+        'open_amount',
+        'open_foundbox',
+        'close_amount',
+        'close_foundbox'
     ];
     
     protected $casts = [

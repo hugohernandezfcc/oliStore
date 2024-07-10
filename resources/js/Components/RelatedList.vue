@@ -213,10 +213,8 @@ export default {
 
             axios.delete(route('relatedlist.delete', id)).then(response => {
                 console.log(response.data);
-                setTimeout(() => {
-                    this.loading = false;
-                    window.location.reload();
-                }, 200);
+                window.location.reload();
+                this.loading = false;
             }).catch(error => {
                 console.log(error)
             });
@@ -254,7 +252,7 @@ export default {
                     message: 'Registro creado correctamente',
                     type: 'success',
                 })
-
+                response.data[0]._id = response.data[1].id;
                 this.toRenderValues.push(response.data[0]);
                 // this.recordToRelate = null;
                 this.loading = false;

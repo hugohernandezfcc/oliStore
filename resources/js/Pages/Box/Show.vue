@@ -86,12 +86,27 @@ export default{
                                     {{customRecord.status}}
                                 </el-tag>
                             </el-descriptions-item> 
+                            <el-descriptions-item label="Monto Apertura en caja" label-align="right" align="left" width="80px">
+                                <b><span class="text-green-600">$ {{customRecord.open_amount}} MXN</span></b>
+                            </el-descriptions-item> 
+                            <el-descriptions-item label="Monto de apertura en fondo de caja" label-align="right" align="left" width="80px">
+                                <b><span class="text-green-600">$ {{customRecord.open_foundbox}} MXN</span></b>
+                            </el-descriptions-item> 
+
                             <el-descriptions-item label="Fondo de caja" label-align="right" align="left" width="80px">
                                 <b><span >$ {{customRecord.founds_box}} MXN</span></b>
                             </el-descriptions-item> 
                             <el-descriptions-item label="Monto en caja" label-align="right" align="left" width="80px">
                                 <b><span >$ {{customRecord.amount}} MXN</span></b>
                             </el-descriptions-item> 
+
+                            <el-descriptions-item label="Monto de cierre en caja" label-align="right" align="left" width="80px">
+                                <b><span class="text-red-700">$ {{(customRecord.close_amount == null) ? 0 : customRecord.close_amount}} MXN</span></b>
+                            </el-descriptions-item> 
+                            <el-descriptions-item label="Monto de cierre en fondo de caja" label-align="right" align="left" width="80px">
+                                <b><span class="text-red-700">$ {{(customRecord.close_foundbox == null) ? 0 : customRecord.close_foundbox}} MXN</span></b>
+                            </el-descriptions-item> 
+
                             <el-descriptions-item label="Tienda" label-align="right" align="left" width="80px">
                                 <span >{{customRecord.store.name}}</span>
                             </el-descriptions-item> 

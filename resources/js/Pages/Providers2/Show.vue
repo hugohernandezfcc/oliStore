@@ -42,13 +42,12 @@ export default{
                 if (!this.lineItemsObject[this.customRecord.line_any_items[i].type]) {
                     this.lineItemsObject[this.customRecord.line_any_items[i].type] = [];
                 }
-                
-
-
+        
                 this.lineItemsObject[this.customRecord.line_any_items[i].type].push(
                     this.customRecord.line_any_items[i][this.customRecord.line_any_items[i][(inverse) ? 'origin_id' : 'target_id'].replace('_id', '')]
                 );
-                
+                this.lineItemsObject[this.customRecord.line_any_items[i].type][this.lineItemsObject[this.customRecord.line_any_items[i].type].length-1]['_id'] = this.customRecord.line_any_items[i].id;
+
             }
 
             console.log('this.lineItemsObject', this.lineItemsObject);

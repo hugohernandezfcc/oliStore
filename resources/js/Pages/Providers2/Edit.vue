@@ -105,17 +105,17 @@ export default{
     <AppLayout title="Profile">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Detalle del producto
+                Detalle del proveedor
             </h2>
         </template>
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <FormSection >
                     <template #title>
-                        Crear Prodcuto
+                        Editar Proveedor
                     </template>
                     <template #description>
-                        Detalla el producto con precios, nombres y descripciones
+                        Detalla los datos de contacto del proveedor
                         
                     </template>
 
@@ -147,7 +147,7 @@ export default{
                     </template>
                     <template #actions>
                         <PrimaryButton @click="submit">
-                            create
+                            Guardar cambios
                         </PrimaryButton>
                     </template>
                 </FormSection>
