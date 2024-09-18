@@ -8,6 +8,8 @@ import FormSection      from '@/Components/FormSection.vue';
 import StockIndicator   from '@/Components/StockIndicator.vue';
 import { ArrowLeftBold } from '@element-plus/icons-vue';
 import RelatedList      from '@/Components/RelatedList.vue';
+import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue';
+import { ElLoading } from 'element-plus';
 
 export default{
     components:{
@@ -18,15 +20,67 @@ export default{
         FormSection,
         StockIndicator,
         ArrowLeftBold,
-        RelatedList
+        RelatedList,
+        Plus,
+        ZoomIn,
+        Download,
+        Delete,
+        ElLoading
     },
 
     props:{
         customRecord: Object,
-        relatedListConfig: Object
+        relatedListConfig: Object,
+
 
     },
     methods:{
+        handleRemove(file) {
+            console.log(file)
+        },
+        handlePictureCardPreview(file) {
+            this.dialogImageUrl = file.url
+            this.dialogVisible = true
+        },
+        handleDownload(file) {
+            console.log(file)
+        },
+        async uploadImage({ file }) {
+            console.log(file)
+            console.log(file.name)
+
+            const loading = ElLoading.service({
+                lock: true,
+                text: 'Loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+            }); 
+
+            const formData = new FormData()
+            formData.append('file', file)
+            formData.append('name', file.name)
+            formData.append('id', this.customRecord.id)
+            try {
+                
+
+                const response = await axios.post('/upload/icon/prod', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+                })
+
+
+                setTimeout(() => {
+                    loading.close()
+                    window.location.reload();
+                }, 1000);       
+                
+            } catch (error) {
+                console.error('Error uploading image:', error)
+                setTimeout(() => {
+                    loading.close()
+                }, 1000);
+            }
+        },
         eliminar() {
             if (confirm('¿Estás seguro de eliminar este registro?')) {
                 this.$inertia.delete(route('products.destroy', this.customRecord.id));
@@ -58,6 +112,8 @@ export default{
     },
     data(){
         return {
+            dialogImageUrl: '',
+            dialogVisible: false,
             reportResults8: new Array(),
             search:'',
             date: new Date(),
@@ -69,6 +125,7 @@ export default{
         this.lineItems();
 
         console.log('componente montado', this.customRecord)
+
 
     },
     computed: {
@@ -109,16 +166,50 @@ button {
                 <FormSection >
 
                     <template #title>
-                        {{customRecord.name}}
+                        <center>
+                            {{customRecord.name}}
+                        </center>
                     </template>
                     <template #description >
-                        <div class="w-[70%]">
-                            {{customRecord.Description}}
-                        </div>
-                        <br/>
-                        <StockIndicator 
-                            :customRecord="customRecord"
-                            :typeRecord="'tesaosicos'" />
+<!--  -->               <StockIndicator  :customRecord="customRecord" :typeRecord="'tesaosicos'" /><br/>
+                        <center>
+                            <img v-if="customRecord.contains_icon == true" :src="customRecord.image" alt="image" class="w-[30%]"/>
+                            <el-upload v-if="customRecord.contains_icon != true"  action="#" list-type="picture-card" :http-request="uploadImage" :auto-upload="true">
+                                <el-icon><Plus /></el-icon>
+
+                                <template #file="{ file }">
+                                <div>
+                                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                                    <span class="el-upload-list__item-actions">
+                                    <span
+                                        class="el-upload-list__item-preview"
+                                        @click="handlePictureCardPreview(file)"
+                                    >
+                                        <el-icon><zoom-in /></el-icon>
+                                    </span>
+                                    <span
+                                        v-if="!disabled"
+                                        class="el-upload-list__item-delete"
+                                        @click="handleDownload(file)"
+                                    >
+                                        <el-icon><Download /></el-icon>
+                                    </span>
+                                    <span
+                                        v-if="!disabled"
+                                        class="el-upload-list__item-delete"
+                                        @click="handleRemove(file)"
+                                    >
+                                        <el-icon><Delete /></el-icon>
+                                    </span>
+                                    </span>
+                                </div>
+                                </template>
+                            </el-upload>
+                            <div class="w-[70%]">
+                                {{customRecord.Description}}
+                            </div>
+                        </center>
+                        
                     </template>
                     <template #details>
                         <br/>

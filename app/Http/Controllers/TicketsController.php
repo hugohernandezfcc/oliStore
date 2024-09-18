@@ -26,7 +26,6 @@ class TicketsController extends Controller
         foreach ($tickets as $ticket) {
             array_push($toSum, $ticket->total);
             $ticket->createdByName = $ticket->createdBy->name; 
-            $ticket->total = '$'.$ticket->total.' MXN';
             $ticket->createddate = Carbon::parse($ticket->created_at, 'CST')->addHour(-6)->format('d-m-Y H:i');
             $ticket->date_time_issued = Carbon::parse($ticket->date_time_issued, 'CST')->addHour(-6)->format('d-m-Y H:i');
             $ticket->noProducts = ($ticket->ticketItems == null) ? 0 : count($ticket->ticketItems);
@@ -64,6 +63,8 @@ class TicketsController extends Controller
     {
         return tickets::where('noTicket', $noTicket)->with('ticketItems')->first();
     }
+
+    
 
     /**
      * Store a newly created resource in storage.

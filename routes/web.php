@@ -37,6 +37,10 @@ Route::resource('products',         App\Http\Controllers\ProductController::clas
 Route::resource('liabilities',      App\Http\Controllers\LiabilitiesController::class   )->middleware('auth:sanctum');
 Route::resource('reports',          App\Http\Controllers\ReportsController::class       )->middleware('auth:sanctum');
 Route::resource('tickets',          App\Http\Controllers\TicketsController::class       )->middleware('auth:sanctum');
+
+Route::resource('tickets2',         App\Http\Controllers\Tickets2Controller::class      )->middleware('auth:sanctum');
+Route::get('/indexLoadAfter',      [App\Http\Controllers\Tickets2Controller::class,  'indexLoadAfter'])->middleware('auth:sanctum')->name('tickets2.index2');
+
 Route::resource('purchaseorders',   App\Http\Controllers\PurchaseOrderController::class )->middleware('auth:sanctum');
 Route::resource('sales',            App\Http\Controllers\SalesController::class         )->middleware('auth:sanctum');
 Route::resource('salesproducts',    App\Http\Controllers\SalesProductsController::class )->middleware('auth:sanctum');
@@ -50,6 +54,8 @@ Route::resource('categories',       App\Http\Controllers\CategoryController::cla
 Route::post('/lookup/field/', [App\Http\Controllers\CoreController::class,          'lookupField' ])->name('lookup.field');
 
 Route::post('/upload',            [App\Http\Controllers\FileUploadController::class,          'store']);
+Route::post('/upload/icon/prod',  [App\Http\Controllers\FileUploadController::class,          'storeProductIcon']);
+Route::get('/uploadtesting',  [App\Http\Controllers\FileUploadController::class,          'testing']);
 
 
 Route::get('/sales/retrieveproduct/{folio}',            [App\Http\Controllers\SalesController::class,          'retrieveProduct']);
@@ -122,7 +128,9 @@ Route::group(
     Route::post('/frontend/storeStock',     [App\Http\Controllers\ProductController::class,     'storeStock']       )->name('store.stock.product');
     Route::post('/frontend/search/product', [App\Http\Controllers\ProductController::class,     'searchRecord']     )->name('search.product');
     Route::get('/frontend/orders',          [App\Http\Controllers\ProvidersController::class,   'scheduleProviders'])->name('schedule.orders');
-    Route::post('/frontend/providers',       [App\Http\Controllers\ProductController::class,   'assignProviderToProducts'])->name('products.assign.providers');
+    Route::post('/frontend/providers',      [App\Http\Controllers\ProductController::class,   'assignProviderToProducts'])->name('products.assign.providers');
+    Route::get('/frontend/products',        [App\Http\Controllers\Tickets2Controller::class,   'productList'])->name('products.list');
+    Route::post('/frontend/products1',        [App\Http\Controllers\Tickets2Controller::class,   'searchProductList'])->name('products.list.search');
     
 
 });

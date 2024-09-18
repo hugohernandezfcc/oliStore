@@ -19,6 +19,7 @@ class Box extends Model
         ['prop' => 'box_date',      'label' => 'Fecha',         'width' => '110', 'type' => 'text'],
         ['prop' => 'name',          'label' => 'Nombre',        'width' => '150', 'type' => 'text']
     ];
+
     public const MODAL_FORM_FIELDS = [
         ['prop' => 'box_date',       'label' => 'Fecha',              'type' => 'text'],
         ['prop' => 'name',           'label' => 'Nombre',             'type' => 'text'],
@@ -31,6 +32,7 @@ class Box extends Model
         ['prop' => 'edited_by_id',   'label' => 'Editado por',        'type' => 'text'],
         ['prop' => 'store_id',       'label' => 'Tienda',             'type' => 'text']
     ];
+    
     protected $fillable = [
         'name',
         'box_date',

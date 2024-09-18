@@ -6,16 +6,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "fakerphp/faker": "^1.23",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^4.1",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "milon/barcode": "^10.0",
         "nesbot/carbon": "^2.71",
-        "tightenco/ziggy": "^1.0",
-        "fakerphp/faker": "^1.23"
+        "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.10",

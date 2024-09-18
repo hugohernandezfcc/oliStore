@@ -204,7 +204,12 @@ export default{
                     </template>
                 </el-table-column>
 
-                <el-table-column prop="name"            label="NOMBRE PRODUCTO"  width="300" sortable/>
+                <el-table-column prop="name"            label="NOMBRE PRODUCTO"  width="200" sortable/>
+                <el-table-column label="UNIDAD"     width="170" sortable>
+                    <template #default="props" >    
+                        <el-tag :type="(props.row.take_portion) ? 'error' : 'primary'"><b>{{(props.row.take_portion) ? 'SE VENDE A GRANEL' : 'SE VENDE POR UNIDAD'}}</b></el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column label="PRECIO LISTA"     width="170" sortable>
                     <template #default="props" >    
                         <p> ${{ props.row.price_list }} MXN </p>
@@ -225,7 +230,7 @@ export default{
         </div>
 
     </AppLayout>
-
+<!-- <el-tag :type="(props.row.take_portion) ? 'info' : 'primary'"><b>{{(props.row.take_portion) ? 'SE VENDE A GRANEL' : 'SE VENDE POR UNIDAD'}}</b></el-tag> -->
     <el-drawer
         v-model="dialog"
         :title="'Asignar proveedor a : ' + temporalSearch.length + ' productos'"

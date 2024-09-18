@@ -65,6 +65,14 @@ class ReportsController extends Controller
                 $data = self::reportPrices("", "", $reporte, "inertia");
             break;
 
+            case 'ReportQuantitySales':
+                $data = self::reportQuantitySales("", "", $reporte, "inertia");
+            break;
+
+            case 'ReportQuantityRange':
+                $data = self::reportQuantitySales("", "", $reporte, "inertia");
+            break;
+
             default:
                 # code...
                 break;
@@ -179,6 +187,76 @@ class ReportsController extends Controller
 
     }
 
+    public static function reportQuantitySales(String $startDateTime = '', String $endDateTime = '',  $report, String $returnType = '') : array | JsonResponse {
+        $startDateTime = ($startDateTime == '') ? Carbon::now()->subDays(8) : $startDateTime;
+        $endDateTime = ($endDateTime == '') ? Carbon::now() : $endDateTime;
+        $carbon = Carbon::now();
+
+        $productLineItems = ProductLineItem::with([
+            'saleId:id,created_at,store',
+            'productId:id,name,price_list,price_customer,take_portion,Description',
+            'createdBy:name'
+        ])->whereBetween('created_at', [
+            // $startDateTime->format("Y-m-d H:i"), 
+            $carbon->startOfWeek()->format("Y-m-d H:i"), 
+            $carbon->endOfWeek()->format("Y-m-d H:i")
+        ])->orderBy('created_at', 'desc')->get();
+
+        $toReturn = array(
+            'Oli Store 1 (Pedregal)' => [],
+            'Oli Store 2 (Plazas)' => []
+        );
+        // dd($productLineItems);
+        for ($i=0; $i < count($productLineItems); $i++) { 
+
+            //Se crea el nodo de la fecha por cada tienda:
+
+            $st     = $productLineItems[$i]->saleId->store;
+            $dSale  = explode(' ', $productLineItems[$i]->created_at)[0];
+            $prod   = $productLineItems[$i]->productId->id;
+
+            if(!isset($toReturn[$st][$dSale][$prod]))
+                $toReturn[$st][$dSale][$prod] = [];
+
+            if(isset($toReturn[$st][$dSale][$prod])){
+                $record = new \stdClass();
+                $record->take_portion = $productLineItems[$i]->productId->take_portion;
+                $record->product  = $productLineItems[$i]->productId->name . ' - ' . $productLineItems[$i]->productId->Description;
+                if(!$productLineItems[$i]->productId->take_portion)
+                    $record->quantity = 1;
+                else{
+                    $record->quantity = floatval(number_format((floatval($productLineItems[$i]->final_price)/$productLineItems[$i]->productId->price_customer)*1000, 2));
+                }
+
+                $record->plist    = floatval($productLineItems[$i]->productId->price_list);
+                $record->clist    = floatval($productLineItems[$i]->productId->price_customer);
+                $record->fprice   = floatval($productLineItems[$i]->final_price);
+                
+                array_push($toReturn[$st][$dSale][$prod], $record);
+
+            }
+
+           
+         }
+
+        $data = [
+            'report' => $report,
+            'reportResults' => [
+                'records' => $toReturn,
+
+            ]
+        ];
+
+        switch ($returnType) {
+            case 'json':
+                return response()->json($data);
+                break;
+            case 'inertia':
+                return $data;
+                break;
+            
+        }
+    }
 
     /**
      * Show the form for editing the specified resource.

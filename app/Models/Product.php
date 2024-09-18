@@ -71,6 +71,8 @@ class Product extends Model
         'is_private',
         'public_description',
         'public_name',
+        'contains_icon',
+        'icon_product',
         'image'
     ];
     

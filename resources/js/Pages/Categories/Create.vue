@@ -11,6 +11,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import LookupField from '@/Components/LookupField.vue';
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
+import { ElLoading } from 'element-plus';
 
 export default{
 
@@ -19,6 +20,7 @@ export default{
     ZoomIn,
     Download,
     Delete,
+    ElLoading
     },
     props:{
         customRecord: Object   

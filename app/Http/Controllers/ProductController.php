@@ -6,8 +6,10 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\ProductLineItem;
 use App\Models\LineAnyItem;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Stock;
 use App\Models\Providers;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -30,7 +32,8 @@ class ProductController extends Controller
             "Description",
             "price_list",
             "price_customer",
-            "updated_at"
+            "updated_at",
+            "take_portion"
           )
             ->orderBy("updated_at", "desc")
             ->limit(30)
@@ -63,7 +66,8 @@ class ProductController extends Controller
             "Description",
             "price_list",
             "price_customer",
-            "updated_at"
+            "updated_at",
+            "take_portion"
           )
             ->where('name', 'LIKE', '%'.strtoupper($productSearch->get('search')).'%')
             ->orWhere('Description', 'LIKE', '%' . strtoupper($productSearch->get('search')) . '%') 
@@ -223,6 +227,10 @@ class ProductController extends Controller
                                 ->with('provider')
                                 ->with('products')
                                 ->get();
+
+        // if($product->image != null)
+        //     $product->image = Storage::disk('s3')->url($product->image);
+        
 
         return Inertia::render('Products2/Show', [
             'customRecord' => $product,

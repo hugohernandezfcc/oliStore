@@ -173,7 +173,22 @@ export default{
             
         </div>
     </div>
-    
+    <figure class="relative flex flex-col-reverse bg-slate-50 rounded-lg p-6 border-2 border-red-600">
+        <blockquote class="mt-6 text-slate-700 dark:text-slate-300">
+            <p>I feel like an idiot for not using Tailwind CSS until now.</p>
+        </blockquote>
+        <figcaption class="flex items-center space-x-4">
+            <img src="/_next/static/media/ryan-florence.3af9c9d9.jpg" alt="" class="flex-none w-14 h-14 rounded-full object-cover" loading="lazy" decoding="async">
+            <div class="flex-auto">
+                <div class="text-base text-slate-900 font-semibold dark:text-slate-300">
+                    <a href="https://twitter.com/ryanflorence/status/1187951799442886656" tabindex="0">
+                        <span class="absolute inset-0"></span>Ryan Florence
+                    </a>
+                </div>
+                <div class="mt-0.5">Remix &amp; React Training</div>
+            </div>
+        </figcaption>
+    </figure>
 
     <el-drawer
         v-model="dialog"
