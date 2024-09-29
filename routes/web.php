@@ -35,7 +35,11 @@ Route::post('/boxupdate/{id}',          [App\Http\Controllers\BoxController::cla
 Route::resource('financials',       App\Http\Controllers\FinancialController::class     )->middleware('auth:sanctum');
 Route::resource('products',         App\Http\Controllers\ProductController::class       )->middleware('auth:sanctum');
 Route::resource('liabilities',      App\Http\Controllers\LiabilitiesController::class   )->middleware('auth:sanctum');
+
 Route::resource('reports',          App\Http\Controllers\ReportsController::class       )->middleware('auth:sanctum');
+Route::post('/reports/quantity',   [App\Http\Controllers\ReportsController::class,   'reportQuantityExecution'])->name('reports.quantity.data');
+
+
 Route::resource('tickets',          App\Http\Controllers\TicketsController::class       )->middleware('auth:sanctum');
 
 Route::resource('tickets2',         App\Http\Controllers\Tickets2Controller::class      )->middleware('auth:sanctum');

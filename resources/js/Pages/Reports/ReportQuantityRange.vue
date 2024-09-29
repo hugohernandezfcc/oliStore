@@ -1,12 +1,15 @@
 <script >
 import AppLayout from '@/Layouts/AppLayout.vue';
-import $ from 'jquery';
+
 
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Footer from '@/Components/Footer.vue';
 import wizardForm from '@/Components/TicketForm.vue';
 import moment from 'moment';
+import Doughnut from '@/Components/Doughnut.vue';
+
+import axios from 'axios';
 
 export default{
     components:{
@@ -14,108 +17,192 @@ export default{
         PrimaryButton,
         SecondaryButton,
         Footer,
-        wizardForm
+        wizardForm,
+        Doughnut,
+        moment
     },
 
     props:{
         report: Object,
-        reportResults: Array 
+        filters: Array,
+        reportResults: Array,
+        storesBackEnd: Array
     },
     methods:{
+        formatTooltip(value) {
+            return `Diferencia de ${30-value} días `;  // Adding '%' symbol to the tooltip value
+        },
         rangeChange(e){
-            console.log(this.days);
-            console.log(e);
+            
+            const today = new Date();
+            console.log(e)
+            const daysToSubtract1 = (30-e[1]);
+            const daysToSubtract2 = (30-e[0]);
+            console.log(daysToSubtract1)
+            console.log(daysToSubtract2)
+
+
+            const start = new Date(today);
+            start.setDate(today.getDate() - daysToSubtract1);
+            console.log(moment(start).format('L'))
+
+
+            const end = new Date(today);
+            end.setDate(today.getDate() - daysToSubtract2);
+            console.log(moment(end).format('L'))
+
+            this.range.start = moment(end).format('L');
+            this.range.end = moment(start).format('L');
+            this.disabledExecuteReport = false;
+        },
+
+        executeReport(){
+            console.log('Ejecutando reporte')
+            console.log(this.range)
+            console.log(this.store)
+            console.log(this.unitType)
+            this.disabledExecuteReport = true;
+            this.profit = 0;
+            this.plist = 0;
+            this.cprice = 0;
+            axios.post(route('reports.quantity.data'),{
+                start: this.range.start,
+                end: this.range.end,
+                store: this.store,
+                unitType: this.unitType
+            }).then(response => {
+                console.log(response.data)
+                this.datatableRecords = [];
+                for (const producto in response.data.reportResults.records){
+                    if(producto.name != 'RECARGA DE SALDO - RECARGA DE SALDO'){
+                        console.log(response.data.reportResults.records[producto][0].take_portion)
+                        if(response.data.reportResults.records[producto][0].take_portion == this.unitType || this.unitType == 'all'){
+
+                            this.datatableRecords.push({
+                                name: response.data.reportResults.records[producto][0].product,
+                                cantidad: (response.data.reportResults.records[producto][0].take_portion) ? this.getPortion(response.data.reportResults.records[producto]) + 'kg.' : response.data.reportResults.records[producto].length + ' ud.',
+                                quantity: (this.reportResults.records[producto][0].take_portion) ? this.getPortion(this.reportResults.records[producto])  : this.reportResults.records[producto].length,
+                                precioCliente: response.data.reportResults.records[producto][0].price,
+                                preciolista: response.data.reportResults.records[producto][0].priceList,
+                                price: response.data.reportResults.records[producto][0].price,
+                                priceList: response.data.reportResults.records[producto][0].priceList
+                            });
+                            
+                            this.profit += this.getProfit(response.data.reportResults.records[producto]);
+                            this.plist += this.getPriceList(response.data.reportResults.records[producto]);
+                            this.cprice += this.getPrecioCliente(response.data.reportResults.records[producto]);
+                        }
+                    }
+                    
+                }
+
+            }).catch(error => {
+                console.log(error)
+            });
+        },
+
+        getPortion(arrayProducts){
+            let portion = 0;
+            for (const product in arrayProducts){
+                portion += arrayProducts[product].quantity;
+            }
+            return (portion/1000).toFixed(3);
+        },
+        getProfit2(element){
+            return element.price-element.priceList;
+        },
+        getProfit(arrayProducts){
+            let profit = 0;
+            for (const product in arrayProducts){
+                profit += (arrayProducts[product].price-arrayProducts[product].priceList);
+            }
+            return profit;
+        },
+
+        getPriceList(arrayProducts){
+            let priceList = 0;
+            for (const product in arrayProducts){
+                priceList += arrayProducts[product].priceList;
+            }
+            return priceList;
+        },
+        getPrecioCliente(arrayProducts){
+            let precioCliente = 0;
+            for (const product in arrayProducts){
+                precioCliente += arrayProducts[product].price;
+            }
+            return precioCliente;
+        },
+        enableExecuteReport(){
+            this.disabledExecuteReport = false;
         }
     },
     data(){
         return {
-         
+            range: {
+                start: moment(new Date().setDate(new Date().getDate() - 10 ) ).format('L'),
+                end: moment(new Date()).format('L')
+            },
             search:'',
-            // kStore: '',
-            days: 0,
+            days: [20, 30],
+            marks: {
+                0: '0',
+                10: '10',
+                20: '20',
+                30: 'HOY'
+            },
             datatable: [],
-            filters: [],
+
             stores: [],
             profit: 0,
             cprice: 0,
-            lprice: 0
+            plist: 0,
+            store: 'all',
+            stores:[],
+            unitType: 'all',
+            unitsType:[
+                {value: false,  label: 'Ventar por unidad'},
+                {value: true, label: 'Venta a granel'},
+                {value: 'all', label: 'Ambos tipos de venta'}
+            ],
+            datatableRecords: [],
+            disabledExecuteReport: true
         }
     },
     mounted(){
-        
-        console.log(this.reportResults);
-        let level1RecordsLocal = [];
-        const datesFilters = new Set();
-        for (const tienda in this.reportResults.records) {
-            this.stores.push({
-                text: tienda,
-                value: tienda
+        this.stores = this.storesBackEnd;
+        this.stores.push({value: 'all', label: 'Todas las tiendas'});
+
+        for (const producto in this.reportResults.records){
+            
+            this.datatableRecords.push({
+                name: this.reportResults.records[producto][0].product,
+                cantidad: (this.reportResults.records[producto][0].take_portion) ? this.getPortion(this.reportResults.records[producto]) + 'kg.' : this.reportResults.records[producto].length + ' ud.',
+                quantity: (this.reportResults.records[producto][0].take_portion) ? this.getPortion(this.reportResults.records[producto])  : this.reportResults.records[producto].length,
+                precioCliente: this.reportResults.records[producto][0].price,
+                preciolista: this.reportResults.records[producto][0].priceList,
+                price: this.reportResults.records[producto][0].price,
+                priceList: this.reportResults.records[producto][0].priceList
             });
-            for (const date in this.reportResults.records[tienda]) {
-                level1RecordsLocal[date] = [];
-                                
-                for (const product in this.reportResults.records[tienda][date]) {
-                    let localRecords = {};
-
-                    localRecords.id = product;
-                    localRecords.product = this.reportResults.records[tienda][date][product][0].product;
-
-                    localRecords.quantity = 0;
-                    localRecords.cprice = 0;
-                    localRecords.lprice = 0;
-                    
-                    localRecords.quantity = this.reportResults.records[tienda][date][product].length;
-                    localRecords.cprice   = localRecords.quantity*this.reportResults.records[tienda][date][product][0].clist;
-                    localRecords.lprice   = localRecords.quantity*this.reportResults.records[tienda][date][product][0].plist;
-                    localRecords.profit   = localRecords.cprice-localRecords.lprice;
-
-                    localRecords.tienda = tienda;
-                    localRecords.date = date;
-
-                    if(this.reportResults.records[tienda][date][product][0].take_portion !== true){
-                        this.datatable.push(localRecords);
-                        level1RecordsLocal[date].push(localRecords);
-                        this.profit += localRecords.profit;
-                        this.cprice += localRecords.cprice;
-                        this.lprice += localRecords.lprice;
-                    }
-                    datesFilters.add(date);
-
-                }
-            }
+            this.profit += this.getProfit(this.reportResults.records[producto]);
+            this.plist += this.getPriceList(this.reportResults.records[producto]);
+            this.cprice += this.getPrecioCliente(this.reportResults.records[producto]);
         }
+        console.log(this.datatableRecords);
 
-
-        for (const date of datesFilters) {
-            this.filters.push({ text: date, value: date });
-        }
-        this.filters.push({ text: 'All', value: '' });  
-        this.stores.push({ text: 'All', value: '' });  
-        
-        console.log(this.datatable);
-        console.log(this.filters);
-        console.log(this.days);
     },
     computed: {
-        /**
-         */
         filterTableData() {
+          
 
-            if(this.kStore !== '' || this.kDates !== ''){
-                let beforeReturn = this.datatable.filter(
-                    (data) =>
-                    (data.tienda === this.kStore || data.date === this.kDates) && (!this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() ))
-                );
-                return beforeReturn;
-            }else{
-                let beforeReturn = this.datatable.filter(
-                    (data) =>
-                    !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
-                );
-                return beforeReturn;
-            }          
+            let beforeReturn = Object.values(this.datatableRecords).filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+            console.log(beforeReturn)
+           
+            return beforeReturn;            
         }
-       
     }
 
 }
@@ -126,42 +213,126 @@ export default{
             Reporte de ventas por unidades / Semanal
         </template>
         
-        <div class="m-4">
-            <div class="flex flex-wrap gap-1 font-mono text-white text-sm font-bold leading-6 bg-stripes-indigo rounded-lg">
-                <div class="p-4 w-1/5 rounded-lg flex items-center justify-center bg-red-500 shadow-lg">
-                    Profit: $ 000 MXN
-                </div>
-                <div class="p-4 w-1/5 rounded-lg flex items-center justify-center bg-red-500 shadow-lg">
-                    Lista P.: $ 000 MXN
-                </div>
-                <div class="p-4 w-1/5 rounded-lg flex items-center justify-center bg-red-500 shadow-lg">
-                    Cliente P.: $ 000 MXN
-                </div>
-            </div>
-        </div>
-        <div class="shadow bg-white md:rounded-md lg:p-4 lg:m-4 m-1 font-mono">
-
-            <div class="slider-demo-block">
-                <el-slider v-model="days" range show-stops :max="30" @change="rangeChange"/>
-            </div>
-
+       
+        <div class="m-8">
+            <el-button type="danger" class="mb-3 ml-3 lg:ml-1 bg-red-600" @click="executeReport" :disabled="disabledExecuteReport">
+                Ejecutar reporte <svg class="ml-1 -mt-0.5 h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M384 192v640l384-320.064z"></path></svg>
+            </el-button>
             
-            <el-table v-loading="loading" :data="filterTableData" height="600" show-summary class="shadow-lg m-1"  stripe :default-sort="{ prop: 'quantity', order: 'descending' }" >
-                <el-table-column prop="tienda"      label="Tienda"           width="250"></el-table-column>
-                <el-table-column prop="date"        label="Fecha"            width="180"></el-table-column>
-                <el-table-column prop="product"     label="Producto"         width="300"></el-table-column>
-                <el-table-column prop="quantity"    label="Cantidad"         width="180"></el-table-column>
-                <el-table-column prop="cprice"      label="Precio de Compra" width="180"></el-table-column>
-                <el-table-column prop="lprice"      label="Precio de Venta"  width="180"></el-table-column>
-                <el-table-column prop="profit"      label="Ganancia"         width="180"></el-table-column>
-            </el-table>
+            <div class="grid grid-rows-5 grid-flow-col gap-4 font-mono text-white text-sm font-bold leading-6 bg-stripes-fuchsia rounded-lg">
+                <div class="p-3 rounded-lg shadow-lg bg-gray-500 grid col-span-1 row-span-6 ">
+                    <!-- <div class="w-5/12 h-48 justify-self-center bg-white rounded-lg  ">
+                        <Doughnut  :labels="[ 'Red', 'Blue']" 
+                                :datasets="[
+                                        {
+                                        backgroundColor: ['#FF6633', '#FFB399'],
+                                        data: [ 4, 5]
+                                    }
+                                ]"/>
+                    </div> -->
 
+                    <el-select
+                            v-model="store"
+                            placeholder="Tienda"
+                            size="large"
+                            @change="enableExecuteReport"
+                            >
+                            <el-option
+                                v-for="item in stores"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                            </el-select>
+
+                            <el-select
+                            v-model="unitType"
+                            placeholder="Tipo de venta"
+                            size="large"
+                            @change="enableExecuteReport"
+                            >
+                            <el-option
+                                v-for="item in unitsType"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            /></el-select>
+                            <div class="p-2  rounded-lg h-10 items-center  bg-red-600 shadow-lg">
+                                {{range.start}} - {{range.end}} 
+                            </div>
+                            <div class="p-2  rounded-lg h-10 items-center  bg-red-500 shadow-lg">
+                                Profit: ${{profit.toFixed(2)}} MXN
+                            </div>
+                            <div class="p-2  rounded-lg h-10 items-center  bg-red-400 shadow-lg">
+                                P. Lista: ${{plist.toFixed(2)}} MXN
+                            </div>
+                            <div class="p-2  rounded-lg h-10 items-center  bg-red-300 shadow-lg">
+                                P. Cliente: ${{ cprice.toFixed(2) }} MXN
+                            </div>
+                            
+                            
+                    
+                </div>
+                <div class="rounded-lg bg-gray-300 grid row-span-1 col-span-3 ">
+                    
+                    <el-slider v-model="days" :format-tooltip="formatTooltip" range show-stops :max="30" @change="rangeChange" :marks="marks" class="m-3"/>
+                </div>
+                <div class="p-4 rounded-lg shadow-lg bg-gray-500 grid  row-span-5 col-span-3 text-gray-700">
+                    <input  type="text" 
+                            id="filterInput" 
+                            placeholder="Buscar..." 
+                            v-model="search"
+                            class="mb-3 p-1 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    <div class="relative overflow-hidden border border-gray-300 rounded-lg shadow-md">
+                        <!-- Table Header (static) -->
+                        <table class="min-w-full bg-white">
+                        <thead class="bg-red-600">
+                            <tr>
+                                <th class="border w-3/6 py-3 text-center text-sm font-medium text-white">Producto</th>
+                                <th class="border w-1/6 py-3 text-center text-sm font-medium text-white">Cantidad</th>
+                                <th class="border w-1/6 py-3 text-center text-sm font-medium text-white">Precio Cliente</th>
+                                <th class="border w-1/6 py-3 text-center text-sm font-medium text-white">Precio Lista</th>
+                            </tr>
+                        </thead>
+                        </table>
+
+                        <!-- Table Body (scrollable) -->
+                        <div class="h-72 overflow-y-auto">
+                        <table class="min-w-full bg-white">
+                            <tbody id="dataTable">
+                                
+
+                                <tr class="odd:bg-gray-300 even:bg-gray-200" v-for="p in filterTableData">
+                                    <td class="border text-left w-3/6 p-1">{{p.name}} </td>
+                                    <td class="border text-center w-1/6">{{p.cantidad}}</td>
+                                    <td class="border text-center w-1/6">$ {{p.precioCliente.toFixed(2)}} MXN</td>
+                                    <td class="border text-center w-1/6">$ {{p.preciolista.toFixed(2)}} MXN</td>
+                                </tr>
+                                
+                                                          
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
+        
     </AppLayout>
 </template>
 
-<style scoped>
-.custom-width {
-  width: 70%;
+<style >
+
+.el-slider__stop{
+    background-color: red;
+    height: 10px;
+    width: 10px;
+    margin-top: -2px;
 }
+.el-slider{
+    width: 95%;
+}
+
 </style>

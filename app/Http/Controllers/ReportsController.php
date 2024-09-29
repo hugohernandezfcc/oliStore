@@ -16,6 +16,7 @@ use App\Models\Sales;
 use App\Models\ProductLineItem;
 use Illuminate\Http\JsonResponse;
 use stdClass;
+use Debugbar;
 
 class ReportsController extends Controller
 {
@@ -70,7 +71,7 @@ class ReportsController extends Controller
             break;
 
             case 'ReportQuantityRange':
-                $data = self::reportQuantitySales("", "", $reporte, "inertia");
+                $data = self::reportQuantityRange($reporte, "inertia");
             break;
 
             default:
@@ -79,6 +80,170 @@ class ReportsController extends Controller
         }
 
         return Inertia::render('Reports/' . $reporte->template, $data);
+    }
+    
+    public static function returnStores($param){
+        $where = [];
+        $stores = [];
+        $ids = [];
+        $labels = [];
+
+        if($param == 'all'){
+            $where = Store::where('id', '!=', 0)->get();
+        }else{
+            $where = Store::where('id', '=', $param)->get();
+        }
+
+        foreach ($where as $store) {
+            array_push($ids, $store->id);   
+            array_push($labels, $store->name);   
+            array_push($stores, [
+                'value' => $store->id,
+                'label' => $store->name
+            ]);
+        }
+        return [ $stores, $ids, $labels ];
+    }
+
+    public static function reportQuantityExecution(Request $request): JsonResponse {
+
+        $store = self::returnStores($request->store);
+        $productLineItems = ProductLineItem::with([
+            'saleId:id,created_at,store',
+            'productId:id,name,price_list,price_customer,take_portion,Description',
+            'createdBy:name'
+        ])->whereBetween('created_at', [
+            new Carbon($request->start),
+            new Carbon($request->end)
+        ])->orderBy('created_at', 'desc')->get();
+
+
+        return response()->json([
+            'start' => $request->start,
+            'end' => $request->end,
+            'store' => $request->store,
+            'unitType' => $request->unitType,
+            'reportResults' => [
+                'records' => self::prepareReportData($productLineItems, $request->unitType, $store[2]),
+            ]
+        ]);
+    }
+
+    public static function prepareReportData($productLineItems, $unitType, $stores){
+        $toReturn = [];
+        for ($i=0; $i < count($productLineItems); $i++) { 
+            $record = new \stdClass();
+            if(in_array($productLineItems[$i]->saleId->store, $stores)){
+                $record->product = $productLineItems[$i]->productId->name . ' - ' . $productLineItems[$i]->productId->Description;
+                $record->store = $productLineItems[$i]->saleId->store;
+    
+                if(!$productLineItems[$i]->productId->take_portion){
+                        $record->quantity = 1;
+                    }else{
+                        $record->quantity = floatval(number_format((floatval($productLineItems[$i]->final_price)/$productLineItems[$i]->productId->price_customer)*1000, 2));
+                    }
+    
+                if(!$productLineItems[$i]->productId->take_portion){
+                    $record->price = floatval($productLineItems[$i]->productId->price_customer);
+                    $record->priceList = floatval($productLineItems[$i]->productId->price_list);
+                }else{
+                    $record->price = floatval($productLineItems[$i]->final_price);
+                    $diff = floatval($productLineItems[$i]->productId->price_customer) - floatval($productLineItems[$i]->productId->price_list);
+                    $getDiff = ($diff / floatval($productLineItems[$i]->productId->price_customer)) * 100;
+                    $record->priceList = floatval($productLineItems[$i]->final_price) - (floatval($productLineItems[$i]->final_price) * ($getDiff / 100));
+                }
+    
+                $record->take_portion = $productLineItems[$i]->productId->take_portion;
+                
+                if($unitType == 'all'){
+                    if(!isset($toReturn[$productLineItems[$i]->productId->id])){
+    
+                        $toReturn[$productLineItems[$i]->productId->id] = [];
+                        array_push($toReturn[$productLineItems[$i]->productId->id], $record);
+                    }else{
+                        array_push($toReturn[$productLineItems[$i]->productId->id], $record);
+                    }
+    
+                }else{
+                    if($productLineItems[$i]->productId->take_portion == $unitType){
+
+                        if(!isset($toReturn[$productLineItems[$i]->productId->id])){
+        
+                            $toReturn[$productLineItems[$i]->productId->id] = [];
+                            array_push($toReturn[$productLineItems[$i]->productId->id], $record);
+                        }else{
+                            
+                            array_push($toReturn[$productLineItems[$i]->productId->id], $record);
+                        }
+                    }
+                }
+            }
+        }
+        return $toReturn;
+        
+    }
+
+    public static function reportQuantityRange( $report, String $returnType) : array | JsonResponse {
+
+        $store = self::returnStores('all');
+
+        $productLineItems = ProductLineItem::with([
+            'saleId:id,created_at,store',
+            'productId:id,name,price_list,price_customer,take_portion,Description',
+            'createdBy:name'
+        ])->whereBetween('created_at', [
+            (Carbon::today())->addDays(-10),
+            Carbon::today()
+        ])->orderBy('created_at', 'desc')->get();
+
+
+        $data = [
+            'report' => $report,
+            'filters' => [(Carbon::today())->addDays(-1),Carbon::today()],
+            'reportResults' => [
+                'records'       => self::prepareReportData($productLineItems, 'all', $store[2]),
+            ],
+            'storesBackEnd' => $store[0]
+        ];
+
+        switch ($returnType) {
+            case 'json':
+                return response()->json($data);
+                break;
+            case 'inertia':
+                return $data;
+                break;
+        }
+    }
+
+    public  function runReport(String $startDateTime = '', String $endDateTime = '',  $report, String $returnType = '') : array | JsonResponse {
+        
+        $productLineItems = ProductLineItem::with([
+            'saleId:id,created_at,store',
+            'productId:id,name,price_list,price_customer,take_portion,Description',
+            'createdBy:name'
+        ])->whereBetween('created_at', [
+            new Carbon($startDateTime),
+            new Carbon($endDateTime)
+        ])->whereIn('sale_id', [])->orderBy('created_at', 'desc')->get();
+
+        $data = [
+            'report' => $report,
+            'reportResults' => [
+                'records' => $toReturn,
+
+            ]
+        ];
+        
+        switch ($returnType) {
+            case 'json':
+                return response()->json($data);
+                break;
+            case 'inertia':
+                return $data;
+                break;
+            
+        }
     }
 
     /**
@@ -197,8 +362,8 @@ class ReportsController extends Controller
             'productId:id,name,price_list,price_customer,take_portion,Description',
             'createdBy:name'
         ])->whereBetween('created_at', [
-            // $startDateTime->format("Y-m-d H:i"), 
-            $carbon->startOfWeek()->format("Y-m-d H:i"), 
+            $startDateTime->format("Y-m-d H:i"), 
+            // $carbon->startOfWeek()->format("Y-m-d H:i"), 
             $carbon->endOfWeek()->format("Y-m-d H:i")
         ])->orderBy('created_at', 'desc')->get();
 
