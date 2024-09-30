@@ -81,7 +81,7 @@ export default{
                             this.datatableRecords.push({
                                 name: response.data.reportResults.records[producto][0].product,
                                 cantidad: (response.data.reportResults.records[producto][0].take_portion) ? this.getPortion(response.data.reportResults.records[producto]) + 'kg.' : response.data.reportResults.records[producto].length + ' ud.',
-                                quantity: (this.reportResults.records[producto][0].take_portion) ? this.getPortion(this.reportResults.records[producto])  : this.reportResults.records[producto].length,
+                                quantity: (response.data.reportResults.records[producto][0].take_portion) ? this.getPortion(response.data.reportResults.records[producto])  : response.data.reportResults.records[producto].length,
                                 precioCliente: response.data.reportResults.records[producto][0].price,
                                 preciolista: response.data.reportResults.records[producto][0].priceList,
                                 price: response.data.reportResults.records[producto][0].price,
