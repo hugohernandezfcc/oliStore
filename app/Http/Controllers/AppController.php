@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\LineAnyItem;
-use App\Models\ProductB2B;
+use App\Models\Productb2b;
 
 class AppController extends Controller
 {
@@ -14,7 +14,7 @@ class AppController extends Controller
      */
     public function index(string $order)
     {
-        $productosWpbe = ProductB2B::with('pricebookEntries')->get();
+        $productosWpbe = Productb2b::with('pricebookEntries')->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
             return $producto->pricebookEntries->isNotEmpty();
         });
