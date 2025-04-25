@@ -47,6 +47,6 @@ class ProductB2B extends Model
 
     public function pricebookEntries()
     {
-        return $this->hasMany(PricebookEntry::class, 'productb2b_id');
+        return $this->hasMany(PriceBookEntry::class, 'productb2b_id');
     }
 }

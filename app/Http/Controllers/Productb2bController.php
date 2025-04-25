@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Productb2b;
+use App\Models\ProductB2B;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -19,7 +19,7 @@ class Productb2bController extends Controller
     public function index()
     {
         return Inertia::render('Productsb2b/Index', [
-            'productsb2b' => Productb2b::get()
+            'productsb2b' => ProductB2B::get()
         ]);
     }
 
@@ -90,7 +90,7 @@ class Productb2bController extends Controller
 
         ]);
 
-        Productb2b::create($request->all());
+        ProductB2B::create($request->all());
         return redirect()->route('productsb2b.index');
     }
 
@@ -99,7 +99,7 @@ class Productb2bController extends Controller
      */
     public function show(string $id)
     {
-        $Productb2b = Productb2b::with('createdBy')->with('editedBy')->find($id);
+        $Productb2b = ProductB2B::with('createdBy')->with('editedBy')->find($id);
         return Inertia::render('Productsb2b/Show', [
             'customRecord' => $Productb2b,
             'pricebookentries' => $Productb2b->pricebookEntries
@@ -111,7 +111,7 @@ class Productb2bController extends Controller
      */
     public function edit(String $productsb2b)
     {   
-        $productb2b = Productb2b::with('createdBy')->with('editedBy')->find($productsb2b);
+        $productb2b = ProductB2B::with('createdBy')->with('editedBy')->find($productsb2b);
         return Inertia::render('Productsb2b/Edit', [
             'customRecord' => $productb2b,
             'pricebookentries' => $productb2b->pricebookEntries
@@ -123,7 +123,7 @@ class Productb2bController extends Controller
      */
     public function update(Request $request, String $id)
     {
-        $Productb2b = Productb2b::find($id);
+        $Productb2b = ProductB2B::find($id);
         $request->merge([
             'edited_by_id' => Auth::id(),
             'public_description' => $request->get('description'),
@@ -139,7 +139,7 @@ class Productb2bController extends Controller
      */
     public function destroy(String $id)
     {
-        $Productb2b = Productb2b::find($id);
+        $Productb2b = ProductB2B::find($id);
         $Productb2b->pricebookEntries()->delete();
         $Productb2b->delete();
         return response()->json([
