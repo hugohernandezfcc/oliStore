@@ -14,7 +14,7 @@ class Tickets extends Model
     protected $fillable = [
         'noTicket',
         'who_issued_ticket',
-        'provider',
+
         'provider_id',
         'total',
         'date_time_issued',
@@ -41,6 +41,7 @@ class Tickets extends Model
     {
         return $this->belongsTo(Providers::class, 'provider_id');
     }
+    
 }
 
 

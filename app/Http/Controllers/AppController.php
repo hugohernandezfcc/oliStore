@@ -1,21 +1,55 @@
 <?php
 
 namespace App\Http\Controllers;
-
+ 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\LineAnyItem;
+use App\Models\ProductB2B;
 
 class AppController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(string $sessionId)
+    public function index(string $order)
     {
+        $productosWpbe = ProductB2B::with('pricebookEntries')->get();
+        $productosWpbe = $productosWpbe->filter(function ($producto) {
+            return $producto->pricebookEntries->isNotEmpty();
+        });
+
+        $productosWpbe = $productosWpbe->map(function ($producto) {
+            return [
+                'id' => $producto->id,
+                'name' => $producto->name,
+                'description' => $producto->description,
+                'price_details' => $producto->pricebookEntries->map(function ($price){
+                    if ($price->is_active == 0) {
+                        return null;
+                    }
+                    return [
+                        'pricebook' => $price->pricebook->name,
+                        'price' => $price->price,
+                        'cost' => $price->cost,
+                    ];
+                }),
+                'price' => $producto->pricebookEntries->map(function ($price){
+                    if ($price->is_active == 0) {
+                        return null;
+                    }
+                    return $price->price;
+                })->first(),
+                'image' => $producto->image,
+                'unit_type' => ($producto->unit_measure == 'Granel') ? 'grams' : 'unit',
+                'quantity' => 0
+            ];
+        });
+
         return Inertia::render('Welcome',
             [
-                'sessionId' => $sessionId
+                'order' => $order,
+                'ProductsB2B' => $productosWpbe
             ]
         );
     }

@@ -11,31 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('productb2b', function (Blueprint $table) {
+        Schema::create('pricebook', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->string('folio')->nullable();
             $table->string('description')->nullable();
-            $table->string('unit_measure')->nullable();
-            $table->string('expiration_range')->nullable();
-            
-            
+            $table->boolean('is_active')->default(false);
+            $table->boolean('is_default')->default(false);
+            $table->double('profit', 8,2)->nullable();
             $table->unsignedBigInteger('created_by_id');
             $table->foreign('created_by_id')->references('id')->on('users')->restrictOnDelete();
             $table->unsignedBigInteger('edited_by_id');
             $table->foreign('edited_by_id')->references('id')->on('users')->restrictOnDelete();
-            $table->boolean('sold_out')->default(0);
 
+            
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('productb2b');
+        Schema::dropIfExists('pricebook');
     }
 };

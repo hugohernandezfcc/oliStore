@@ -19,6 +19,8 @@ Route::get('/welcome', function () {
     return Inertia::render('Welcome');
 })->name('welcome');
 
+
+
 Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
@@ -89,6 +91,7 @@ Route::group(['prefix' => 'app' ], function () {
         Route::get('/order/{sessionId}', [App\Http\Controllers\AppController::class, 'index']  );
 
 });
+
 
 /**
  * Core routes
@@ -175,14 +178,32 @@ Route::group(
         Route::post('/open/box', [App\Http\Controllers\BoxController::class, 'store'])->name('box.open');
         Route::post('/close/box/{id}', [App\Http\Controllers\BoxController::class, 'update'])->name('box.close');
         Route::post('/save/box/cut', [App\Http\Controllers\BoxCutController::class, 'store'])->name('box.cut.save');
-});
+}); 
 
 
 Route::get('/products2/readcsv',             [App\Http\Controllers\ProductController::class,        'storeMasive' ]);
 Route::get('/passtoyesterday',               [App\Http\Controllers\SalesProductsController::class,  'editSales' ]);
 
-Route::post('/dashboard',                    [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.results');;
+Route::post('/dashboard',                    [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.results');
+Route::get('/byweek',                        [App\Http\Controllers\DashboardController::class, 'byweek'])->name('dashboard.byweek');
+Route::get('/bymonth',                       [App\Http\Controllers\DashboardController::class, 'bymonth'])->name('dashboard.bymonth');
 Route::post('/cardsales',                     [App\Http\Controllers\DashboardController::class, 'cardSales'])->name('card.sales');;
 
 
-            
+Route::group(
+    [
+        'prefix' => 'b2b',
+        'middleware' => ['auth:sanctum']
+    ], function () {
+        Route::resource('productsb2b',               App\Http\Controllers\Productb2bController::class      )->middleware('auth:sanctum');
+        Route::post('productsb2b/upload',           [App\Http\Controllers\Productb2bController::class,     'storeImage']);
+        Route::post('productsb2b/pricebookentry',   [App\Http\Controllers\Productb2bController::class,     'storePriceBookEntry'])->name('pricebooksentry.storefromb2b');
+        Route::resource('pricebooks',                App\Http\Controllers\PriceBookController::class      )->middleware('auth:sanctum');
+        Route::resource('pricebooksentry',           App\Http\Controllers\PriceBookEntryController::class      )->middleware('auth:sanctum');
+
+        // Route::post('/store', [App\Http\Controllers\LineAnyItemController::class, 'storeFromRelatedList'])->name('relatedlist.store');
+        // Route::delete('/delete/{id}', [App\Http\Controllers\LineAnyItemController::class, 'destroy'])->name('relatedlist.delete');
+        // Route::post('/update', [App\Http\Controllers\LineAnyItemController::class, 'update'])->name('relatedlist.update');
+
+});
+

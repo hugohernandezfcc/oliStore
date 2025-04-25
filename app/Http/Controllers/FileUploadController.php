@@ -10,9 +10,10 @@ class FileUploadController extends Controller
     public function store(Request $request)
     {
         if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $path = $file->store('public/uploads');
-            return response()->json(['url' => Storage::url($path)], 200);
+
+            $filePath = Storage::putFileAs('categories', $request->file('file'), $request->name);
+
+            return response()->json(['url' => Storage::url($filePath)], 200);
         }
         return response()->json($request);
     }
@@ -22,6 +23,8 @@ class FileUploadController extends Controller
         if ($request->hasFile('file')) {
 
             $filePath = Storage::putFileAs('products', $request->file('file'), $request->name);
+
+
             $fileUrl = Storage::url($filePath);
             
             $producto = Product::find($request->id);
@@ -37,6 +40,7 @@ class FileUploadController extends Controller
     
     
     public function testing(){
-        return Storage::get('file.txt');
+        $test = Storage::put('test.txt', 'test');
+
     }
 }

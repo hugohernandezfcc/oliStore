@@ -1,120 +1,48 @@
 <script lang="ts">
 import productItem from '../Components/app/Product.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
+import {Search} from '@element-plus/icons-vue';
 
 export default{
     components:{
-        productItem
+        productItem, Search
     },
     name: 'App',
     props:{
-        sessionId: String
+        order: String,
+        ProductsB2B: Array,
     },
 
     methods:{
-        loadAll() {
-            return [
-                { value: 'vue', link: 'https://github.com/vuejs/vue' },
-                { value: 'element', link: 'https://github.com/ElemeFE/element' },
-                { value: 'cooking', link: 'https://github.com/ElemeFE/cooking' },
-                { value: 'mint-ui', link: 'https://github.com/ElemeFE/mint-ui' },
-                { value: 'vuex', link: 'https://github.com/vuejs/vuex' },
-                { value: 'vue-router', link: 'https://github.com/vuejs/vue-router' },
-                { value: 'babel', link: 'https://github.com/babel/babel' },
-            ]
+        
+        loadProducts(){
+            for (let i = 0; i < this.ProductsB2B.length; i++) {
+                console.log('loadProduct:', this.ProductsB2B[i]);
+                this.products.push(this.ProductsB2B[i]);
+            }
+            
         },
-        querySearchAsync(queryString: String, cb: (arg: any) => void) {
-        const results = queryString
-            ? this.links.filter(this.createFilter(queryString))
-            : this.links
+        
 
-        if (this.timeout) {
-            clearTimeout(this.timeout)
+        handleChange(){
+            console.log('handleChange')
         }
 
-        this.timeout = setTimeout(() => {
-            cb(results)
-        }, 3000 * Math.random())
-        },
-        createFilter(queryString: string) {
-        return (restaurant: { value: string }) => {
-            return (
-            restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-            )
-        }
-        },
-        handleSelect(item: Record<string, any>) {
-        console.log(item)
-        }
     },
     data(){
         return {
+            dialogVisible: false,
             dialog: false,
             state: '',
-            links: [] as Array<{ value: string; link: string }>,
-            timeout: null as ReturnType<typeof setTimeout> | null,
-            products: [
-                {
-                    id:1, 
-                    name:'producto 1',
-                    price: 100,
-                    unit_type: 'unit',
-                    description: 'descripcion del producto 1',
-                    image: 'https://via.placeholder.com/150',
-                    quantity: 0
-                },
-                {
-                    id:2, 
-                    name:'producto 2',
-                    price: 200,
-                    unit_type: 'grams',
-                    description: 'descripcion del producto 2',
-                    image: 'https://via.placeholder.com/150',
-                    quantity: 0
-                },
-                {
-                    id:3, 
-                    name:'producto 3',
-                    price: 300,
-                    unit_type: 'unit',
-                    description: 'descripcion del producto 3',
-                    image: 'https://via.placeholder.com/150',
-                    quantity: 0
-                },
-                {
-                    id:4, 
-                    name:'producto 4',
-                    price: 400,
-                    unit_type: 'grams',
-                    description: 'descripcion del producto 4',
-                    image: 'https://via.placeholder.com/150',
-                    quantity: 0
-                },
-                {
-                    id:5, 
-                    name:'producto 5',
-                    price: 500,
-                    unit_type: 'unit',
-                    description: 'descripcion del producto 5',
-                    image: 'https://via.placeholder.com/150',
-                    quantity: 0
-                },
-                {
-                    id:6, 
-                    name:'producto 6',
-                    price: 600,
-                    unit_type: 'grams',
-                    description: 'descripcion del producto 6',
-                    image: 'https://via.placeholder.com/150',
-                    quantity: 0
-                }
-            ]
+            products: [],
+            activePromos:[]
+
         }
     },
     mounted(){
-        this.links = this.loadAll()
-        console.log('mounted',this.sessionId);
 
+        console.log('mounted',this.sessionId);
+        this.loadProducts();
     },
     computed: {
         
@@ -132,7 +60,9 @@ export default{
         </div>
         <div class=" ">
             <span class="text-l md:text-xl lg:text-xl font-semibold text-red-600" >
-                4 producto(s)
+                4 producto(s) <el-button type="danger" id="checkout" round  @click="dialogVisible = true">
+                        BUSCAR &nbsp; <el-icon><Search /></el-icon>
+                    </el-button> 
             </span>
         </div>
         <div class=" ">
@@ -145,24 +75,31 @@ export default{
             
         </div>
         <div class="grow ">
+            <div class="demo-collapse hidden" >
+                <el-collapse v-model="activePromos" @change="handleChange">
+                <el-collapse-item  name="1">
+                    <template #title>
+                        <center class="bg-red-600 rounded-lg my-2 px-12">
+                            <span class="text-l md:text-xl lg:text-xl font-semibold text-white" > 
+                                Promociones 
+                            </span>
+                        </center>
+                    </template>
+                   <!-- promociones -->
+                    <el-carousel :interval="4000" type="card" height="150px">
+                        <el-carousel-item v-for="item in 6" :key="item">
+                            <h3 text="2xl" justify="center">{{ item }}</h3>
+                        </el-carousel-item>
+                    </el-carousel>
+                    <!-- / promociones -->
+                </el-collapse-item>
+                </el-collapse>
+            </div>
             
-            <!-- promociones -->
-            <el-carousel :interval="4000" type="card" height="150px">
-                <el-carousel-item v-for="item in 6" :key="item">
-                <h3 text="2xl" justify="center">{{ item }}</h3>
-                </el-carousel-item>
-            </el-carousel>
-            <!-- / promociones -->
+    <!-- <pre class="mt-4">{{ products }}</pre> -->
 
             <!-- search -->
-            <el-autocomplete
-                v-model="state"
-                :fetch-suggestions="querySearchAsync"
-                placeholder="Buscar Categorias o productos (Coca cola ...)"
-                @select="handleSelect"
-                class="w-full px-2 py-4 "
-                id="search"
-            />
+            
             <div class="overflow-y-scroll ">
                 <productItem v-for="product in products" :key="product.id" :product="product" />
             </div>
@@ -173,22 +110,31 @@ export default{
             
         </div>
     </div>
-    <figure class="relative flex flex-col-reverse bg-slate-50 rounded-lg p-6 border-2 border-red-600">
-        <blockquote class="mt-6 text-slate-700 dark:text-slate-300">
-            <p>I feel like an idiot for not using Tailwind CSS until now.</p>
-        </blockquote>
-        <figcaption class="flex items-center space-x-4">
-            <img src="/_next/static/media/ryan-florence.3af9c9d9.jpg" alt="" class="flex-none w-14 h-14 rounded-full object-cover" loading="lazy" decoding="async">
-            <div class="flex-auto">
-                <div class="text-base text-slate-900 font-semibold dark:text-slate-300">
-                    <a href="https://twitter.com/ryanflorence/status/1187951799442886656" tabindex="0">
-                        <span class="absolute inset-0"></span>Ryan Florence
-                    </a>
-                </div>
-                <div class="mt-0.5">Remix &amp; React Training</div>
-            </div>
-        </figcaption>
-    </figure>
+    
+
+    <el-dialog v-model="dialogVisible" 
+    modal-class="overide-animation"
+    :before-close="
+      (doneFn) => {
+        console.log('before-close'), doneFn()
+      }
+    "
+    @open="console.log('open')"
+    @open-auto-focus="console.log('open-auto-focus')"
+    @opened="console.log('opened')"
+    @close="console.log('close')"
+    @close-auto-focus="console.log('close-auto-focus')"
+    @closed="console.log('closed')">
+        <span>It's a modal Dialog</span>
+        <template #footer>
+        <div class="dialog-footer">
+            <el-button @click="dialogVisible = false">Cancel</el-button>
+            <el-button type="primary" @click="dialogVisible = false">
+            Confirm
+            </el-button>
+        </div>
+        </template>
+    </el-dialog>
 
     <el-drawer
         v-model="dialog"
@@ -213,7 +159,7 @@ export default{
 </template>
 <style >
 #checkout{
-    background-color: red !important;
+    background-color: #dc2626 !important;
 }
 #search {
     font-size: large !important;
