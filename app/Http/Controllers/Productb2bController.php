@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-use App\Models\PricebookEntry;
+use App\Models\PriceBookEntry;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\TryCatch;
 
@@ -47,7 +47,7 @@ class Productb2bController extends Controller
     {
         $toReturn = array();
         for( $index = 0; $index < count($request->get('pricebookentries')); $index++){
-            $entry = PricebookEntry::updateOrCreate(
+            $entry = PriceBookEntry::updateOrCreate(
                 [
                     'productb2b_id' => $request->get('parentRecordId'),
                     'pricebook_id' => $request->get('pricebookentries')[$index]['pricebook'],
