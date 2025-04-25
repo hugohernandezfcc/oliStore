@@ -34,12 +34,12 @@ class PriceBookEntry extends Model
     // Relationships
     public function productb2b()
     {
-        return $this->belongsTo(ProductB2B::class, 'productb2b_id');
+        return $this->belongsTo(Productb2b::class, 'productb2b_id');
     }
 
     public function pricebook()
     {
-        return $this->belongsTo(Pricebook::class, 'pricebook_id');
+        return $this->belongsTo(PriceBook::class, 'pricebook_id');
     }
 
     public function created_by_id()
