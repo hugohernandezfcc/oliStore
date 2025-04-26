@@ -16,9 +16,12 @@ export default{
     methods:{
         
         loadProducts(){
-            for (let i = 0; i < this.ProductsB2B.length; i++) {
-                console.log('loadProduct:', this.ProductsB2B[i]);
-                this.products.push(this.ProductsB2B[i]);
+            
+            let productsB2B = Object.values(this.ProductsB2B);
+            console.log(Array.isArray(productsB2B));
+            for (let i = 0; i < productsB2B.length; i++) {
+                console.log('loadProduct:', productsB2B[i]);
+                this.products.push(productsB2B[i]);
             }
             
         },
@@ -41,7 +44,7 @@ export default{
     },
     mounted(){
 
-        console.log('mounted',this.sessionId);
+        
         this.loadProducts();
     },
     computed: {
@@ -97,6 +100,7 @@ export default{
             </div>
             
     <!-- <pre class="mt-4">{{ products }}</pre> -->
+
 
             <!-- search -->
             
