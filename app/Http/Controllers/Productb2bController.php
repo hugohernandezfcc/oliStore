@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Productb2b;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 use App\Models\PriceBookEntry;
 use Illuminate\Support\Facades\Storage;
-use PhpParser\Node\Stmt\TryCatch;
+
 
 class Productb2bController extends Controller
 {
@@ -17,7 +18,8 @@ class Productb2bController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    {   
+        
         return Inertia::render('Productsb2b/Index', [
             'productsb2b' => Productb2b::get()
         ]);
@@ -71,6 +73,14 @@ class Productb2bController extends Controller
             'message' => 'Se han guardado las entradas de la lista de precios'
         ])->setStatusCode(200);
     }
+
+    // public function migrationProducts()
+    // {
+    //     $products = Product::all();
+    //     return response()->json([
+    //         'message' => 'Se han migrado los productos'
+    //     ])->setStatusCode(200);
+    // }
 
 
     /**
