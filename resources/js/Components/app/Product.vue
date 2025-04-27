@@ -1,24 +1,29 @@
 <template>
     <article class="text-wrap border border-red-400  rounded-lg mx-2 my-1 px-2 py-1">
-        <div class="grid grid-rows-4 grid-flow-col ">
-            <div class=" row-span-4 py-2 pl-2">
+        <div class="grid grid-rows-2 grid-flow-col ">
+            <div class="w-16 md:w-32 row-span-3 md:row-span-4 py-2 px-1 md:m-1 ">
                 <center>
-                    <img :src="product.image" alt="product image" class="w-32 h-32 rounded-lg">
+                    <img :src="product.image" alt="product image" class="h-16 w-16 md:h-32 md:w-32 rounded-lg">
                 </center>
             </div>
-            <div class=" col-span-3 pt-2">
-                <span class="text-lg font-bold text-green-600 ">$ {{ product.price }} MXN</span> | <span class="text-lg font-semibold text-red-600  ">{{ product.name }}</span>
+            <div class=" col-span-3 ">
+                <span class="font-bold text-green-600 ">$ {{ product.price }} MXN</span> <br/> <span class=" font-semibold text-red-600  ">{{ product.name }}</span>
             </div>
             <div class=" col-span-3 ">
-                <span> {{ product.description }} </span>
+
+                <div class="w-[250px] md:w-[400px]">
+                    <span class="block break-words">
+                        {{ product.description }}
+                    </span>
+                </div>
             </div>
             <div class=" col-span-3 ">
-                <el-input-number v-model="product.quantity" :min="0" :max="100" v-if="product.unit_type == 'unit'" />
+                <el-input-number class="touch-manipulation" v-model="product.quantity" :min="0" :max="100" v-if="product.unit_type == 'unit'" />
                 <el-input v-model="product.quantity" style="width: 220px; color:white;" placeholder="Please input" class="input-with-select"  v-if="product.unit_type == 'grams'">
                     <template #append>
-                        <el-select v-model="select" placeholder="PESOS" style="width: 120px; color: white;" id="unitType">
+                        <el-select v-model="product.unit_subtype" placeholder="PESOS" style="width: 120px; color: white;" id="unitType">
                             <el-option label="PESOS" value="1" />
-                            <el-option label="GRAMOS" value="2" />
+                            <el-option label="KG" value="2" />
                         </el-select>
                     </template>
                 </el-input>
@@ -43,6 +48,9 @@
     i > svg {
         color: white;
     }
+    button {
+  touch-action: manipulation !important;
+}
 </style>
 <script>
 

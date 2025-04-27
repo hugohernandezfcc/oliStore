@@ -8,6 +8,8 @@ import RelatedList      from '@/Components/RelatedList.vue';
 import RelatedListNative from '@/Components/RelatedListNative.vue';
 import QuickEntries from '@/Components/QuickEntries.vue';
 import { ArrowLeftBold } from '@element-plus/icons-vue';
+import Referenceb2cElement from '@/Components/Referenceb2c.vue';
+
 export default{
     components:{
         AppLayout,
@@ -18,13 +20,14 @@ export default{
         RelatedList,
         RelatedListNative,
         QuickEntries,
-        ArrowLeftBold
+        ArrowLeftBold,
+        Referenceb2cElement
     },
-    name: 'CategoriesShow',
+    name: 'ProductShow',
     props:{
         customRecord: Object,
-        pricebookentries: Array
-        // relatedList: Object
+        pricebookentries: Array,
+        referenceb2c: Object
     },
 
     methods:{
@@ -50,7 +53,8 @@ export default{
     mounted(){
         let globalResults = [];
         console.log('componente montado', this.customRecord)
-
+        console.log('componente montado', this.pricebookentries)
+        console.log('componente montado', this.referenceb2c)
     },
     computed: {
         
@@ -114,7 +118,11 @@ export default{
                         </el-descriptions>
                         <br/>
 
-                       
+                        <Referenceb2cElement 
+                        :cost="referenceb2c.price_list"
+                        :price="referenceb2c.price_customer"
+                        :porcentage="((referenceb2c.price_customer - referenceb2c.price_list) / referenceb2c.price_list) * 100"
+                         v-if="referenceb2c != null"></Referenceb2cElement>
 
                     </template>
                     <template #relatedlist>

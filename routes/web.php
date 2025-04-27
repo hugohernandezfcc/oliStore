@@ -201,6 +201,7 @@ Route::group(
         Route::resource('pricebooks',                App\Http\Controllers\PriceBookController::class      )->middleware('auth:sanctum');
         Route::resource('pricebooksentry',           App\Http\Controllers\PriceBookEntryController::class      )->middleware('auth:sanctum');
 
+        Route::get('/migrationProducts', [App\Http\Controllers\Productb2bController::class, 'migrationProducts'])->name('migrationProducts');
         // Route::post('/store', [App\Http\Controllers\LineAnyItemController::class, 'storeFromRelatedList'])->name('relatedlist.store');
         // Route::delete('/delete/{id}', [App\Http\Controllers\LineAnyItemController::class, 'destroy'])->name('relatedlist.delete');
         // Route::post('/update', [App\Http\Controllers\LineAnyItemController::class, 'update'])->name('relatedlist.update');

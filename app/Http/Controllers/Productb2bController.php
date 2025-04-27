@@ -74,13 +74,42 @@ class Productb2bController extends Controller
         ])->setStatusCode(200);
     }
 
-    // public function migrationProducts()
-    // {
-    //     $products = Product::all();
-    //     return response()->json([
-    //         'message' => 'Se han migrado los productos'
-    //     ])->setStatusCode(200);
-    // }
+    public function migrationProducts()
+    {
+        set_time_limit(100);
+        $ids = array();
+        $productsb2b = Productb2b::get();
+        foreach($productsb2b as $product){
+            array_push($ids, $product->folio);
+        }
+
+        $products = Product::select('name', 'folio', 'Description', 'unit_measure')
+                    ->where('Description', 'NOT LIKE', '%EXPRES%')
+                    ->where('Description', 'NOT LIKE', '%PROMOCI%')
+                    ->whereNotIn('folio', $ids)
+                    ->get();
+
+        foreach($products as $product){
+            $productb2b = Productb2b::create([
+                'name' => $product->name,
+                'folio' => $product->folio,
+                'description' => $product->Description,
+                'unit_measure' => $product->unit_measure,
+                'created_by_id' => Auth::id(),
+                'edited_by_id' => Auth::id(),
+                'sold_out' => false,
+                'is_public' => true,
+                'is_private' => false,
+                'public_description' => $product->Description,
+                'public_name' => $product->name,
+                'image' => "https://olistore-bucket.s3.us-east-2.amazonaws.com/products/CleanShot+2025-04-25+at+18.16.59%402x.png"
+            ]);
+        }
+
+
+        
+        return response()->json($products)->setStatusCode(200);
+    }
 
 
     /**
@@ -110,9 +139,12 @@ class Productb2bController extends Controller
     public function show(string $id)
     {
         $Productb2b = Productb2b::with('createdBy')->with('editedBy')->find($id);
+        $Productb2c = Product::where('folio', $Productb2b->folio)->first();
+
         return Inertia::render('Productsb2b/Show', [
-            'customRecord' => $Productb2b,
-            'pricebookentries' => $Productb2b->pricebookEntries
+            'customRecord'      => $Productb2b,
+            'pricebookentries'  => $Productb2b->pricebookEntries,
+            'referenceb2c'      => $Productb2c  
         ]);
     }
 

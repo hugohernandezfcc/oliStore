@@ -2,10 +2,11 @@
 import productItem from '../Components/app/Product.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
 import {Search} from '@element-plus/icons-vue';
+import ProductsB2BOrderList from '@/Components/ProductsB2BOrderList.vue';
 
 export default{
     components:{
-        productItem, Search
+        productItem, Search, ProductsB2BOrderList
     },
     name: 'App',
     props:{
@@ -26,6 +27,41 @@ export default{
             
         },
         
+        makeOrder(){
+            console.log('makeOrder')
+            this.orderProducts = [];
+            for (let i = 0; i < this.products.length; i++) {
+
+                if(this.products[i].quantity > 0){
+                    let calculateFinalPrice = 0;
+                    let calculateFinalQuantity = `${this.products[i].quantity} u.`;
+
+                    if(this.products[i].unit_type != 'grams')
+                        calculateFinalPrice = this.products[i].price * this.products[i].quantity;
+                    else
+                        if(this.products[i].unit_subtype == "2")
+                            calculateFinalPrice = this.products[i].price * this.products[i].quantity;
+                        else{
+                            calculateFinalQuantity = this.products[i].quantity / this.products[i].price;
+                            calculateFinalQuantity =  `${calculateFinalQuantity.toFixed(2)} kg.`
+                            calculateFinalPrice = (this.products[i].quantity / this.products[i].price) * this.products[i].price;
+                        }
+
+                    this.orderProducts.push({
+                        name: this.products[i].name,
+                        description: this.products[i].description,
+                        price: calculateFinalPrice,
+                        quantity: calculateFinalQuantity,
+                        unit_subtype: this.products[i].unit_subtype,
+                        unit_type: this.products[i].unit_type,
+                        image: this.products[i].image
+                    });
+                }
+
+            }
+            console.log('orderProducts:', this.orderProducts);
+            this.dialog = true;
+        },
 
         handleChange(){
             console.log('handleChange')
@@ -38,8 +74,8 @@ export default{
             dialog: false,
             state: '',
             products: [],
-            activePromos:[]
-
+            activePromos:[],
+            orderProducts: [],
         }
     },
     mounted(){
@@ -69,7 +105,7 @@ export default{
             </span>
         </div>
         <div class=" ">
-            <el-button type="danger" id="checkout" @click="dialog = true" round>ORDENAR</el-button>
+            <el-button type="danger" id="checkout" @click="makeOrder()" round>HACER PEDIDO</el-button>
         </div>
     </div>
 
@@ -142,23 +178,24 @@ export default{
 
     <el-drawer
         v-model="dialog"
-        title="I have a nested form inside!"
+        title="DETALLE DE TU PEDIDO"
         :before-close="handleClose"
         direction="btt"
         class=" border-red-600  rounded-3xl"
         size="80%"
     >
-        <div class="demo-drawer__content ">
-        asdcasdcasdc
-        <div class="demo-drawer__footer">
-            <el-button @click="cancelForm">Cancel</el-button>
-            <el-button type="primary" :loading="loading" @click="onClick">
-            {{ loading ? 'Submitting ...' : 'Submit' }}
-            </el-button>
-        </div>
+        <el-button type="primary" :loading="loading" @click="onClick">
+        {{ loading ? 'Submitting ...' : 'Submit' }}
+        </el-button>
+        <div class="demo-drawer__content  ">
+            
+        
+            <ProductsB2BOrderList :tableData="orderProducts"></ProductsB2BOrderList>
+
+           
         </div>
     </el-drawer>
-
+ 
 
 </template>
 <style >

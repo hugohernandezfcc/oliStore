@@ -42,6 +42,7 @@ class AppController extends Controller
                 })->first(),
                 'image' => $producto->image,
                 'unit_type' => ($producto->unit_measure == 'Granel') ? 'grams' : 'unit',
+                'unit_subtype' => '1',
                 'quantity' => 0
             ];
         });
