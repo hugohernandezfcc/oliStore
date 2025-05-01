@@ -20,6 +20,12 @@ class Orpb2b extends Model
         'verified',
         'loaded',
         'deliveried',
+        'delivery_date',
+        'name',
+        'quantity',
+        'image',
+        'unit_price',
+        'subtotal_price'
     ];
 
     protected $casts = [
@@ -40,12 +46,12 @@ class Orpb2b extends Model
         return $this->belongsTo(ProductB2B::class, 'productb2b_id');
     }
 
-    public function created_by_id()
+    public function createdById()
     {
         return $this->belongsTo(User::class, 'created_by_id');
     }
 
-    public function edited_by_id()
+    public function editedById()
     {
         return $this->belongsTo(User::class, 'edited_by_id');
     }

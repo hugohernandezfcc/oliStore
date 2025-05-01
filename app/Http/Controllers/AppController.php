@@ -9,12 +9,18 @@ use App\Models\Productb2b;
 
 class AppController extends Controller
 {
+
+    public function customerRouter(){
+        return Inertia::render('CustomerRouter');
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(string $order)
+    public function index(string $whatsappNumber)
     {
-        $productosWpbe = Productb2b::with('pricebookEntries')->get();
+        set_time_limit(100);
+        $productosWpbe = Productb2b::with('pricebookEntries')->limit(10)->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
             return $producto->pricebookEntries->isNotEmpty();
         });
@@ -49,7 +55,7 @@ class AppController extends Controller
 
         return Inertia::render('Welcome',
             [
-                'order' => $order,
+                'whatsappNumber' => $whatsappNumber,
                 'ProductsB2B' => $productosWpbe
             ]
         );

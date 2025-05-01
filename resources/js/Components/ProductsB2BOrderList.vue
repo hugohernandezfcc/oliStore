@@ -42,6 +42,7 @@
   interface producto {
     name: string
     description: string
+    id: number
     price: number
     quantity: number
     image: string
@@ -84,6 +85,12 @@
         console.log('Deleted', index, row)
         this.tableData.splice(index, 1);
       },
+      calculateTotalPrice() {
+        return this.tableData.reduce((total, item) => {
+          return total + item.price
+        }, 0)
+      } 
+      
     },
   })
   </script>

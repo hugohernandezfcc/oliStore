@@ -1,7 +1,6 @@
 <template>
     
-    <el-card  shadow="never" v-loading="loading"
-    element-loading-text="Cargando elementos ...">
+    <el-card  shadow="never" v-loading="loading" element-loading-text="Cargando elementos ...">
         <PrimaryButton v-if="somethingChange" class="mr-1 " @click="savePriceBookEntry"> Guardar lista de precios </PrimaryButton>
         <SecondaryButton @click="addForm" class="mb-3 ml-3 lg:ml-0">Agregar </SecondaryButton>
         <div v-for="(form, index) in forms"

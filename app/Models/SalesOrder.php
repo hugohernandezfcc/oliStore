@@ -30,13 +30,18 @@ class SalesOrder extends Model
         return $this->belongsTo(Account::class, 'account_id');
     }
 
-    public function created_by()
+    public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function updated_by()
+    public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function salesOrderItems()
+    {
+        return $this->hasMany(Orpb2b::class, 'salesorder_id');
     }
 }

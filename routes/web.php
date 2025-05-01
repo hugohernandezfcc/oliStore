@@ -84,12 +84,13 @@ Route::post('ticketItem/update/{id}',         [App\Http\Controllers\TicketsContr
  * Core routes
  */
 Route::group(['prefix' => 'app' ], function () {
+        Route::get('/', [App\Http\Controllers\AppController::class, 'customerRouter']  );
 
         /**
          * Routes for users
          */
-        Route::get('/order/{sessionId}', [App\Http\Controllers\AppController::class, 'index']  );
-
+        Route::get('/ecommerce/{whatsappNumber}', [App\Http\Controllers\AppController::class, 'index']  );
+        Route::post('salesorder/store',              [App\Http\Controllers\SalesOrderController::class,     'storeApp'])->name('salesorder.store.app');
 });
 
 
@@ -198,10 +199,16 @@ Route::group(
         Route::resource('productsb2b',               App\Http\Controllers\Productb2bController::class      )->middleware('auth:sanctum');
         Route::post('productsb2b/upload',           [App\Http\Controllers\Productb2bController::class,     'storeImage']);
         Route::post('productsb2b/pricebookentry',   [App\Http\Controllers\Productb2bController::class,     'storePriceBookEntry'])->name('pricebooksentry.storefromb2b');
-        Route::resource('pricebooks',                App\Http\Controllers\PriceBookController::class      )->middleware('auth:sanctum');
-        Route::resource('pricebooksentry',           App\Http\Controllers\PriceBookEntryController::class      )->middleware('auth:sanctum');
-
         Route::get('/migrationProducts', [App\Http\Controllers\Productb2bController::class, 'migrationProducts'])->name('migrationProducts');
+        
+        
+        Route::resource('pricebooks',                App\Http\Controllers\PriceBookController::class        )->middleware('auth:sanctum');
+        Route::resource('pricebooksentry',           App\Http\Controllers\PriceBookEntryController::class   )->middleware('auth:sanctum');
+        Route::resource('salesorder',               App\Http\Controllers\SalesOrderController::class        )->middleware('auth:sanctum');
+        
+        Route::resource('accounts',                  App\Http\Controllers\AccountController::class          )->middleware('auth:sanctum');
+
+
         // Route::post('/store', [App\Http\Controllers\LineAnyItemController::class, 'storeFromRelatedList'])->name('relatedlist.store');
         // Route::delete('/delete/{id}', [App\Http\Controllers\LineAnyItemController::class, 'destroy'])->name('relatedlist.delete');
         // Route::post('/update', [App\Http\Controllers\LineAnyItemController::class, 'update'])->name('relatedlist.update');
