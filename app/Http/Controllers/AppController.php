@@ -20,7 +20,7 @@ class AppController extends Controller
     public function index(string $whatsappNumber)
     {
         set_time_limit(100);
-        $productosWpbe = Productb2b::with('pricebookEntries')->limit(10)->get();
+        $productosWpbe = Productb2b::with('pricebookEntries')->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
             return $producto->pricebookEntries->isNotEmpty();
         });
