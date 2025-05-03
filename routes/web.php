@@ -84,13 +84,16 @@ Route::post('ticketItem/update/{id}',         [App\Http\Controllers\TicketsContr
  * Core routes
  */
 Route::group(['prefix' => 'app' ], function () {
-        Route::get('/', [App\Http\Controllers\AppController::class, 'customerRouter']  );
-
+        Route::get('/',                        [App\Http\Controllers\AppController::class, 'customerRouter']  );
+        Route::get('/validuser/{phoneNumber}', [App\Http\Controllers\AppController::class, 'validPhoneNumber']  );
         /**
          * Routes for users
          */
-        Route::get('/ecommerce/{whatsappNumber}', [App\Http\Controllers\AppController::class, 'index']  );
-        Route::post('salesorder/store',              [App\Http\Controllers\SalesOrderController::class,     'storeApp'])->name('salesorder.store.app');
+        Route::get('/ecommerce/{whatsappNumber}',   [App\Http\Controllers\AppController::class,         'index']  );
+        Route::post('salesorder/store',             [App\Http\Controllers\SalesOrderController::class,  'storeApp'])->name('salesorder.store.app');
+        Route::get('salesorder/{field}/{orpb2bId}', [App\Http\Controllers\SalesOrderController::class,  'updateProductOrderStatus'])->name('salesorder.update.status.item');
+        Route::get('salesorder/{status}/{recordId}/status', [App\Http\Controllers\SalesOrderController::class,  'updateStatus'])->name('salesorder.update.status.item');
+
 });
 
 

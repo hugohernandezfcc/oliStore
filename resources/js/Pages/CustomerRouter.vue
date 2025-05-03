@@ -113,21 +113,36 @@ export default{
         }, 
 
         continuePhoneNumber(){
-
+            this.phoneNumber = this.phoneNumber.replace(/\D/g, '');
+            console.log(this.phoneNumber);
+            this.isLoading = true;
 
             if(this.phoneNumber.length < 10){
                 alert('El número de teléfono debe tener al menos 10 dígitos.');
                 return;
             }
 
-            this.phoneNumber = this.phoneNumber.replace(/\D/g, '');
-            console.log(this.phoneNumber);
-            this.isLoading = true;
-            this.$inertia.visit(`/app/ecommerce/${this.phoneNumber}`, {
-                method: 'get',
-                preserveState: true,
-                preserveScroll: true
-            });
+            if(this.phoneNumber.length >= 10){
+
+                axios.get(`/app/validuser/${this.phoneNumber}`).then(response => {
+                    if(response.data.status){
+                        this.$inertia.visit(`/app/ecommerce/${this.phoneNumber}`, {
+                            method: 'get',
+                            preserveState: true,
+                            preserveScroll: true
+                        });
+                    }else{
+                        alert('Valida tu número de teléfono, no se encuentra registrado como socio.');
+                        this.isLoading = false;
+
+                        return;
+                    }
+
+                }).catch(error => {
+                    console.error('Error al verificar el número de teléfono:', error);
+                    this.isLoading = false;
+                });
+            }
 
         },
 

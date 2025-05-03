@@ -18,7 +18,9 @@ class SalesOrderController extends Controller
      */ 
     public function index()
     {
-        //
+        return Inertia::render('SalesOrders/Index', [
+            'salesOrders' => SalesOrder::with(['createdBy', 'updatedBy', 'account'])->get()
+        ]);
     }
 
     /**
@@ -57,6 +59,26 @@ class SalesOrderController extends Controller
         return response()->json($salesOrder);
     }
 
+    public function updateProductOrderStatus(String $field, String $orpb2bId)
+    {
+        $salesOrder = Orpb2b::find($orpb2bId);
+
+        $salesOrder->edited_by_id = Auth::id();
+        $salesOrder->updated_at = Carbon::now();
+        $salesOrder->requested  = false;
+        $salesOrder->verified   = false;
+        $salesOrder->loaded     = false;
+        $salesOrder->deliveried = false;
+        
+        
+        $salesOrder[$field] = true;
+        $salesOrder->save();
+
+        return response()->json($salesOrder);
+
+    }
+
+
     public function storeApp(Request $request)
     {
         $account = Account::with(['createdBy', 'editedBy', 'contacts', 'salesOrders'])->where('phone', '=', $request->get('whatsappNumber') )->first();
@@ -72,7 +94,7 @@ class SalesOrderController extends Controller
         if($containsActiveOrder){
             $salesOrder->updated_at = Carbon::now();
             $salesOrder->note = $request->get('note') . '//' . $salesOrder->note;
-            $salesOrder->status = 'En progreso';
+            $salesOrder->status = 'Abierta';
             $salesOrder->payment_method = $request->get('paymentMethod');
             $salesOrder->total = $request->get('total');
             $salesOrder->no_products = count($pli);
@@ -81,7 +103,7 @@ class SalesOrderController extends Controller
         }else{
             $salesOrder = SalesOrder::create([
                 'account_id'    => $account->id,
-                'status'        => 'En progreso',
+                'status'        => 'Abierta',
                 'note'          => $request->get('note') . '//' . 'Orden de compra generada por cliente el ' . date('Y-m-d H:i:s') . ' para la tienda ' . $account->name,
                 'created_by'    => 1,
                 'updated_by'    => 1,
@@ -117,8 +139,6 @@ class SalesOrderController extends Controller
             'salesOrder' => $salesOrder,
             'message' => 'Se ha guardado la orden de compra'
         ])->setStatusCode(200);
-
-
 
     }
 
@@ -156,6 +176,17 @@ class SalesOrderController extends Controller
     public function update(Request $request, SalesOrder $salesOrder)
     {
         //
+    }
+
+    public function updateStatus(String $status, String $recordId)
+    {
+        $salesOrder = SalesOrder::find($recordId);
+        $salesOrder->update([
+            'status' => urldecode($status),
+            'updated_by' => Auth::id(),
+            'updated_at' => Carbon::now()
+        ]);
+        return response()->json($salesOrder);
     }
 
     /**

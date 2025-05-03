@@ -68,11 +68,12 @@ export default{
                 }
                 })
 
-
                 setTimeout(() => {
-                    loading.close()
-                    window.location.reload();
-                }, 1000);       
+                        loading.close()
+                        window.location.reload();
+                    console.log('response', response.data)
+
+                }, 4000);       
                 
             } catch (error) {
                 console.error('Error uploading image:', error)

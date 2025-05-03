@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
- 
+
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\LineAnyItem;
@@ -14,11 +15,32 @@ class AppController extends Controller
         return Inertia::render('CustomerRouter');
     }
 
+    public function validPhoneNumber(String $phoneNumber){
+        $account = Account::with('contacts')->where('phone', $phoneNumber)->first();
+        
+        if($account){
+            return response()->json([
+                'status' => true,
+                'account' => $account
+            ]);
+        }else{
+            
+
+            return response()->json([
+                'status' => false,
+                'account' => null
+            ]);
+        }
+
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(string $whatsappNumber)
     {
+
+        
         set_time_limit(100);
         $productosWpbe = Productb2b::with('pricebookEntries')->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
@@ -49,7 +71,14 @@ class AppController extends Controller
                 'image' => $producto->image,
                 'unit_type' => ($producto->unit_measure == 'Granel') ? 'grams' : 'unit',
                 'unit_subtype' => '1',
-                'quantity' => 0
+                'quantity' => 0,
+                'promo' => $producto->promo,
+                'bulkSale'  => $producto->bulkSale,
+                'drinks'    => $producto->drinks,
+                'snacks'    => $producto->snacks,
+                'groceries' => $producto->groceries,
+                'cleaning'  => $producto->cleaning,
+                'underFox'  => $producto->underFox
             ];
         });
 

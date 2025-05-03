@@ -24,7 +24,14 @@ class Productb2b extends Model
         'is_private',
         'public_description',
         'public_name',
-        'image'
+        'image',
+        'promo',
+        'bulkSale',
+        'drinks',
+        'snacks',
+        'groceries',
+        'cleaning',
+        'underFox',
     ];
 
     protected $casts = [

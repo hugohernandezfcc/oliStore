@@ -129,6 +129,9 @@ console.log(router.page.url.indexOf("tickets"));
                                                 <DropdownLink :href="route('stocks.index')" :active="router.page.url.indexOf('stocks') >= 0" v-if="$page.props.auth.user.is_admin">
                                                     Actividades de tienda
                                                 </DropdownLink>
+                                                <DropdownLink :href="route('accounts.index')" :active="router.page.url.indexOf('accounts') >= 0" >
+                                                    Clientes
+                                                </DropdownLink>
                                             </template>
                                         </Dropdown>
                                     </div>

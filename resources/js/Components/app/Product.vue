@@ -71,7 +71,7 @@ export default {
         
     },
     mounted() {
-        console.log('mounting wall item component');
+        // console.log('mounting wall item component');
 
     }
 }

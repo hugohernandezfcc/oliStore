@@ -16,13 +16,23 @@ export default{
         whatsappNumber: String,
         ProductsB2B: Array,
     },
-
+    watch: {
+        products: {
+            handler(newVal, oldVal) {
+                this.onJsonChanged(newVal)
+            },
+            deep: true
+        }
+    },
     methods:{
-        
+        onJsonChanged(newVal) {
+            this.closeSession = this.closeSession + 60000;
+            console.log('onJsonChanged', this.closeSession);
+        },
         loadProducts(){
-            
+            this.products = [];
             let productsB2B = Object.values(this.ProductsB2B);
-            console.log(Array.isArray(productsB2B));
+            // console.log(Array.isArray(productsB2B));
             for (let i = 0; i < productsB2B.length; i++) {
                 console.log('loadProduct:', productsB2B[i]);
                 this.products.push(productsB2B[i]);
@@ -52,7 +62,7 @@ export default{
                         this.confirmOrder = false;
                         this.dialog = false; 
                         location.reload();
-                    }, 2000);
+                    }, 2500);
                 }).catch(error => {
                     console.log('error:', error);
                 })
@@ -105,11 +115,84 @@ export default{
 
         handleChange(){
             console.log('handleChange')
-        }
+        },
+        openFilters(){
+            this.loadProducts();
+            this.filtersDialog = true;
+        },
+        clearFilters(){
+            this.filters = {
+                search: '',
+                promo: false,
+                bulkSale: false,     
+                drinks: false,             
+                snacks: false,             
+                groceries: false,           
+                cleaning: false,      
+                underFox: false
+            }
+            this.loadProducts();
+            this.appliedFilters = false;
+            this.filtersDialog = false;
+            this.filterButtonLabel = 'BUSCAR';
+
+        },
+        handleCloseFilters(){
+
+
+            let beforeReturn = [];
+            for( let i = 0; i < this.products.length; i++){
+                let skip = false;
+
+                if(this.filters.promo && this.products[i].promo == true && skip == false){
+                    beforeReturn.push(this.products[i]);
+                    skip = true;
+                }
+
+                if(this.filters.bulkSale && this.products[i].bulkSale == true && skip == false){
+                    beforeReturn.push(this.products[i]);
+                    skip = true;
+                }
+                if(this.filters.drinks && this.products[i].drinks == true && skip == false){
+                    beforeReturn.push(this.products[i]);
+                    skip = true;
+                }
+                if(this.filters.snacks && this.products[i].snacks == true && skip == false){
+                    beforeReturn.push(this.products[i]);
+                    skip = true;
+                }
+                if(this.filters.groceries && this.products[i].groceries == true && skip == false){
+                    beforeReturn.push(this.products[i]);
+                    skip = true;
+                }
+                if(this.filters.cleaning && this.products[i].cleaning == true && skip == false){
+                    beforeReturn.push(this.products[i]);
+                    skip = true;
+                }
+                if(this.filters.underFox && this.products[i].underFox == true && skip == false){
+                    beforeReturn.push(this.products[i]);
+                    skip = true;
+                }
+                if(this.filters.search && this.products[i].name.toLowerCase().includes(this.filters.search.toLowerCase()) && skip == false){
+                    beforeReturn.push(this.products[i]);
+                    skip = true;
+                }
+
+            }
+
+
+            console.log('localProducts:', beforeReturn);
+            console.log('this.filters:', this.filters);
+            this.products = beforeReturn;
+            this.filtersDialog = false;
+            this.appliedFilters = true;
+            this.filterButtonLabel = '**FILTROS';
+        },
 
     },
     data(){
         return {
+            closeSession: 900000, //900000,
             dialogVisible: false,
             dialog: false,
             state: '',
@@ -121,13 +204,29 @@ export default{
             paymentMethod: '',
             note: '',
             errorMessage: '',
-            statusButton : 'almostReady'
+            statusButton : 'almostReady',
+            filtersDialog: false,
+            appliedFilters: false,
+            filterButtonLabel: 'BUSCAR',
+            filters:{
+                search: '',
+                promo: false,
+                bulkSale: false,     
+                drinks: false,             
+                snacks: false,             
+                groceries: false,           
+                cleaning: false,      
+                underFox: false
+
+            }
         }
     },
     mounted(){
 
-        
         this.loadProducts();
+        setTimeout(() => {
+            this.$inertia.visit('/app')
+        }, this.closeSession);
     },
     computed: {
         
@@ -142,8 +241,8 @@ export default{
     <div class="fixed top-0 left-0 right-0  p-1 shadow-md z-50 grid grid-cols-3 border-b-2 border-red-400 place-items-center bg-white">
         <div class=" ">
             <span class="text-l md:text-xl lg:text-xl font-semibold text-red-600" >
-                <el-button type="danger" id="checkout" round  @click="dialogVisible = true">
-                        BUSCAR &nbsp; <el-icon><Search /></el-icon>
+                <el-button type="danger" id="checkout" round  @click="openFilters">
+                        {{filterButtonLabel}} &nbsp; <el-icon><Search /></el-icon>
                     </el-button> 
             </span>
         </div>
@@ -156,13 +255,13 @@ export default{
         </div>
         
     </div>
-
-    <div class="flex pt-16">
+    
+    <div class="flex pt-16 ">
         <div class=" flex-none w-[20.3%]  hidden sm:hidden md:block lg:block">
             
         </div>
-        <div class="grow ">
-            <div class="demo-collapse hidden" >
+        <div class="grow   " >
+            <div class="demo-collapse hidden" v-if="false">
                 <el-collapse v-model="activePromos" @change="handleChange">
                 <el-collapse-item  name="1">
                     <template #title>
@@ -183,51 +282,24 @@ export default{
                 </el-collapse>
             </div>
             
-    <!-- <pre class="mt-4">{{ products }}</pre> -->
-
-
-            <!-- search -->
             
-            <div class="overflow-y-scroll  " style="background-color: rgb(255, 0, 0);">
+            
+            <div class="overflow-y-scroll  " style="background-color: rgb(255, 0, 0);">       
+                <span v-if="appliedFilters" class="bg-white rounded-b-md mx-2 p-1 text-green-600 text-sm font-bold">
+                    {{products.length}} Productos filtrados
+                </span>         
                 <productItem v-for="product in products" :key="product.id" :product="product" />
             </div>
-            <!-- / search -->            
+
 
         </div>
         <div class=" flex-none w-[20.3%]  hidden sm:hidden md:block lg:block">
             
         </div>
     </div>
-    
-
-    <el-dialog v-model="dialogVisible" 
-    modal-class="overide-animation"
-    :before-close="
-      (doneFn) => {
-        console.log('before-close'), doneFn()
-      }
-    "
-    @open="console.log('open')"
-    @open-auto-focus="console.log('open-auto-focus')"
-    @opened="console.log('opened')"
-    @close="console.log('close')"
-    @close-auto-focus="console.log('close-auto-focus')"
-    @closed="console.log('closed')">
-        <span>It's a modal Dialog</span>
-        <template #footer>
-        <div class="dialog-footer">
-            <el-button @click="dialogVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="dialogVisible = false">
-            Confirm
-            </el-button>
-        </div>
-        </template>
-    </el-dialog>
 
     <el-dialog v-model="confirmOrder" :modal="false" width="85%">
-        <template #header>
-            <div class="my-header">{{ orderProducts.length }} Productos = ${{ total }} MXN</div>
-        </template>
+        <template #header> <div class="my-header">{{ orderProducts.length }} Productos = ${{ total }} MXN</div> </template>
         <span class="text-sm">Al realizar el pedido se pondrán en contacto contigo y nos comprometemos ambas partes en surtir y recibir el pago. ¿deseas continuar?</span>
         <InputLabel for="status" value="Método de pago" class="pt-2"/>
         <span class="text-sm text-red-600" v-if="errorMessage.length > 0">{{ errorMessage }}</span>
@@ -259,24 +331,40 @@ export default{
         </template>
     </el-dialog>
 
-    <el-drawer
-        v-model="dialog"
-        title="DETALLE DE TU PEDIDO"
-        :before-close="handleClose"
-        direction="btt"
-        class=" border-red-600  rounded-3xl"
-        size="80%"
-    >
+
+    <el-drawer v-model="dialog" title="DETALLE DE TU PEDIDO" direction="btt" class=" border-red-600  rounded-3xl" size="80%"><!--:before-close="handleClose"-->
         <el-button type="danger" class="w-full -mt-8 touch-manipulation" id="checkout" @click="confirmOrder = true" round>CONFIRMO PEDIDO (${{ total }} MXN)</el-button>
         <div class="demo-drawer__content  ">
-            
-        
             <ProductsB2BOrderList :tableData="orderProducts"></ProductsB2BOrderList>
-
-           
         </div>
     </el-drawer>
- 
+
+    <el-drawer v-model="filtersDialog"  :direction="'ttb'"  size="45%">
+        <template #header>
+            <h4>Aplicar filtros a lista de productos</h4>
+        </template>
+        <template #default>
+
+                <el-input v-model="filters.search" placeholder="Filtra por palabra, por ejemplo: COCA" class="shadow-lg shadow-red-200 -mt-4 mb-3" />
+                <el-checkbox v-model="filters.promo" label="promo"                   value="Value A" />
+                <el-checkbox v-model="filters.bulkSale" label="Venta a granel"       value="Value A" />
+                <el-checkbox v-model="filters.drinks" label="Bebidas"                value="Value A" />
+                <el-checkbox v-model="filters.snacks" label="Botanas"                value="Value A" />
+                <el-checkbox v-model="filters.groceries" label="Abarrotes"           value="Value A" />
+                <el-checkbox v-model="filters.cleaning" label="Limpieza"             value="Value A" />
+                <el-checkbox v-model="filters.underFox" label="Por debajo del Zorro" value="Value A" />
+
+        </template>
+        <template #footer>
+            <div style="flex: auto"> 
+                <el-button @click="clearFilters" round>Vaciar filtros</el-button>
+                <el-button type="danger" id="checkout" round  @click="handleCloseFilters">
+                    Aplicar filtros
+                </el-button> 
+
+            </div>
+        </template>
+    </el-drawer>
 
 </template>
 <style >
@@ -319,4 +407,5 @@ export default{
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
 }
+
 </style>
