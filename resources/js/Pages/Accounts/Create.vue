@@ -140,7 +140,7 @@ export default{
                             <TextInput id="email" v-model="form.email" type="text" class="mt-1 block w-full" autocomplete="email"/>
                         </div>
                         <div class="col-span-3 ">
-                            <InputLabel for="phone" value="Nombre de producto" class="mb-6"/>
+                            <InputLabel for="phone" value="Teléfono" class="mb-6"/>
                             <TextInput id="phone" v-model="form.phone" type="text" class="mt-1 block w-full" autocomplete="phone"/>
                         </div>
                         <div class="col-span-6 "><br/>
