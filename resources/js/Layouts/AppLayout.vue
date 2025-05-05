@@ -329,7 +329,7 @@ console.log(router.page.url.indexOf("tickets"));
                             Tickets
                         </ResponsiveNavLink>
                         
-                        <ResponsiveNavLink :href="route('purchaseorders.index')" :active="router.page.url.indexOf('purchaseorders') >= 0">
+                        <ResponsiveNavLink :href="route('salesorder.index')" :active="router.page.url.indexOf('salesorder') >= 0">
                             Ordenes de compra
                         </ResponsiveNavLink>
 
