@@ -206,6 +206,10 @@ export default{
                             </textarea>
                             
                         </div>
+                        <div class="col-span-3 mb-2">
+                            <el-switch v-model="form.is_public" class="mt-4" active-text="Producto público" inactive-text=" "/>
+
+                        </div>
                         <!-- <div class="col-span-6 sm:col-span-4">
                             <InputLabel for="description" value="Categoría principal" />
                             <LookupField :firstLine="'name'" :secondLine="'description'"  ref="lookupCategory" :likeDataFx="{

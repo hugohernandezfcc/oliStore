@@ -201,6 +201,7 @@ Route::group(
     ], function () {
         Route::resource('productsb2b',               App\Http\Controllers\Productb2bController::class      )->middleware('auth:sanctum');
         Route::post('productsb2b/upload',           [App\Http\Controllers\Productb2bController::class,     'storeImage']);
+        Route::post('productsb2b/changestatus',     [App\Http\Controllers\Productb2bController::class,     'changeStatus']);
         Route::post('productsb2b/pricebookentry',   [App\Http\Controllers\Productb2bController::class,     'storePriceBookEntry'])->name('pricebooksentry.storefromb2b');
         Route::get('/migrationProducts', [App\Http\Controllers\Productb2bController::class, 'migrationProducts'])->name('migrationProducts');
         
@@ -210,6 +211,7 @@ Route::group(
         Route::resource('salesorder',               App\Http\Controllers\SalesOrderController::class        )->middleware('auth:sanctum');
         
         Route::resource('accounts',                  App\Http\Controllers\AccountController::class          )->middleware('auth:sanctum');
+        Route::resource('cases',                     App\Http\Controllers\Case2Controller::class            )->middleware('auth:sanctum');
 
 
         // Route::post('/store', [App\Http\Controllers\LineAnyItemController::class, 'storeFromRelatedList'])->name('relatedlist.store');

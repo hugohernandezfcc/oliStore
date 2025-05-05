@@ -15,7 +15,18 @@ export default{
         productsb2b: Array 
     },
     methods:{
-        
+        changeStatus(id, status){
+            console.log('cambio de estado', id, status);
+
+            axios.post('/b2b/productsb2b/changestatus', {
+                id: id,
+                status: status
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
+        },
     },
     data(){
         return {
@@ -71,9 +82,15 @@ export default{
                             </el-button>
                         </inertia-link>
                     </template>
+                    
+                </el-table-column>
+                <el-table-column width="150" label="Publicar" >
+                    <template #default="scope" >
+                        <el-switch v-model="scope.row.is_public" @change="changeStatus(scope.row.id, scope.row.is_public)"  class="mt-4" active-text="Público" inactive-text=" "/>
+                    </template>
                 </el-table-column>
                 <el-table-column prop="name" label="Nombre " width="200" sortable/>
-                <el-table-column width="150" label="Imagen" >
+                <el-table-column width="100" label="Imagen" >
                     <template #default="scope" >
                         <el-image :src="scope.row.image" style="width: 40px;"/>
                     </template>
@@ -84,10 +101,10 @@ export default{
                         {{ (scope.row.status == 'Category') ? 'Categoría' : 'Subcategoría'}}
                     </template>
                 </el-table-column> -->
-                <el-table-column prop="description" label="Descripción" width="500" sortable/>
-                <el-table-column prop="unit_measure" label="Unidad de medida" width="500" sortable/>
+                <el-table-column prop="description" label="Descripción" width="300" sortable/>
+                <el-table-column prop="unit_measure" label="Unidad de medida" width="200" sortable/>
                 
-                <el-table-column width="150" label="Fecha de creación" >
+                <el-table-column width="200" label="Fecha de creación" >
                     <template #default="scope" >
                         {{ scope.row.created_at }}
                     </template>

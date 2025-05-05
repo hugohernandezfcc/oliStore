@@ -27,7 +27,7 @@
                     <template #default="scope">
                         <el-popconfirm v-if="category.nameApi != 'deliveried'"  confirm-button-text="¡Listo!" cancel-button-text="Pendiente"
                                         icon-color="#626AEF" :title="labels[category.nameApi]" width="200"
-                                        @confirm="confirmEvent(category.nameApi, scope.row.id)" @cancel="cancelEvent(scope.row.id)">
+                                        @confirm="confirmEvent(category.nameApi, scope.row.id)" @cancel="cancelEvent(category.nameApi, scope.row)">
                             <template #reference>
                                 <el-button size="small" type="primary" class="touch-manipulation">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" class="h-4 w-4 text-white " ><path fill="currentColor" d="M384 192v640l384-320.064z"></path></svg>
@@ -132,8 +132,27 @@
                     }
                 }
             },
-            cancelEvent(productId){
-                console.log('id product', productId);
+            cancelEvent(fieldApi, lineItem){
+                console.log('id product', lineItem);
+                console.log('id product', fieldApi);
+                let formCase = {
+                    productb2b_id: lineItem.productb2b_id,
+                    salesorder_id: lineItem.salesorder_id,
+                    orpb2b_id: lineItem.id,
+                    subject: 'Problema con el producto: ' + lineItem.name,
+                    description: 'Problema con '+lineItem.name+' en etapa: ' + fieldApi,
+                    status: 'open',
+                    type: 'problem / '+fieldApi,
+                    priority: 'medium',
+                }
+                axios.post( route('cases.store'), formCase).then(response => {
+                    console.log(response.data)
+                    console.log('case created')
+                }).catch(error => {
+                    console.log(error)
+                    console.log('case error')
+                })
+
             },
             updateStatusProduct(fieldApi, recordId){
                 axios.get('/app/salesorder/'+fieldApi+'/'+recordId).then(response => {

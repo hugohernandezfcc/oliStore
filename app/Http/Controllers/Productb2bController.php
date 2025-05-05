@@ -74,6 +74,16 @@ class Productb2bController extends Controller
         ])->setStatusCode(200);
     }
 
+    public function changeStatus(Request $request)
+    {
+        $productb2b = Productb2b::find($request->get('id'));
+        $productb2b->is_public = $request->get('status');
+        $productb2b->save();
+        return response()->json([
+            'message' => 'Se ha cambiado el estatus del producto'
+        ])->setStatusCode(200);
+    }
+
     public function migrationProducts()
     {
         set_time_limit(100);

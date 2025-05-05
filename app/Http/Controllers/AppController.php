@@ -42,7 +42,7 @@ class AppController extends Controller
 
         
         set_time_limit(100);
-        $productosWpbe = Productb2b::with('pricebookEntries')->get();
+        $productosWpbe = Productb2b::where('is_public', '=', true)->with('pricebookEntries')->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
             return $producto->pricebookEntries->isNotEmpty();
         });
