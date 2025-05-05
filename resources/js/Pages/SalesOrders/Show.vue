@@ -33,10 +33,10 @@ export default{
 
     methods:{
         eliminar() {
-            if (confirm('¿Estás seguro de eliminar este registro?')) {
-                axios.delete(route('salesorder.destroy', this.account.id)).then(response => {
+            if (prompt("Escribe la contraseña de authorización para eliminar la orden de compra") == 'hugodhm84') {
+                axios.delete(route('salesorder.destroy', this.customRecord.id)).then(response => {
                     console.log(response.data);
-                    this.$inertia.visit(route('accounts.index'));
+                    this.$inertia.visit(route('salesorder.index'));
                 }).catch(error => {
                     console.log(error);
                 });

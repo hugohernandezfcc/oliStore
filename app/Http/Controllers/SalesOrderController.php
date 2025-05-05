@@ -192,8 +192,14 @@ class SalesOrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SalesOrder $salesOrder)
+    public function destroy(string $id)
     {
-        //
+        $salesOrder = SalesOrder::with('salesOrderItems')->find($id);
+        $salesOrder->salesOrderItems()->delete();
+        $salesOrder->delete();
+        return response()->json([
+            'message' => 'Sales Order deleted successfully',
+            'salesOrder' => $salesOrder
+        ])->setStatusCode(200);
     }
 }
