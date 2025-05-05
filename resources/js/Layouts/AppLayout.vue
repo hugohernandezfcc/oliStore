@@ -353,9 +353,14 @@ console.log(router.page.url.indexOf("tickets"));
                         <ResponsiveNavLink :href="route('reports.index')" :active="router.page.url.indexOf('reports') >= 0" v-if="$page.props.auth.user.is_admin">
                             Reportes
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('productsb2b.index')" :active="router.page.url.indexOf('productsb2b') >= 0" v-if="$page.props.auth.user.is_admin">
+                        <ResponsiveNavLink :href="route('productsb2b.index')" :active="router.page.url.indexOf('productsb2b') >= 0" >
                             Productos B2B
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('accounts.index')" :active="router.page.url.indexOf('accounts') >= 0" >
+                            Clientes
+                        </ResponsiveNavLink>
+
+                        
 
 
                     </div>
