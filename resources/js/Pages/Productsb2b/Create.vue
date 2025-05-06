@@ -42,7 +42,8 @@ export default{
                 expiration_range: '',
                 unit_measure: '',
                 image: '',
-
+                package: false,
+                bundle: ''
             },
             dialogImageUrl: '',
             dialogVisible: false,
@@ -190,7 +191,10 @@ export default{
                                     ]" :key="item.value" :label="item.label" :value="item.value"/>
                             </el-select>
                         </div>
-          
+                        <div class="col-span-3 ">
+                            <el-switch v-model="form.package" class="mb-2" active-text="Paquete de producto" inactive-text=" "/>
+                            <TextInput id="package" :disabled="!form.package" v-model="form.bundle" type="text" :class="(!form.package) ? 'mt-1 block w-full bg-gray-100' : 'mt-1 block w-full ' " autocomplete="package"/>
+                        </div>
                         <div class="col-span-3 mb-2">
                             <InputLabel for="description" value="Descripción" />
                             <textarea

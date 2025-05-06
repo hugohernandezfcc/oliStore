@@ -197,7 +197,7 @@ export default{
 
                         <div class="col-span-3 ">
                             <el-switch v-model="form.package" class="mb-2" active-text="Paquete de producto" inactive-text=" "/>
-                            <TextInput id="package" :disabled="form.package" v-model="form.bundle" type="text" :class="(!form.package) ? 'mt-1 block w-full bg-gray-100' : 'mt-1 block w-full ' " autocomplete="package"/>
+                            <TextInput id="package" :disabled="!form.package" v-model="form.bundle" type="text" :class="(!form.package) ? 'mt-1 block w-full bg-gray-100' : 'mt-1 block w-full ' " autocomplete="package"/>
                         </div>
           
                         <div class="col-span-3 mb-2">
