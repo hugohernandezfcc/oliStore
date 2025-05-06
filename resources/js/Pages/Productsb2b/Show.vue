@@ -41,6 +41,18 @@ export default{
                     console.log(error);
                 });
             }
+        },
+        changinCategory(category, recordId, value){
+            console.log('cambiando categoria', category, recordId, value)
+            axios.post('/b2b/productsb2b/changing/cateogry', {
+                category: category,
+                recordId: recordId,
+                value: value
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
         }
     },
     data(){
@@ -94,6 +106,13 @@ export default{
 
                     </template>
                     <template #details>
+                        <el-switch v-model="customRecord.promo" class="mb-2" active-text="Promo" @change="changinCategory('promo', customRecord.id, customRecord.promo)" />&nbsp;
+                        <el-switch v-model="customRecord.bulkSale" class="mb-2" active-text="Granel" @change="changinCategory('bulkSale',customRecord.id, customRecord.bulkSale )"/>&nbsp;
+                        <el-switch v-model="customRecord.drinks" class="mb-2" active-text="Bebidas" @change="changinCategory('drinks',customRecord.id, customRecord.drinks )"/>&nbsp;
+                        <el-switch v-model="customRecord.snacks" class="mb-2" active-text="Botanas" @change="changinCategory('snacks',customRecord.id, customRecord.snacks )"/>&nbsp;
+                        <el-switch v-model="customRecord.groceries" class="mb-2" active-text="Abarrotes" @change="changinCategory('groceries',customRecord.id, customRecord.groceries )"/>&nbsp;
+                        <el-switch v-model="customRecord.cleaning" class="mb-2" active-text="Limpieza" @change="changinCategory('cleaning',customRecord.id, customRecord.cleaning )"/>&nbsp;
+                        <el-switch v-model="customRecord.underFox" class="mb-2" active-text="Más barato que zorro" @change="changinCategory('underFox',customRecord.id, customRecord.underFox )"/>
 
                         <br/>
                         <el-descriptions title="Detalle del producto" :column="1" border>
@@ -123,9 +142,9 @@ export default{
                         <br/>
                         
                         <Referenceb2cElement 
-                        :cost="referenceb2c.price_list"
-                        :price="referenceb2c.price_customer"
-                        :porcentage="((referenceb2c.price_customer - referenceb2c.price_list) / referenceb2c.price_list) * 100"
+                            :cost="referenceb2c.price_list"
+                            :price="referenceb2c.price_customer"
+                            :porcentage="((referenceb2c.price_customer - referenceb2c.price_list) / referenceb2c.price_list) * 100"
                          v-if="referenceb2c != null"></Referenceb2cElement>
 
                     </template>

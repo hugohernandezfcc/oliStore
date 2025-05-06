@@ -286,6 +286,7 @@ export default{
             
             
             <div class="overflow-y-scroll  " style="background-color: rgb(255, 0, 0);">       
+                
                 <span v-if="appliedFilters" class="bg-white rounded-b-md mx-2 p-1 text-green-600 text-sm font-bold">
                     {{products.length}} Productos filtrados
                 </span>         
@@ -307,9 +308,7 @@ export default{
         <el-select id="status" v-model="paymentMethod" placeholder="Seleccionar  ..." class="w-full" clearable>
             <el-option v-for="item in [
                 {name: 'Efectivo',        key: 'Efectivo'},
-                {name: 'Transferencia',   key: 'Transferencia'},
-                {name: 'Cerrada',       key: 'Cerrada'},
-                {name: 'Cancelada',     key: 'Cancelada'}
+                {name: 'Transferencia',   key: 'Transferencia'}
             ]" :key="item.key" :label="item.name" :value="item.key"/>
         </el-select>
         

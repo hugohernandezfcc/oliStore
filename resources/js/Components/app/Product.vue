@@ -29,7 +29,7 @@
                 placement="top-end"
             >
                 <el-switch
-                    v-if="product.quantity > 0"
+                    v-if="product.quantity > 0 && product.unit_type == 'unit'"
                     v-model="product.package"
                     class="ml-2 touch-manipulation"
                     inline-prompt

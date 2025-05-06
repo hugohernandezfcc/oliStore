@@ -202,6 +202,7 @@ Route::group(
         Route::resource('productsb2b',               App\Http\Controllers\Productb2bController::class      )->middleware('auth:sanctum');
         Route::post('productsb2b/upload',           [App\Http\Controllers\Productb2bController::class,     'storeImage']);
         Route::post('productsb2b/changestatus',     [App\Http\Controllers\Productb2bController::class,     'changeStatus']);
+        Route::post('productsb2b/changing/cateogry',     [App\Http\Controllers\Productb2bController::class,     'changinCategory']);
         Route::post('productsb2b/pricebookentry',   [App\Http\Controllers\Productb2bController::class,     'storePriceBookEntry'])->name('pricebooksentry.storefromb2b');
         Route::get('/migrationProducts', [App\Http\Controllers\Productb2bController::class, 'migrationProducts'])->name('migrationProducts');
         

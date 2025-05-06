@@ -158,6 +158,17 @@ class Productb2bController extends Controller
         ]);
     }
 
+    public function changinCategory(Request $request)
+    {
+        $productb2b = Productb2b::find($request->get('recordId'));
+        $productb2b[$request->get('category')] = $request->get('value');
+        $productb2b->save();
+        return response()->json([
+            'message' => 'Se ha cambiado la categoria del producto'
+        ])->setStatusCode(200);
+    }
+
+
     /**
      * Show the form for editing the specified resource.
      */

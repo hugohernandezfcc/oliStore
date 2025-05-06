@@ -109,7 +109,7 @@ export default{
         submit(){
             let localValidation = this.validForm();
             console.log(this.form);
-            
+
             if(localValidation.isValid){
                 this.$inertia.post(this.route('productsb2b.store'), this.form);
             }else{
