@@ -106,6 +106,10 @@ export default{
                             <el-descriptions-item label="Imagen de producto" label-align="right" align="left" >
                                 <el-image style="width: 50px;" :src="customRecord.image" />
                             </el-descriptions-item>
+                            <el-descriptions-item label="Contenido del paquete " label-align="right" align="left" v-if="!customRecord.bulkSale" >
+                                <span >{{customRecord.bundle}} unidades</span>
+                            </el-descriptions-item>
+
                             <el-descriptions-item label="Actualizado por" label-align="right" align="left" >
                                 <span > {{customRecord.edited_by.name}} </span>
                             </el-descriptions-item>
@@ -117,7 +121,7 @@ export default{
                             </el-descriptions-item>
                         </el-descriptions>
                         <br/>
-
+                        
                         <Referenceb2cElement 
                         :cost="referenceb2c.price_list"
                         :price="referenceb2c.price_customer"

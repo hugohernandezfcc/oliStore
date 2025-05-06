@@ -5,7 +5,7 @@
         <SecondaryButton @click="addForm" class="mb-3 ml-3 lg:ml-0">Agregar </SecondaryButton>
         <div v-for="(form, index) in forms"
         :key="index"
-        class="mb-2 border p-1 rounded"
+        class="mb-2 -mx-2 border p-1 rounded"
         
         >
         <el-row>
