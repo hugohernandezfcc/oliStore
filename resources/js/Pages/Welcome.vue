@@ -35,6 +35,7 @@ export default{
             // console.log(Array.isArray(productsB2B));
             for (let i = 0; i < productsB2B.length; i++) {
                 console.log('loadProduct:', productsB2B[i]);
+                productsB2B[i].package = false;
                 this.products.push(productsB2B[i]);
             }
             
