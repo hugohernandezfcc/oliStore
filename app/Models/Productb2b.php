@@ -32,6 +32,8 @@ class Productb2b extends Model
         'groceries',
         'cleaning',
         'underFox',
+        'package',
+        'bundle'
     ];
 
     protected $casts = [

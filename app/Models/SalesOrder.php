@@ -44,4 +44,9 @@ class SalesOrder extends Model
     {
         return $this->hasMany(Orpb2b::class, 'salesorder_id');
     }
+
+    public function cases()
+    {
+        return $this->hasMany(Case2::class, 'salesorder_id');
+    }
 }

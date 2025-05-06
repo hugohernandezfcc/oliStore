@@ -194,7 +194,8 @@ class SalesOrderController extends Controller
      */
     public function destroy(string $id)
     {
-        $salesOrder = SalesOrder::with('salesOrderItems')->find($id);
+        $salesOrder = SalesOrder::with(['salesOrderItems', 'cases'])->find($id);
+        $salesOrder->cases()->delete();
         $salesOrder->salesOrderItems()->delete();
         $salesOrder->delete();
         return response()->json([

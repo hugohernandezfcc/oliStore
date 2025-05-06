@@ -194,6 +194,11 @@ export default{
                                     ]" :key="item.value" :label="item.label" :value="item.value"/>
                             </el-select>
                         </div>
+
+                        <div class="col-span-3 ">
+                            <el-switch v-model="form.package" class="mb-2" active-text="Paquete de producto" inactive-text=" "/>
+                            <TextInput id="package" :disabled="form.package" v-model="form.bundle" type="text" :class="(form.package) ? 'mt-1 block w-full bg-gray-100' : 'mt-1 block w-full ' " autocomplete="package"/>
+                        </div>
           
                         <div class="col-span-3 mb-2">
                             <InputLabel for="description" value="Descripción" />
@@ -208,7 +213,6 @@ export default{
                         </div>
                         <div class="col-span-3 mb-2">
                             <el-switch v-model="form.is_public" class="mt-4" active-text="Producto público" inactive-text=" "/>
-
                         </div>
                         <!-- <div class="col-span-6 sm:col-span-4">
                             <InputLabel for="description" value="Categoría principal" />

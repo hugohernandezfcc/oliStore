@@ -78,7 +78,9 @@ class AppController extends Controller
                 'snacks'    => $producto->snacks,
                 'groceries' => $producto->groceries,
                 'cleaning'  => $producto->cleaning,
-                'underFox'  => $producto->underFox
+                'underFox'  => $producto->underFox,
+                'package'  => $producto->package,
+                'bundle' => $producto->bundle
             ];
         });
 
