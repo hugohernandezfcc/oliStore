@@ -19,7 +19,9 @@ Route::get('/welcome', function () {
     return Inertia::render('Welcome');
 })->name('welcome');
 
-
+Route::get('/', function () {
+    return Inertia::render('home');
+})->name('home');
 
 Route::middleware([ 'auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
     Route::get('/dashboard', function () {
@@ -195,7 +197,9 @@ Route::post('/cardsales',                     [App\Http\Controllers\DashboardCon
 
 
 Route::group( ['prefix' => 'integrations' ], function () {
-    Route::match(['get', 'post'], '/inboundEvent', [App\Http\Controllers\IntegrationsController::class, 'inboudEvent'])->name('whatsapp.inbound.event');
+    Route::match(['get', 'post'], '/inboundEvent', [App\Http\Controllers\IntegrationsController::class, 'inboundEvent'])->name('whatsapp.inbound.event');
+    Route::get('/sendMessage',                     [App\Http\Controllers\IntegrationsController::class, 'outboundMessage'])->name('whatsapp.outbound.message');
+    Route::get('/requestApproveTemplate',          [App\Http\Controllers\IntegrationsController::class, 'requestApproveTemplate'])->name('whatsapp.request.approve.template');
 
 
 });

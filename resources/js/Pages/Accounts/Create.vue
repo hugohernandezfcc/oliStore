@@ -23,7 +23,7 @@ export default{
         ElLoading
     },
     props:{
-        customRecord: Object   
+        customRecord: Object
     },
     data(){
 
@@ -45,7 +45,7 @@ export default{
         }
     },
     methods:{
-        
+
         validForm(){
             const fields = [
                 'name',
@@ -92,7 +92,7 @@ export default{
                     offset: 100,
                 });
             }
-            
+
         }
     },
     mounted() {
@@ -101,7 +101,7 @@ export default{
 }
 
 
-</script> 
+</script>
 
 <template>
     <AppLayout title="Profile">
@@ -121,26 +121,26 @@ export default{
                         Aquí podrás registrar los detalles del cliente.
                     </template>
                     <template #form>
-                        
+
                         <div class="col-span-6 ">
-                            <InputLabel for="name" value="Nombre de la cuenta" class="mb-6"/>
+                            <InputLabel for="name" value="Nombre de la cuenta" class="mt-1"/>
                             <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" autocomplete="name"/>
                         </div>
-                        
+
                         <div class="col-span-6 "><br/>
                             <div class="bg-red-600 text-white text-center font-bold rounded-full " >Nombre de responsable</div>
                             <InputLabel for="firstname" value="Nombre del responsable" class="mt-1"/>
                             <TextInput id="firstname" v-model="form.firstname" type="text" class="mt-1 block w-full" autocomplete="firstname"/>
-                            
+
                             <InputLabel for="lastname" value="Apellidos" class="mt-1"/>
                             <TextInput id="lastname" v-model="form.lastname" type="text" class="mt-1 block w-full" autocomplete="lastname"/>
                         </div>
                         <div class="col-span-3 ">
-                            <InputLabel for="email" value="Correo Electrónico" class="mb-6"/>
+                            <InputLabel for="email" value="Correo Electrónico" class="mt-1"/>
                             <TextInput id="email" v-model="form.email" type="text" class="mt-1 block w-full" autocomplete="email"/>
                         </div>
                         <div class="col-span-3 ">
-                            <InputLabel for="phone" value="Teléfono" class="mb-6"/>
+                            <InputLabel for="phone" value="Teléfono" class="mt-1"/>
                             <TextInput id="phone" v-model="form.phone" type="text" class="mt-1 block w-full" autocomplete="phone"/>
                         </div>
                         <div class="col-span-6 "><br/>
@@ -149,31 +149,31 @@ export default{
                             <TextInput id="address" v-model="form.address" type="text" class="mt-1 block w-full" autocomplete="address"/>
                         </div>
                         <div class="col-span-3 ">
-                            <InputLabel for="city" value="Ciudad" class="mb-6"/>
+                            <InputLabel for="city" value="Ciudad" class="mt-1"/>
                             <TextInput id="city" v-model="form.city" type="text" class="mt-1 block w-full" autocomplete="city"/>
                         </div>
                         <div class="col-span-3 ">
-                            <InputLabel for="state" value="Estado" class="mb-6"/>
+                            <InputLabel for="state" value="Estado" class="mt-1"/>
                             <TextInput id="state" v-model="form.state" type="text" class="mt-1 block w-full" autocomplete="state"/>
                         </div>
                         <div class="col-span-3 ">
-                            <InputLabel for="zip" value="Código postal" class="mb-6"/>
+                            <InputLabel for="zip" value="Código postal" class="mt-1"/>
                             <TextInput id="zip" v-model="form.zip" type="text" class="mt-1 block w-full" autocomplete="zip"/>
                         </div>
                         <div class="col-span-3 ">
-                            <InputLabel for="country" value="País" class="mb-6"/>
+                            <InputLabel for="country" value="País" class="mt-1"/>
                             <TextInput id="country" v-model="form.country" type="text" class="mt-1 block w-full" autocomplete="country"/>
                         </div>
-                        
+
                     </template>
-                    
-                   
-                    
+
+
+
                     <template #actions>
-                       
+
                         <inertia-link :href="route('accounts.index')" class="m-1">
                             <el-button :type="'plain'" text bg class="m-2">
-                                Cancelar 
+                                Cancelar
                             </el-button>
                         </inertia-link>
                         <PrimaryButton @click="submit" class="m-2">
@@ -185,7 +185,7 @@ export default{
             </div>
         </div>
     </AppLayout>
-   
+
 </template>
 <style >
     div.el-autocomplete{ width: 100% !important; } input.el-input__inner{ margin: 5px; font-size:large }

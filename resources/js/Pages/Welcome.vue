@@ -4,12 +4,10 @@ import PrimaryButton from '../Components/PrimaryButton.vue';
 import {Search, ShoppingCartFull} from '@element-plus/icons-vue';
 import ProductsB2BOrderList from '@/Components/ProductsB2BOrderList.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import { error } from 'jquery';
-import { relativeTimeRounding } from 'moment';
-
+import TextInput from '@/Components/TextInput.vue';
 export default{
     components:{
-        productItem, Search, ProductsB2BOrderList, ShoppingCartFull, InputLabel, PrimaryButton
+        productItem, Search, ProductsB2BOrderList, ShoppingCartFull, InputLabel, PrimaryButton, TextInput
     },
     name: 'App',
     props:{
@@ -38,13 +36,13 @@ export default{
                 productsB2B[i].package = false;
                 this.products.push(productsB2B[i]);
             }
-            
+
         },
         confirm(){
             this.statusButton = 'inprogress';
             if(this.paymentMethod == ''){
                 this.statusButton = 'almostReady';
-                this.errorMessage = 'Selecciona un método de pago'; 
+                this.errorMessage = 'Selecciona un método de pago';
                 return;
             }else{
                 this.errorMessage = '';
@@ -61,7 +59,7 @@ export default{
                     this.statusButton = 'complete';
                     setTimeout(() => {
                         this.confirmOrder = false;
-                        this.dialog = false; 
+                        this.dialog = false;
                         location.reload();
                     }, 2500);
                 }).catch(error => {
@@ -69,12 +67,12 @@ export default{
                 })
             }
 
-            
+
         },
         preOrder(){
 
             if(this.filterButtonLabel == '**FILTROS'){
-                this.clearFilters();   
+                this.clearFilters();
             }
 
             console.log('preOrder')
@@ -95,7 +93,7 @@ export default{
                             calculateFinalQuantity =  `${calculateFinalQuantity.toFixed(1)} kg.`
                             calculateFinalPrice = (this.products[i].quantity / this.products[i].price) * this.products[i].price;
                         }
-                    
+
                     this.total = this.total + parseFloat(calculateFinalPrice.toFixed(1));
                     this.total = parseFloat(this.total.toFixed(1));
                     this.orderProducts.push({
@@ -130,11 +128,11 @@ export default{
             this.filters = {
                 search: '',
                 promo: false,
-                bulkSale: false,     
-                drinks: false,             
-                snacks: false,             
-                groceries: false,           
-                cleaning: false,      
+                bulkSale: false,
+                drinks: false,
+                snacks: false,
+                groceries: false,
+                cleaning: false,
                 underFox: false
             }
             this.loadProducts();
@@ -217,11 +215,11 @@ export default{
             filters:{
                 search: '',
                 promo: false,
-                bulkSale: false,     
-                drinks: false,             
-                snacks: false,             
-                groceries: false,           
-                cleaning: false,      
+                bulkSale: false,
+                drinks: false,
+                snacks: false,
+                groceries: false,
+                cleaning: false,
                 underFox: false
 
             }
@@ -235,7 +233,7 @@ export default{
         }, this.closeSession);
     },
     computed: {
-        
+
     }
 
 }
@@ -243,13 +241,13 @@ export default{
 
 
 <template>
-    
+
     <div class="fixed top-0 left-0 right-0  p-1 shadow-md z-50 grid grid-cols-3 border-b-2 border-red-400 place-items-center bg-white">
         <div class=" ">
             <span class="text-l md:text-xl lg:text-xl font-semibold text-red-600" >
                 <el-button type="danger" id="checkout" round  @click="openFilters">
                         {{filterButtonLabel}} &nbsp; <el-icon><Search /></el-icon>
-                    </el-button> 
+                    </el-button>
             </span>
         </div>
         <div >
@@ -259,12 +257,12 @@ export default{
             <el-button type="success"  id="checkoutorder" @click="preOrder()" round  >
                 ORDENAR<el-icon><ShoppingCartFull /></el-icon> </el-button>
         </div>
-        
+
     </div>
-    
+
     <div class="flex pt-16 ">
         <div class=" flex-none w-[20.3%]  hidden sm:hidden md:block lg:block">
-            
+
         </div>
         <div class="grow   " >
             <div class="demo-collapse hidden" v-if="false">
@@ -272,8 +270,8 @@ export default{
                 <el-collapse-item  name="1">
                     <template #title>
                         <center class="bg-red-600 rounded-lg my-2 px-12">
-                            <span class="text-l md:text-xl lg:text-xl font-semibold text-white" > 
-                                Promociones 
+                            <span class="text-l md:text-xl lg:text-xl font-semibold text-white" >
+                                Promociones
                             </span>
                         </center>
                     </template>
@@ -287,21 +285,21 @@ export default{
                 </el-collapse-item>
                 </el-collapse>
             </div>
-            
-            
-            
-            <div class="overflow-y-scroll  " style="background-color: rgb(255, 0, 0);">       
-                
+
+
+
+            <div class="overflow-y-scroll  " style="background-color: rgb(255, 0, 0);">
+
                 <span v-if="appliedFilters" class="bg-white rounded-b-md mx-2 p-1 text-green-600 text-sm font-bold">
                     {{products.length}} Productos filtrados
-                </span>         
+                </span>
                 <productItem v-for="product in products" :key="product.id" :product="product" />
             </div>
 
 
         </div>
         <div class=" flex-none w-[20.3%]  hidden sm:hidden md:block lg:block">
-            
+
         </div>
     </div>
 
@@ -316,7 +314,7 @@ export default{
                 {name: 'Transferencia',   key: 'Transferencia'}
             ]" :key="item.key" :label="item.name" :value="item.key"/>
         </el-select>
-        
+
         <el-input v-model="note" type="textarea" class="pt-2" placeholder="Si deseas agregar una nota para la entrega puedes apuntarlo aquí" />
         <template #footer>
         <div class="dialog-footer">
@@ -339,7 +337,7 @@ export default{
 
     <el-drawer v-model="dialog" title="DETALLE DE TU PEDIDO" direction="btt" class=" border-red-600  rounded-3xl" size="80%"><!--:before-close="handleClose"-->
         <el-button type="danger" class="w-full -mt-8 touch-manipulation" id="checkout" @click="confirmOrder = true" round>CONFIRMO PEDIDO (${{ total }} MXN)</el-button>
-        
+
         <div class="demo-drawer__content  ">
             <ProductsB2BOrderList :tableData="orderProducts"></ProductsB2BOrderList>
         </div>
@@ -351,7 +349,8 @@ export default{
         </template>
         <template #default>
 
-                <el-input v-model="filters.search" placeholder="Filtra por palabra, por ejemplo: COCA" class="shadow-lg shadow-red-200 -mt-4 mb-3" />
+                <TextInput    v-model="filters.search" placeholder="Filtra por palabra, por ejemplo: COCA" class="shadow-lg shadow-red-200 -mt-4 mb-3 w-full" />
+            <br/>
                 <el-checkbox v-model="filters.promo" label="promo"                   value="Value A" />
                 <el-checkbox v-model="filters.bulkSale" label="Venta a granel"       value="Value A" />
                 <el-checkbox v-model="filters.drinks" label="Bebidas"                value="Value A" />
@@ -362,11 +361,11 @@ export default{
 
         </template>
         <template #footer>
-            <div style="flex: auto"> 
+            <div style="flex: auto">
                 <el-button @click="clearFilters" round>Vaciar filtros</el-button>
                 <el-button type="danger" id="checkout" round  @click="handleCloseFilters">
                     Aplicar filtros
-                </el-button> 
+                </el-button>
 
             </div>
         </template>
@@ -415,3 +414,5 @@ export default{
 }
 
 </style>
+
+

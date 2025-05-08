@@ -12,7 +12,7 @@ export default{
     },
 
     props:{
-        productsb2b: Array 
+        productsb2b: Array
     },
     methods:{
         changeStatus(id, status){
@@ -27,6 +27,18 @@ export default{
                 console.log(error);
             });
         },
+        changinCategory(category, recordId, value){
+            console.log('cambiando categoria', category, recordId, value)
+            axios.post('/b2b/productsb2b/changing/cateogry', {
+                category: category,
+                recordId: recordId,
+                value: value
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
+        }
     },
     data(){
         return {
@@ -55,35 +67,46 @@ export default{
             <h3 class="text-lg text-gray-900"> Listado de productos - # {{ productsb2b.length }}</h3>
             <p class="text-sm text-gray">Catalogo de productos registrados </p>
         </template>
-        
-        
+
+
 
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-2">
             <div class="flex flex-row m-1">
                 <div class="basis-1/2">
-                    <inertia-link :href="route('productsb2b.create')" class="m-1"> 
+                    <inertia-link :href="route('productsb2b.create')" class="m-1">
                         <PrimaryButton >
                             Nuevo Producto
                         </PrimaryButton>
-                    </inertia-link> 
+                    </inertia-link>
                 </div>
                 <div class="basis-1/2">
                     <el-input v-model="search"  placeholder="Type to search" class="shadow-2xl"/>
                 </div>
             </div>
-            
+
             <br/>
             <el-table :data="filterTableData" class="shadow-lg m-1" stripe  >
                 <el-table-column align="left" width="70" fixed="left">
                     <template #default="scope">
                         <inertia-link :href="route('productsb2b.show', scope.row.id)" >
-                            <el-button size="small" color="#dc2626"> 
+                            <el-button size="small" color="#dc2626">
                                 <svg class="h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 160c320 0 512 352 512 352S832 864 512 864 0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288 52.608 79.872 211.456 288 436.8 288 225.28 0 384.128-208.064 436.8-288-52.608-79.872-211.456-288-436.8-288zm0 64a224 224 0 1 1 0 448 224 224 0 0 1 0-448m0 64a160.192 160.192 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160-71.744-160-160-160"></path></svg>
                             </el-button>
                         </inertia-link>
                     </template>
-                    
+
                 </el-table-column>
+                <el-table-column type="expand" sortable>
+                        <template #default="props" >
+                            <el-switch v-model="props.row.promo"     class="mb-2" active-text="Promo" @change="changinCategory('promo', props.row.id, props.row.promo)" />&nbsp;
+                            <el-switch v-model="props.row.bulkSale"  class="mb-2" active-text="Granel" @change="changinCategory('bulkSale',props.row.id, props.row.bulkSale )"/>&nbsp;
+                            <el-switch v-model="props.row.drinks"    class="mb-2" active-text="Bebidas" @change="changinCategory('drinks',props.row.id, props.row.drinks )"/>&nbsp;
+                            <el-switch v-model="props.row.snacks"    class="mb-2" active-text="Botanas" @change="changinCategory('snacks',props.row.id, props.row.snacks )"/>&nbsp;
+                            <el-switch v-model="props.row.groceries" class="mb-2" active-text="Abarrotes" @change="changinCategory('groceries',props.row.id, props.row.groceries )"/>&nbsp;
+                            <el-switch v-model="props.row.cleaning"  class="mb-2" active-text="Limpieza" @change="changinCategory('cleaning',props.row.id, props.row.cleaning )"/>&nbsp;
+                            <el-switch v-model="props.row.underFox"  class="mb-2" active-text="Más barato que zorro" @change="changinCategory('underFox',props.row.id, props.row.underFox )"/>
+                        </template>
+                    </el-table-column>
                 <el-table-column width="150" label="Publicar" >
                     <template #default="scope" >
                         <el-switch v-model="scope.row.is_public" @change="changeStatus(scope.row.id, scope.row.is_public)"  class="mt-4" active-text="Público" inactive-text=" "/>
@@ -95,7 +118,7 @@ export default{
                         <el-image :src="scope.row.image" style="width: 40px;"/>
                     </template>
                 </el-table-column>
-
+                /Users/hugohernandez/Documents/Heroku/Projects/oliStore/resources/js/Pages/Productsb2b/Index.vue
                 <!-- <el-table-column width="150" label="Tipo de categoría" >
                     <template #default="scope" >
                         {{ (scope.row.status == 'Category') ? 'Categoría' : 'Subcategoría'}}
@@ -103,7 +126,7 @@ export default{
                 </el-table-column> -->
                 <el-table-column prop="description" label="Descripción" width="300" sortable/>
                 <el-table-column prop="unit_measure" label="Unidad de medida" width="200" sortable/>
-                
+
                 <el-table-column width="200" label="Fecha de creación" >
                     <template #default="scope" >
                         {{ scope.row.created_at }}
@@ -117,10 +140,10 @@ export default{
                     </template>
                 </el-table-column> -->
 
-                
+
 
             </el-table>
-            
+
             <br/>
 
         </div>
