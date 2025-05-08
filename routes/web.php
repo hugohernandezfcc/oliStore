@@ -71,14 +71,14 @@ Route::get('/sales/{start}/{end}/results/{storeId}',    [App\Http\Controllers\Sa
 Route::get('/sales/yesterday/results',                  [App\Http\Controllers\SalesController::class,  'salesYesterday'])->middleware('auth:sanctum')->name('sales.yesterday');
 Route::post('/storeProduct',                            [App\Http\Controllers\StockController::class,          'storeProduct' ]);
 Route::post('/storeticket',                             [App\Http\Controllers\TicketsController::class,          'store' ]);
-Route::post('/storeProductFromPos',          [App\Http\Controllers\SalesController::class,          'storeProductFromPos' ]);
-Route::get('sales/show/{id}',                [App\Http\Controllers\SalesController::class, 'showById'])->middleware('auth:sanctum')->name('sales.show');
-Route::get('tickets/check/{noTicket}',       [App\Http\Controllers\TicketsController::class, 'validateTicket'])->middleware('auth:sanctum');
+Route::post('/storeProductFromPos',                     [App\Http\Controllers\SalesController::class,          'storeProductFromPos' ]);
+Route::get('sales/show/{id}',                           [App\Http\Controllers\SalesController::class, 'showById'])->middleware('auth:sanctum')->name('sales.show');
+Route::get('tickets/check/{noTicket}',                  [App\Http\Controllers\TicketsController::class, 'validateTicket'])->middleware('auth:sanctum');
 
-Route::get('tickets/destroy/{id}',           [App\Http\Controllers\TicketsController::class, 'destroy'])->middleware('auth:sanctum');
-Route::get('tickets/destroyItem/{id}',       [App\Http\Controllers\TicketsController::class, 'destroyItem'])->middleware('auth:sanctum');
-Route::get('ticketItem/show/{id}',           [App\Http\Controllers\TicketsController::class, 'ticketItemShow'])->middleware('auth:sanctum');
-Route::post('ticketItem/update/{id}',         [App\Http\Controllers\TicketsController::class, 'ticketItemUpdate'])->middleware('auth:sanctum');
+Route::get('tickets/destroy/{id}',                      [App\Http\Controllers\TicketsController::class, 'destroy'])->middleware('auth:sanctum');
+Route::get('tickets/destroyItem/{id}',                  [App\Http\Controllers\TicketsController::class, 'destroyItem'])->middleware('auth:sanctum');
+Route::get('ticketItem/show/{id}',                      [App\Http\Controllers\TicketsController::class, 'ticketItemShow'])->middleware('auth:sanctum');
+Route::post('ticketItem/update/{id}',                   [App\Http\Controllers\TicketsController::class, 'ticketItemUpdate'])->middleware('auth:sanctum');
 
 /**
  * Core routes
@@ -142,12 +142,12 @@ Route::group(
     Route::post('/frontend/providers',      [App\Http\Controllers\ProductController::class,   'assignProviderToProducts'])->name('products.assign.providers');
     Route::get('/frontend/products',        [App\Http\Controllers\Tickets2Controller::class,   'productList'])->name('products.list');
     Route::post('/frontend/products1',        [App\Http\Controllers\Tickets2Controller::class,   'searchProductList'])->name('products.list.search');
-    
+
 
 });
 
 /**
- * related list routes 
+ * related list routes
  */
 Route::group(
     [
@@ -182,7 +182,7 @@ Route::group(
         Route::post('/open/box', [App\Http\Controllers\BoxController::class, 'store'])->name('box.open');
         Route::post('/close/box/{id}', [App\Http\Controllers\BoxController::class, 'update'])->name('box.close');
         Route::post('/save/box/cut', [App\Http\Controllers\BoxCutController::class, 'store'])->name('box.cut.save');
-}); 
+});
 
 
 Route::get('/products2/readcsv',             [App\Http\Controllers\ProductController::class,        'storeMasive' ]);
@@ -194,30 +194,28 @@ Route::get('/bymonth',                       [App\Http\Controllers\DashboardCont
 Route::post('/cardsales',                     [App\Http\Controllers\DashboardController::class, 'cardSales'])->name('card.sales');;
 
 
-Route::group(
-    [
-        'prefix' => 'b2b',
-        'middleware' => ['auth:sanctum']
-    ], function () {
+Route::group( ['prefix' => 'integrations' ], function () {
+    Route::get('/imboundEvent',                        [App\Http\Controllers\IntegrationsController::class, 'inboudEvent'])->name('whatsapp.inbound.event');
+
+});
+
+Route::group( ['prefix' => 'b2b',  'middleware' => ['auth:sanctum'] ], function () {
         Route::resource('productsb2b',               App\Http\Controllers\Productb2bController::class      )->middleware('auth:sanctum');
-        Route::post('productsb2b/upload',           [App\Http\Controllers\Productb2bController::class,     'storeImage']);
-        Route::post('productsb2b/changestatus',     [App\Http\Controllers\Productb2bController::class,     'changeStatus']);
-        Route::post('productsb2b/changing/cateogry',     [App\Http\Controllers\Productb2bController::class,     'changinCategory']);
-        Route::post('productsb2b/pricebookentry',   [App\Http\Controllers\Productb2bController::class,     'storePriceBookEntry'])->name('pricebooksentry.storefromb2b');
-        Route::get('/migrationProducts', [App\Http\Controllers\Productb2bController::class, 'migrationProducts'])->name('migrationProducts');
-        
-        
+        Route::post('productsb2b/upload',                       [App\Http\Controllers\Productb2bController::class,     'storeImage']);
+        Route::post('productsb2b/changestatus',                 [App\Http\Controllers\Productb2bController::class,     'changeStatus']);
+        Route::post('productsb2b/changing/cateogry',            [App\Http\Controllers\Productb2bController::class,     'changinCategory']);
+        Route::post('productsb2b/pricebookentry',               [App\Http\Controllers\Productb2bController::class,     'storePriceBookEntry'])->name('pricebooksentry.storefromb2b');
+        Route::get('/migrationProducts',                        [App\Http\Controllers\Productb2bController::class, 'migrationProducts'])->name('migrationProducts');
+
+
         Route::resource('pricebooks',                App\Http\Controllers\PriceBookController::class        )->middleware('auth:sanctum');
         Route::resource('pricebooksentry',           App\Http\Controllers\PriceBookEntryController::class   )->middleware('auth:sanctum');
         Route::resource('salesorder',               App\Http\Controllers\SalesOrderController::class        )->middleware('auth:sanctum');
-        
+
         Route::resource('accounts',                  App\Http\Controllers\AccountController::class          )->middleware('auth:sanctum');
         Route::resource('cases',                     App\Http\Controllers\Case2Controller::class            )->middleware('auth:sanctum');
 
 
-        // Route::post('/store', [App\Http\Controllers\LineAnyItemController::class, 'storeFromRelatedList'])->name('relatedlist.store');
-        // Route::delete('/delete/{id}', [App\Http\Controllers\LineAnyItemController::class, 'destroy'])->name('relatedlist.delete');
-        // Route::post('/update', [App\Http\Controllers\LineAnyItemController::class, 'update'])->name('relatedlist.update');
 
 });
 
