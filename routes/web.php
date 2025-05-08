@@ -195,7 +195,8 @@ Route::post('/cardsales',                     [App\Http\Controllers\DashboardCon
 
 
 Route::group( ['prefix' => 'integrations' ], function () {
-    Route::post('/inboundEvent',                        [App\Http\Controllers\IntegrationsController::class, 'inboudEvent'])->name('whatsapp.inbound.event');
+    Route::match(['get', 'post'], '/inboundEvent', [App\Http\Controllers\IntegrationsController::class, 'inboudEvent'])->name('whatsapp.inbound.event');
+
 
 });
 
