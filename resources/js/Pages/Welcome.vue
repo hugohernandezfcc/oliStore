@@ -76,6 +76,7 @@ export default{
             }
 
             console.log('preOrder')
+            this.total = 0;
             this.orderProducts = [];
             for (let i = 0; i < this.products.length; i++) {
 
