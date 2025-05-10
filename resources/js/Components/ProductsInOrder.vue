@@ -1,5 +1,5 @@
 <template>
-    
+
     <el-tabs type="border-card" class="demo-tabs">
         <el-tab-pane v-for="(category, index) in productCategories" :key="index" :label="category.nameApi">
             <template #label>
@@ -22,7 +22,7 @@
                 <el-table-column label="$" width="70">
                     <template #default="scope">${{scope.row.unit_price}}</template>
                 </el-table-column>
-                
+
                 <el-table-column label=" " width="70">
                     <template #default="scope">
                         <el-popconfirm v-if="category.nameApi != 'deliveried'"  confirm-button-text="¡Listo!" cancel-button-text="Pendiente"
@@ -38,11 +38,11 @@
                     </template>
                 </el-table-column>
             </el-table>
-                
+
         </el-tab-pane>
     </el-tabs>
-  
-    
+
+
 </template>
 
 <script>
@@ -69,7 +69,6 @@
         },
         props: {
             products: Object
-            
         },
         data() {
             return {
@@ -128,7 +127,7 @@
                                 console.log('productCategories', this.productCategories);
                                 break;
                             }
-                        } 
+                        }
                     }
                 }
             },

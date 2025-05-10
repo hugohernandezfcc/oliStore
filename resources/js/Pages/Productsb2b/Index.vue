@@ -104,7 +104,8 @@ export default{
                             <el-switch v-model="props.row.snacks"    class="mb-2" active-text="Botanas" @change="changinCategory('snacks',props.row.id, props.row.snacks )"/>&nbsp;
                             <el-switch v-model="props.row.groceries" class="mb-2" active-text="Abarrotes" @change="changinCategory('groceries',props.row.id, props.row.groceries )"/>&nbsp;
                             <el-switch v-model="props.row.cleaning"  class="mb-2" active-text="Limpieza" @change="changinCategory('cleaning',props.row.id, props.row.cleaning )"/>&nbsp;
-                            <el-switch v-model="props.row.underFox"  class="mb-2" active-text="Más barato que zorro" @change="changinCategory('underFox',props.row.id, props.row.underFox )"/>
+                            <el-switch v-model="props.row.underFox"  class="mb-2" active-text-text="Más barato que zorro" @change="changinCategory('underFox',props.row.id, props.row.underFox )"/>&nbsp;
+                            <el-switch v-model="props.row.cigars"  class="mb-2" active-text="Cigarrillos" @change="changinCategory('cigars',props.row.id, props.row.cigars )"/>
                         </template>
                     </el-table-column>
                 <el-table-column width="150" label="Publicar" >
@@ -118,7 +119,7 @@ export default{
                         <el-image :src="scope.row.image" style="width: 40px;"/>
                     </template>
                 </el-table-column>
-                /Users/hugohernandez/Documents/Heroku/Projects/oliStore/resources/js/Pages/Productsb2b/Index.vue
+
                 <!-- <el-table-column width="150" label="Tipo de categoría" >
                     <template #default="scope" >
                         {{ (scope.row.status == 'Category') ? 'Categoría' : 'Subcategoría'}}

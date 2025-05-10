@@ -91,9 +91,11 @@ Route::group(['prefix' => 'app' ], function () {
         /**
          * Routes for users
          */
-        Route::get('/ecommerce/{whatsappNumber}',   [App\Http\Controllers\AppController::class,         'index']  );
-        Route::post('salesorder/store',             [App\Http\Controllers\SalesOrderController::class,  'storeApp'])->name('salesorder.store.app');
-        Route::get('salesorder/{field}/{orpb2bId}', [App\Http\Controllers\SalesOrderController::class,  'updateProductOrderStatus'])->name('salesorder.update.status.item');
+        Route::get('/ecommerce/{whatsappNumber}',           [App\Http\Controllers\AppController::class,         'index']  );
+        Route::get('/ecommerce/{filter}/{format}',          [App\Http\Controllers\AppController::class,         'utilityLoadProducts']);
+
+        Route::post('salesorder/store',                     [App\Http\Controllers\SalesOrderController::class,  'storeApp'])->name('salesorder.store.app');
+        Route::get('salesorder/{field}/{orpb2bId}',         [App\Http\Controllers\SalesOrderController::class,  'updateProductOrderStatus'])->name('salesorder.update.status.item');
         Route::get('salesorder/{status}/{recordId}/status', [App\Http\Controllers\SalesOrderController::class,  'updateStatus'])->name('salesorder.update.status.item');
 
 });

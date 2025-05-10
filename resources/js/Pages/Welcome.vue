@@ -141,6 +141,10 @@ export default{
             this.filterButtonLabel = 'BUSCAR';
 
         },
+        /**
+         * @deprecated
+         * this method is not used more, will be removed
+         */
         handleCloseFilters(){
 
 
@@ -193,6 +197,46 @@ export default{
             this.filterButtonLabel = '**FILTROS';
         },
 
+        navigationCategory(){
+            console.log('navigationCategory', this.goForIt);
+
+
+
+            let queryProducts = '';
+            for (let i = 0; i < this.categories.length; i++) {
+                console.log('category:', this.categories[i]);
+                if (this.categories[i].apiName == this.goForIt && this.categories[i].firstVisit == false) {
+                    this.categories[i].firstVisit = true;
+                    queryProducts = this.categories[i].apiName;
+                    break;
+                }
+            }
+
+            console.log('queryProducts:', queryProducts);
+            if (queryProducts != '') {
+
+                let localProducts = [...this.products]; // Clonamos el array
+                this.products = [];
+
+                axios.get('/app/ecommerce/' + queryProducts + '/json').then(response => {
+                        let respuesta = Object.values(response.data);
+
+                        if (respuesta.length > 0) {
+                            for (let i = 0; i < respuesta.length; i++) {
+                                respuesta[i].package = false;
+                                console.log('respuesta[i]:', respuesta[i]);
+                                localProducts.push(respuesta[i]);
+                            }
+                        }
+                        console.log('localProducts:', localProducts);
+                        this.products = localProducts;
+                }).catch(error => {
+                    console.log('error:', error);
+                });
+            }
+
+        }
+
     },
     data(){
         return {
@@ -222,12 +266,51 @@ export default{
                 cleaning: false,
                 underFox: false
 
-            }
+            },
+            categories:[
+                {
+                    label: 'Bebidas',
+                    apiName: 'drinks',
+                    firstVisit: true
+                },
+                {
+                    label: 'Cigarros',
+                    apiName: 'cigars',
+                    firstVisit: false
+                },
+                {
+                    label: 'Abarrotes',
+                    apiName: 'groceries',
+                    firstVisit: false
+                },
+                {
+                    label: 'Venta a granel',
+                    apiName: 'bulkSale',
+                    firstVisit: false
+                },
+                {
+                    label: 'Botanas',
+                    apiName: 'snacks',
+                    firstVisit: false
+                },
+                {
+                    label: 'Limpieza',
+                    apiName: 'cleaning',
+                    firstVisit: false
+                },
+                {
+                    label: 'Más barato que zorro',
+                    apiName: 'underFox',
+                    firstVisit: false
+                }
+            ],
+            goForIt: ''
         }
     },
     mounted(){
 
         this.loadProducts();
+        this.goForIt = 'drinks';
         setTimeout(() => {
             this.$inertia.visit('/app')
         }, this.closeSession);
@@ -260,48 +343,24 @@ export default{
 
     </div>
 
-    <div class="flex pt-16 ">
-        <div class=" flex-none w-[20.3%]  hidden sm:hidden md:block lg:block">
-
+    <div class="pt-16">
+        <div v-if="appliedFilters" class="w-[95%] bg-red-600 rounded-b-md mx-2 p-1 text-white text-sm font-bold ">
+            <center>
+                {{products.length}} Productos filtrados
+            </center>
         </div>
-        <div class="grow   " >
-            <div class="demo-collapse hidden" v-if="false">
-                <el-collapse v-model="activePromos" @change="handleChange">
-                <el-collapse-item  name="1">
-                    <template #title>
-                        <center class="bg-red-600 rounded-lg my-2 px-12">
-                            <span class="text-l md:text-xl lg:text-xl font-semibold text-white" >
-                                Promociones
-                            </span>
-                        </center>
-                    </template>
-                   <!-- promociones -->
-                    <el-carousel :interval="4000" type="card" height="150px">
-                        <el-carousel-item v-for="item in 6" :key="item">
-                            <h3 text="2xl" justify="center">{{ item }}</h3>
-                        </el-carousel-item>
-                    </el-carousel>
-                    <!-- / promociones -->
-                </el-collapse-item>
-                </el-collapse>
-            </div>
 
+        <el-tabs v-model="goForIt" @tab-change="navigationCategory" :key="products.length">
+            <el-tab-pane class="touch-manipulation" v-for="(category, index) in categories" :key="index" :label="category.label" :name="category.apiName">
+                <div v-for="product in products" >
+                    <productItem v-if="product[category.apiName]" :key="product.id" :product="product"  />
+                </div>
+            </el-tab-pane>
 
-
-            <div class="overflow-y-scroll  " style="background-color: rgb(255, 0, 0);">
-
-                <span v-if="appliedFilters" class="bg-white rounded-b-md mx-2 p-1 text-green-600 text-sm font-bold">
-                    {{products.length}} Productos filtrados
-                </span>
-                <productItem v-for="product in products" :key="product.id" :product="product" />
-            </div>
-
-
-        </div>
-        <div class=" flex-none w-[20.3%]  hidden sm:hidden md:block lg:block">
-
-        </div>
+        </el-tabs>
     </div>
+
+
 
     <el-dialog v-model="confirmOrder" :modal="false" width="85%">
         <template #header> <div class="my-header">{{ orderProducts.length }} Productos = ${{ total }} MXN</div> </template>
@@ -335,30 +394,21 @@ export default{
     </el-dialog>
 
 
-    <el-drawer v-model="dialog" title="DETALLE DE TU PEDIDO" direction="btt" class=" border-red-600  rounded-3xl" size="80%"><!--:before-close="handleClose"-->
+    <el-drawer v-model="dialog"  direction="btt" class=" border-red-600  rounded-3xl" size="80%"><!--:before-close="handleClose"-->
         <el-button type="danger" class="w-full -mt-8 touch-manipulation" id="checkout" @click="confirmOrder = true" round>CONFIRMO PEDIDO (${{ total }} MXN)</el-button>
 
+
+        <br/>
+        <br/>
         <div class="demo-drawer__content  ">
             <ProductsB2BOrderList :tableData="orderProducts"></ProductsB2BOrderList>
         </div>
     </el-drawer>
 
-    <el-drawer v-model="filtersDialog"  :direction="'ttb'"  size="45%">
-        <template #header>
-            <h4>Aplicar filtros a lista de productos</h4>
-        </template>
+    <el-drawer v-model="filtersDialog"  :direction="'ttb'"  size="20%">
+
         <template #default>
-
-                <TextInput    v-model="filters.search" placeholder="Filtra por palabra, por ejemplo: COCA" class="shadow-lg shadow-red-200 -mt-4 mb-3 w-full" />
-            <br/>
-                <el-checkbox v-model="filters.promo" label="promo"                   value="Value A" />
-                <el-checkbox v-model="filters.bulkSale" label="Venta a granel"       value="Value A" />
-                <el-checkbox v-model="filters.drinks" label="Bebidas"                value="Value A" />
-                <el-checkbox v-model="filters.snacks" label="Botanas"                value="Value A" />
-                <el-checkbox v-model="filters.groceries" label="Abarrotes"           value="Value A" />
-                <el-checkbox v-model="filters.cleaning" label="Limpieza"             value="Value A" />
-                <el-checkbox v-model="filters.underFox" label="Por debajo del Zorro" value="Value A" />
-
+                <TextInput    v-model="filters.search" placeholder="Filtra por palabra .. coca, arroz, azucar, huevo ..." class="shadow-lg shadow-red-200 -mt-6 mb-3 w-full" />
         </template>
         <template #footer>
             <div style="flex: auto">
@@ -412,7 +462,55 @@ export default{
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
 }
+.el-tabs__item:hover {
+    color: #ff0000 !important;
+    cursor: pointer;
+}
 
+.el-tabs__item {
+    padding: 0 20px;
+    height: 4rem !important;
+    color: var(--el-text-color-primary) !important;
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+}
+.el-tabs__nav-prev > i > svg {
+    color: #f10000 !important;
+}
+.el-tabs__nav-next > i > svg {
+    color: #f10000 !important;
+}
+.el-tabs__nav-prev {
+    left: 5px !important;
+}
+.el-tabs__nav-next {
+    right: 5px !important;
+}
+.el-tabs__nav-prev.is-disabled{
+    opacity: 0.2 !important;
+}
+.el-tabs__nav-next, .el-tabs__nav-prev {
+    position: absolute;
+    cursor: pointer;
+    line-height: 67px !important;
+    font-size: 1rem !important;
+}
+
+.el-tabs__active-bar {
+    height: 4px !important;
+    background-color: #ff0000 !important;
+}
+.el-tabs__content {
+    margin-top: -10px;
+}
+
+.el-drawer__header {
+    align-items: center;
+    color: #aac5e6;
+    display: flex;
+    margin-bottom: -2rem !important;
+}
+.el-overlay {
+    background-color: rgba(255, 191, 191, 0.22);
+}
 </style>
-
-

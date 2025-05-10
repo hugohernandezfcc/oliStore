@@ -33,15 +33,27 @@ class Productb2b extends Model
         'cleaning',
         'underFox',
         'package',
-        'bundle'
+        'bundle',
+        'cigars',
+        'order'
     ];
 
     protected $casts = [
         'sold_out' => 'boolean',
+        'cigars' => 'boolean',
+        'order' => 'integer',
+        'promo' => 'boolean',
+        'bulkSale' => 'boolean',
+        'drinks' => 'boolean',
+        'snacks' => 'boolean',
+        'groceries' => 'boolean',
+        'cleaning' => 'boolean',
+        'underFox' => 'boolean',
+        'package' => 'boolean',
         'created_at'  => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i'
     ];
-    
+
 
     // Relationships
     public function createdBy()

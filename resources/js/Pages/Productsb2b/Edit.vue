@@ -41,6 +41,8 @@ export default{
                 folio: this.customRecord.folio,
                 is_public: this.customRecord.is_public,
                 is_private: this.customRecord.is_private,
+                package: this.customRecord.package,
+                bundle: this.customRecord.bundle,
                 image: this.customRecord.image,
 
             },
@@ -117,7 +119,7 @@ export default{
                     offset: 100,
                 });
             }
-            
+
         }
     },
     mounted() {
@@ -127,13 +129,13 @@ export default{
 }
 
 
-</script> 
+</script>
 
 <template>
     <AppLayout title="Profile">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                <PrimaryButton  class="mb-3 ml-3 lg:ml-0" @click="$inertia.visit(route('productsb2b.index'))"> 
+                <PrimaryButton  class="mb-3 ml-3 lg:ml-0" @click="$inertia.visit(route('productsb2b.index'))">
                 <el-icon><ArrowLeftBold /></el-icon>
             </PrimaryButton>&nbsp;Detalle del producto
             </h2>
@@ -150,7 +152,7 @@ export default{
                         <el-image style="width: 70px;" :src="customRecord.image" />
                     </template>
                     <template #form>
-                        
+
                         <div class="col-span-3 ">
 
                             <InputLabel for="name" value="Nombre de producto" class="mb-6"/>
@@ -199,7 +201,7 @@ export default{
                             <el-switch v-model="form.package" class="mb-2" active-text="Paquete de producto" inactive-text=" "/>
                             <TextInput id="package" :disabled="!form.package" v-model="form.bundle" type="text" :class="(!form.package) ? 'mt-1 block w-full bg-gray-100' : 'mt-1 block w-full ' " autocomplete="package"/>
                         </div>
-          
+
                         <div class="col-span-3 mb-2">
                             <InputLabel for="description" value="Descripción" />
                             <textarea
@@ -209,7 +211,7 @@ export default{
                                 autocomplete="Description"
                             >
                             </textarea>
-                            
+
                         </div>
                         <div class="col-span-3 mb-2">
                             <el-switch v-model="form.is_public" class="mt-4" active-text="Producto público" inactive-text=" "/>
@@ -235,7 +237,7 @@ export default{
 
                         <div class="col-span-6 sm:col-span-4">
                             Imagen de producto<br/>
-                            
+
                             <el-upload action="#" list-type="picture-card" :http-request="uploadImage" :auto-upload="true">
                                 <el-icon><Plus /></el-icon>
 
@@ -267,19 +269,19 @@ export default{
                                 </div>
                                 </template>
                             </el-upload>
-                            
+
                             <el-dialog v-model="dialogVisible">
                                 <img w-full :src="dialogImageUrl" alt="Preview Image" />
                             </el-dialog>
                         </div>
                     </template>
-                    
 
-                    
+
+
                     <template #actions>
                         <inertia-link :href="route('categories.index')" class="m-1">
                             <el-button :type="'plain'" text bg class="m-2">
-                                Cancelar 
+                                Cancelar
                             </el-button>
                         </inertia-link>
                         <PrimaryButton @click="submit" class="m-2">
@@ -291,7 +293,7 @@ export default{
             </div>
         </div>
     </AppLayout>
-   
+
 </template>
 <style >
     div.el-autocomplete{ width: 100% !important; } input.el-input__inner{ margin: 5px; font-size:large }

@@ -17,14 +17,14 @@ class AppController extends Controller
 
     public function validPhoneNumber(String $phoneNumber){
         $account = Account::with('contacts')->where('phone', $phoneNumber)->first();
-        
+
         if($account){
             return response()->json([
                 'status' => true,
                 'account' => $account
             ]);
         }else{
-            
+
 
             return response()->json([
                 'status' => false,
@@ -34,15 +34,12 @@ class AppController extends Controller
 
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(string $whatsappNumber)
-    {
-
-        
-        set_time_limit(100);
-        $productosWpbe = Productb2b::where('is_public', '=', true)->with('pricebookEntries')->get();
+    public function utilityLoadProducts(string $filter, string $format){
+        $productosWpbe = Productb2b::where('is_public', '=', true)
+                                   ->where($filter, '=', true)
+                                   ->with('pricebookEntries')
+                                   ->orderBy('created_at', 'desc')
+                                   ->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
             return $producto->pricebookEntries->isNotEmpty();
         });
@@ -80,14 +77,27 @@ class AppController extends Controller
                 'cleaning'  => $producto->cleaning,
                 'underFox'  => $producto->underFox,
                 'package'  => $producto->package,
-                'bundle' => $producto->bundle
+                'bundle' => $producto->bundle,
+                'cigars' => $producto->cigars
             ];
         });
+        if($format == 'json') {
+            return response()->json($productosWpbe->toArray());
+        }else{
+            return $productosWpbe;
+        }
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(string $whatsappNumber)
+    {
 
         return Inertia::render('Welcome',
             [
                 'whatsappNumber' => $whatsappNumber,
-                'ProductsB2B' => $productosWpbe
+                'ProductsB2B' => $this->utilityLoadProducts('drinks', 'php')
             ]
         );
     }

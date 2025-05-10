@@ -10,7 +10,7 @@ use Inertia\Inertia;
 
 use App\Models\PriceBookEntry;
 use Illuminate\Support\Facades\Storage;
-
+use Carbon\Carbon;
 
 class Productb2bController extends Controller
 {
@@ -18,10 +18,10 @@ class Productb2bController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {   
-        
+    {
+
         return Inertia::render('Productsb2b/Index', [
-            'productsb2b' => Productb2b::get()
+            'productsb2b' => Productb2b::where('created_at', '>=', Carbon::today())->get()
         ]);
     }
 
@@ -59,7 +59,7 @@ class Productb2bController extends Controller
                     'created_by_id' => Auth::id(),
                     'edited_by_id'  => Auth::id(),
                     'cost'          => $request->get('pricebookentries')[$index]['cost'],
-                    'profit'        => (floatval($request->get('pricebookentries')[$index]['cost']) * floatval($request->get('pricebookProfit')))/100,       
+                    'profit'        => (floatval($request->get('pricebookentries')[$index]['cost']) * floatval($request->get('pricebookProfit')))/100,
                     'is_active'     => $request->get('pricebookentries')[$index]['isActive'],
                     'description'   => 'Ganancia de ' . $request->get('pricebookProfit') . '%',
                     'name'          => 'Lista de precios seleccionada es: ' . $request->get('pricebookentries')[$index]['pricebook']
@@ -117,7 +117,7 @@ class Productb2bController extends Controller
         }
 
 
-        
+
         return response()->json($products)->setStatusCode(200);
     }
 
@@ -154,7 +154,7 @@ class Productb2bController extends Controller
         return Inertia::render('Productsb2b/Show', [
             'customRecord'      => $Productb2b,
             'pricebookentries'  => $Productb2b->pricebookEntries,
-            'referenceb2c'      => $Productb2c  
+            'referenceb2c'      => $Productb2c
         ]);
     }
 
@@ -173,7 +173,7 @@ class Productb2bController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(String $productsb2b)
-    {   
+    {
         $productb2b = Productb2b::with('createdBy')->with('editedBy')->find($productsb2b);
         return Inertia::render('Productsb2b/Edit', [
             'customRecord' => $productb2b,
