@@ -21,7 +21,8 @@ class Productb2bController extends Controller
     {
 
         return Inertia::render('Productsb2b/Index', [
-            'productsb2b' => Productb2b::where('created_at', '>=', Carbon::today())->get()
+            // 'productsb2b' => Productb2b::where('created_at', '>=', Carbon::today())->get()
+            'productsb2b' => Productb2b::get()
         ]);
     }
 
