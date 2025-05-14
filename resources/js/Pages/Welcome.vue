@@ -12,6 +12,7 @@ export default{
     name: 'App',
     props:{
         whatsappNumber: String,
+        account: Object,
         ProductsB2B: Array,
     },
     watch: {
@@ -28,12 +29,30 @@ export default{
             console.log('onJsonChanged', this.closeSession);
         },
         loadProducts(){
+
+            let clientType = '';
+
+            if(this.account.email == 'b2c@olistore.mx'){
+                clientType = 'b2c';
+            }else{
+                clientType = 'b2b';
+            }
+
             this.products = [];
             let productsB2B = Object.values(this.ProductsB2B);
             // console.log(Array.isArray(productsB2B));
             for (let i = 0; i < productsB2B.length; i++) {
                 console.log('loadProduct:', productsB2B[i]);
                 productsB2B[i].package = false;
+                let OriginalPrice = productsB2B[i].price;
+
+                if(clientType == 'b2c'){
+                    productsB2B[i].price += OriginalPrice * 0.05;
+                }else{
+                    productsB2B[i].price -= OriginalPrice * 0.01;
+                }
+                productsB2B[i].price = parseFloat(productsB2B[i].price.toFixed(1));
+
                 this.products.push(productsB2B[i]);
             }
 
@@ -406,9 +425,14 @@ export default{
         </div>
     </el-drawer>
 
-    <el-drawer v-model="filtersDialog"  :direction="'ttb'"  size="20%">
+    <el-drawer v-model="filtersDialog"  :direction="'ttb'"  size="30%">
 
         <template #default>
+            <span class="text-sm">El filtro aplica para todas las secciones, navega entre ellas para encontrar los productos que buscas.</span>
+            <br/>
+            <br/>
+
+
                 <TextInput    v-model="filters.search" placeholder="Filtra por palabra .. coca, arroz, azucar, huevo ..." class="shadow-lg shadow-red-200 -mt-6 mb-3 w-full" />
         </template>
         <template #footer>

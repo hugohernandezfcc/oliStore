@@ -21,8 +21,8 @@ class Productb2bController extends Controller
     {
 
         return Inertia::render('Productsb2b/Index', [
-            // 'productsb2b' => Productb2b::where('created_at', '>=', Carbon::today())->get()
-            'productsb2b' => Productb2b::get()
+
+            'productsb2b' => Productb2b::where('image', '!=', 'https://olistore-bucket.s3.us-east-2.amazonaws.com/products/CleanShot+2025-04-25+at+18.16.59%402x.png')->orderBy('order', 'asc')->get()
         ]);
     }
 
@@ -161,9 +161,9 @@ class Productb2bController extends Controller
 
     public function changinCategory(Request $request)
     {
-        $productb2b = Productb2b::find($request->get('recordId'));
-        $productb2b[$request->get('category')] = $request->get('value');
-        $productb2b->save();
+        $productb2b = Productb2b::find($request->get('id'));
+        $productb2b->update($request->all());
+
         return response()->json([
             'message' => 'Se ha cambiado la categoria del producto'
         ])->setStatusCode(200);

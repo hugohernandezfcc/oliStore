@@ -67,7 +67,50 @@ class AccountController extends Controller
             'contact' => $contact
         ])->setStatusCode(200);
 
+
+    }
+
+    public function storeApp(Request $request){
+
+        $accValition = Account::where('phone', $request->phone)->first();
+        if($accValition){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Account already exists'
+            ])->setStatusCode(400);
+        }
         
+        $account = Account::create([
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'phone'         => $request->phone,
+            'address'       => $request->address,
+            'city'          => $request->city,
+            'state'         => $request->state,
+            'zip'           => $request->zip,
+            'country'       => $request->country,
+            'created_by'    => 1,
+            'updated_by'    => 1
+        ]);
+
+        $contact = Contact::create([
+            'firstname'    => $request->firstname,
+            'lastname'     => $request->lastname,
+            'email'         => $request->email,
+            'phone'         => $request->phone,
+            'account_id'    => $account->id,
+            'created_by'    => 1,
+            'updated_by'    => 1
+        ]);
+
+
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Account created successfully',
+            'account' => $account,
+            'contact' => $contact
+        ])->setStatusCode(200);
     }
 
     /**

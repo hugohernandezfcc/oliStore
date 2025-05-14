@@ -199,10 +199,10 @@ Route::post('/cardsales',                     [App\Http\Controllers\DashboardCon
 
 
 Route::group( ['prefix' => 'integrations' ], function () {
-    Route::match(['get', 'post'], '/inboundEvent', [App\Http\Controllers\IntegrationsController::class, 'inboundEvent'])->name('whatsapp.inbound.event');
-    Route::get('/sendMessage',                     [App\Http\Controllers\IntegrationsController::class, 'outboundMessage'])->name('whatsapp.outbound.message');
+    Route::match(['get', 'post'], '/inboundEvent', [App\Http\Controllers\IntegrationsController::class, 'inboundEvent' ]         )->name('whatsapp.inbound.event');
+    Route::get('/sendMessage',                     [App\Http\Controllers\IntegrationsController::class, 'outboundMessage' ]      )->name('whatsapp.outbound.message');
     Route::get('/requestApproveTemplate',          [App\Http\Controllers\IntegrationsController::class, 'requestApproveTemplate'])->name('whatsapp.request.approve.template');
-
+    Route::post('accounts/store2',                  [App\Http\Controllers\AccountController::class,     'storeApp'          ]    )->name('accounts.store2');
 
 });
 
@@ -221,8 +221,6 @@ Route::group( ['prefix' => 'b2b',  'middleware' => ['auth:sanctum'] ], function 
 
         Route::resource('accounts',                  App\Http\Controllers\AccountController::class          )->middleware('auth:sanctum');
         Route::resource('cases',                     App\Http\Controllers\Case2Controller::class            )->middleware('auth:sanctum');
-
-
 
 });
 

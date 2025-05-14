@@ -35,10 +35,11 @@ class AppController extends Controller
     }
 
     public function utilityLoadProducts(string $filter, string $format){
+        set_time_limit(100);
         $productosWpbe = Productb2b::where('is_public', '=', true)
                                    ->where($filter, '=', true)
                                    ->with('pricebookEntries')
-                                   ->orderBy('created_at', 'desc')
+                                   ->orderBy('order', 'asc')
                                    ->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
             return $producto->pricebookEntries->isNotEmpty();
@@ -88,15 +89,21 @@ class AppController extends Controller
         }
     }
 
+
+
     /**
      * Display a listing of the resource.
      */
     public function index(string $whatsappNumber)
     {
 
+        $account = Account::where('phone', $whatsappNumber)->first();
+
+
         return Inertia::render('Welcome',
             [
                 'whatsappNumber' => $whatsappNumber,
+                'account' => $account,
                 'ProductsB2B' => $this->utilityLoadProducts('drinks', 'php')
             ]
         );
