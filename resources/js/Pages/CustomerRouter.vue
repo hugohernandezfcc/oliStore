@@ -20,37 +20,102 @@
             <InputLabel for="address" value="Número telefonico / Whatsapp" class="mt-1"/>
             <el-row>
                 <el-col :span="19">
-                    <el-input class="mt-1 pr-1 block " v-model="phoneNumber" size="large" placeholder="Ingresa tu # whatsapp" :formatter="formatPhone" :parser="parsePhone" />
+
+                    <el-input class="mt-1 pr-1 block " v-model="phoneNumber" size="large" placeholder="Ingresa tu # whatsapp" :formatter="formatPhone" :parser="parsePhone"  />
                 </el-col>
                 <el-col :span="4">
-                    <el-button class="mt-1 touch-manipulation" color="#dc2626" @click="continuePhoneNumber"> 
+                    <el-button class="mt-1 touch-manipulation" color="#dc2626" @click="continuePhoneNumber">
                         <svg class=" h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M288 320a224 224 0 1 0 448 0 224 224 0 1 0-448 0m544 608H160a32 32 0 0 1-32-32v-96a160 160 0 0 1 160-160h448a160 160 0 0 1 160 160v96a32 32 0 0 1-32 32z"></path></svg>
                     </el-button>
                 </el-col>
             </el-row>
-            
-            
+
+
         </el-card>
         <el-divider content-position="center">Ó</el-divider>
         <el-card  shadow="never" >
-            <InputLabel for="address" value="Número orden de compra" class="mt-1"/>
+            <center>
+                <el-button class="mt-1 touch-manipulation" color="#dc2626" @click="openRegisterScroller('client')">Registrarme como cliente</el-button><br/>
+                <el-button class="mt-1 touch-manipulation" @click="openRegisterScroller('associate')">Registrarme &nbsp; como socio</el-button>
+            </center>
+            <!-- <InputLabel for="address" value="Número orden de compra" class="mt-1"/>
             <el-row>
                 <el-col :span="19">
                     <el-input class="mt-1 pr-1 block " v-model="orderNumber" size="large" placeholder="Número de orden" :formatter="formatNumber" :parser="parseNumber" />
                 </el-col>
                 <el-col :span="4">
-                    <el-button class="mt-1 touch-manipulation" color="#dc2626" @click="continueOrderNumber"> 
+                    <el-button class="mt-1 touch-manipulation" color="#dc2626" @click="continueOrderNumber">
                         <svg class=" h-5 w-5 text-white " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M512 160c320 0 512 352 512 352S832 864 512 864 0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288 52.608 79.872 211.456 288 436.8 288 225.28 0 384.128-208.064 436.8-288-52.608-79.872-211.456-288-436.8-288zm0 64a224 224 0 1 1 0 448 224 224 0 0 1 0-448m0 64a160.192 160.192 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160-71.744-160-160-160"></path></svg>
                     </el-button>
                 </el-col>
-            </el-row>
+            </el-row> -->
         </el-card>
         </el-card>
 
 
       </div>
     </transition>
-  </div>
+        <el-drawer v-model="register.components.registerDrawer" :title="register.components.title"  direction="btt" class=" border-red-600  rounded-3xl" size="85%">
+            <div class="demo-drawer__content  ">
+                <div v-if="register.components.registerType == 'client'">
+                    <InputLabel for="name" value="Nombre completo" class="mt-1"/>
+                    <TextInput id="name" v-model="register.form.b2c.name" type="text" class="mt-1 block w-full" autocomplete="name"/>
+
+                    <InputLabel for="whatsapp" value="Whatsapp" class="mt-1"/>
+                    <el-input class="mt-1 pr-1 block " v-model="register.form.b2c.phoneNumber" size="large"  :formatter="formatPhone" :parser="parsePhone" />
+
+                    <InputLabel for="address" value="Calle y Número" class="mt-1"/>
+                    <TextInput id="address" v-model="register.form.b2c.address" type="text" class="mt-1 block w-full" autocomplete="address"/>
+
+                    <InputLabel for="city" value="Colonia" class="mt-1"/>
+                    <TextInput id="city" v-model="register.form.b2c.neighborhood" type="text" class="mt-1 block w-full" autocomplete="city"/>
+                    <el-button class="mt-3 touch-manipulation w-full" color="#dc2626" :loading="register.buttons.status" :disabled="register.buttons.status" @click="submitData('client')">{{ register.buttons.b2c.label }}</el-button>
+                    <el-divider content-position="center"> :D </el-divider>
+                    <span class="text-sm">Por ahora solo operamos Tizayuca, dudas o pedidos al Whatsapp </span> <a class="text-blue-600" href="https://wa.me/525522539923?text=Hola%20me%20gustaría%20obtener%20realizar%20un%20pedido" target="_blank">+52 55 225 39923</a>
+                </div>
+                <div v-else>
+                    <br/>
+                    <div class="grid grid-cols-6 gap-4">
+                        <div class="col-span-6 ">
+                            <InputLabel for="name" value="Nombre de tu negocio" />
+                            <TextInput id="name" v-model="register.form.b2b.name" type="text" class="mt-1 block w-full" autocomplete="name"/>
+                        </div>
+                        <div class="col-span-3 ">
+                            <InputLabel for="firstname" value="Nombre " />
+                            <TextInput id="firstname" v-model="register.form.b2b.firstname" type="text" class="mt-1 block w-full" autocomplete="firstname"/>
+                        </div>
+                        <div class="col-span-3 ">
+                            <InputLabel for="lastname" value="Apellido" />
+                            <TextInput id="lastname" v-model="register.form.b2b.lastname" type="text" class="mt-1 block w-full" autocomplete="lastname"/>
+                        </div>
+                        <div class="col-span-3 ">
+                            <InputLabel for="email" value="Correo Electrónico" />
+                            <TextInput id="email" v-model="register.form.b2b.email" type="text" class="mt-1 block w-full" autocomplete="email"/>
+                        </div>
+                        <div class="col-span-3 ">
+                            <InputLabel for="phone" value="Teléfono" />
+                            <el-input class="mt-1 pr-1 block " v-model="register.form.b2b.phoneNumber" size="large"  :formatter="formatPhone" :parser="parsePhone" />
+
+                        </div>
+                        <div class="col-span-6 ">
+                            <div class="bg-red-600 text-white text-center font-bold rounded-full " >Dirección de entrega</div>
+                            <InputLabel for="address" value="Calle y número" />
+                            <TextInput id="address" v-model="register.form.b2b.address" type="text" class="mt-1 block w-full" autocomplete="address"/>
+                        </div>
+                        <div class="col-span-3 ">
+                            <InputLabel for="city" value="Ciudad" />
+                            <TextInput id="city" v-model="register.form.b2b.city" type="text" class=" block w-full" autocomplete="city"/>
+                        </div>
+                        <div class="col-span-3 ">
+                            <InputLabel for="zip" value="Código postal" />
+                            <TextInput id="zip" v-model="register.form.b2b.zip" type="text" class=" block w-full" autocomplete="zip"/>
+                        </div>
+                    </div>
+                    <el-button class="mt-3 touch-manipulation w-full" color="#dc2626" :loading="register.buttons.status" :disabled="register.buttons.status" @click="submitData('associate')">{{ register.buttons.b2b.label }}</el-button>
+                </div>
+            </div>
+        </el-drawer>
+    </div>
 </template>
 <script>
 import { ElLoading } from 'element-plus';
@@ -66,7 +131,7 @@ export default{
     components:{
         ElLoading,
 
-        CustomLoader, 
+        CustomLoader,
         loaderIcon,
         InputLabel,
         TextInput,
@@ -74,20 +139,149 @@ export default{
     },
 
     name: 'CustomerRouter',
-    props:{ 
+    props:{
         // parentRecord: Object,
         // salesOrders: Array
     },
     data(){
         return {
-
             isLoading: true,
             somethingChange: false,
             phoneNumber: '',
-            orderNumber: ''
+            orderNumber: '',
+            register: {
+                buttons: {
+                    status: false,
+                    b2c: {
+                        label: 'Registrarme como cliente'
+                    },
+                    b2b: {
+                        label: 'Registrarme como socio'
+                    }
+                },
+                components: {
+                    registerDrawer: false,
+                    registerType: '',
+                    title: ''
+                },
+                form:{
+                    b2c:{
+                        name:'',
+                        phoneNumber:'',
+                        address:'',
+                        neighborhood:''
+                    },
+                    b2b:{
+                        name:'',
+                        firstname:'',
+                        lastname:'',
+                        email:'',
+                        phone:'',
+                        address:'',
+                        city:'',
+                        state:'',
+                        zip:'',
+                        country:''
+                    }
+                },
+                data:{
+                    name:'',
+                    email:'',
+                    firstname:'',
+                    lastname:'',
+                    phone:'',
+                    address:'',
+                    city:'',
+                    state:'',
+                    zip:'',
+                    country:''
+                }
+
+            }
+
         }
     },
     methods:{
+
+        submitData(typeForm){
+            let renderValidation = false;
+            this.register.buttons.status = true;
+            if(typeForm == 'client'){
+
+                Object.keys(this.register.form.b2c).map((element, index) => {
+                    if(this.register.form.b2c[element] == ''){
+                        renderValidation = true;
+                    }
+                });
+
+                this.register.data.name = this.register.form.b2c.name;
+                this.register.data.firstname = this.register.form.b2c.name;
+                this.register.data.lastname = this.register.form.b2c.name;
+                this.register.data.email = 'b2c@olistore.mx';
+                this.register.data.phone = this.register.form.b2c.phoneNumber;
+                this.register.data.address = this.register.form.b2c.address + ', ' + this.register.form.b2c.neighborhood;
+                this.register.data.city = 'Tizayuca';
+                this.register.data.state = 'Hidalgo';
+                this.register.data.zip = 'tbd';
+                this.register.data.country = 'México';
+
+
+            }else if(typeForm == 'associate'){
+                Object.keys(this.register.form.b2b).map((element, index) => {
+                    if(this.register.form.b2b[element] == ''){
+                        renderValidation = true;
+                    }
+                });
+
+                this.register.data.name = this.register.form.b2b.name;
+                this.register.data.firstname = this.register.form.b2b.firstname;
+                this.register.data.lastname = this.register.form.b2b.lastname;
+                this.register.data.email = 'b2b@olistore.mx';
+                this.register.data.phone = this.register.form.b2b.phoneNumber;
+                this.register.data.address = this.register.form.b2b.address;
+                this.register.data.city = this.register.form.b2b.city;
+                this.register.data.state = 'Hidalgo';
+                this.register.data.zip = this.register.form.b2b.zip;
+                this.register.data.country = 'México';
+            }
+
+            if(renderValidation){
+                alert('Por favor, completa todos los campos');
+                this.register.buttons.status = false;
+            }else{
+                console.log(this.register.data);
+
+                axios.post(this.route('accounts.store2'), this.register.data).then(response => {
+                    console.log(response);
+                    this.phoneNumber = response.data.account.phone;
+                    setTimeout(() => {
+                        this.register.components.registerDrawer = false;
+                        this.continuePhoneNumber();
+                    }, 1000);
+
+                }).catch(error => {
+                    console.log(error);
+                    alert('Error al crear la cuenta.');
+                    this.register.components.registerDrawer = false;
+                    this.register.buttons.status = false;
+                    this.register.buttons.b2c.label = 'Registrarme como cliente';
+                    this.register.buttons.b2b.label = 'Registrarme como socio';
+                });
+
+            }
+
+        },
+
+
+        openRegisterScroller(registerType){
+            this.register.components.registerDrawer = true;
+            this.register.components.registerType = registerType;
+            this.register.components.title = registerType == 'client' ? 'Registrarme como cliente' : 'Registrarme como socio';
+
+            this.register.buttons.b2c.label = 'Registrarme como cliente';
+            this.register.buttons.b2b.label = 'Registrarme como socio';
+
+        },
 
         formatPhone(value) {
             const digits = value.replace(/\D/g, '').slice(0, 10);
@@ -110,7 +304,7 @@ export default{
         },
         sayhello() {
             return 'hello';
-        }, 
+        },
 
         continuePhoneNumber(){
             this.phoneNumber = this.phoneNumber.replace(/\D/g, '');
@@ -146,10 +340,7 @@ export default{
 
         },
 
-        continueOrderNumber(){
-            this.somethingChange = true;
-            this.$emit('continueOrderNumber', this.orderNumber);
-        },
+
 
         saveSalesOrder(){
             this.loading = true;
@@ -164,7 +355,7 @@ export default{
             }, 2000);
         },
         deleteForm(index) {
-            
+
         }
     },
     mounted() {
@@ -172,7 +363,7 @@ export default{
 
         setTimeout(() => {
             this.isLoading = false;
-        }, 2000); 
+        }, 2000);
     },
 }
 </script>
@@ -197,4 +388,5 @@ export default{
     width: 100vw;
     height: 100vh;
   }
+
 </style>
