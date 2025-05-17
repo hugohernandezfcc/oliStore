@@ -213,6 +213,8 @@ Route::group( ['prefix' => 'b2b',  'middleware' => ['auth:sanctum'] ], function 
         Route::post('productsb2b/changing/cateogry',            [App\Http\Controllers\Productb2bController::class,     'changinCategory']);
         Route::post('productsb2b/pricebookentry',               [App\Http\Controllers\Productb2bController::class,     'storePriceBookEntry'])->name('pricebooksentry.storefromb2b');
         Route::get('/migrationProducts',                        [App\Http\Controllers\Productb2bController::class, 'migrationProducts'])->name('migrationProducts');
+        Route::post('/importProducts',                           [App\Http\Controllers\Productb2bController::class, 'importProducts'])->name('importProducts');
+        Route::post('/addprice',                                 [App\Http\Controllers\Productb2bController::class, 'addPrice'])->name('addprice');
 
 
         Route::resource('pricebooks',                App\Http\Controllers\PriceBookController::class        )->middleware('auth:sanctum');

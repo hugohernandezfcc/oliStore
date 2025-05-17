@@ -19,10 +19,10 @@ class Productb2bController extends Controller
      */
     public function index()
     {
-
+        //
         return Inertia::render('Productsb2b/Index', [
-
-            'productsb2b' => Productb2b::where('image', '!=', 'https://olistore-bucket.s3.us-east-2.amazonaws.com/products/CleanShot+2025-04-25+at+18.16.59%402x.png')->orderBy('order', 'asc')->get()
+            'wizard' => Productb2b::WIZARD_COLUMNS,
+            'productsb2b' => Productb2b::where('image', '!=', 'https://olistore-bucket.s3.us-east-2.amazonaws.com/products/CleanShot+2025-04-25+at+18.16.59%402x.png')->orderBy('created_at', 'desc')->get()
         ]);
     }
 
@@ -45,6 +45,24 @@ class Productb2bController extends Controller
         return response()->json($request);
     }
 
+    public function addPrice(Request $request){
+        $entry = PriceBookEntry::create(
+            [
+                'productb2b_id' => $request->get('product_id'),
+                'pricebook_id'  => 1,
+                'price'         => floatval($request->get('price')),
+                'created_by_id' => Auth::id(),
+                'edited_by_id'  => Auth::id(),
+                'cost'          => $request->get('cost'),
+                'is_active'     => $request->get('activar'),
+                'name'          => 'Precios creados desde tabla principal de productos: ' . $request->get('product_id')
+            ]
+        );
+        return response()->json([
+            'message' => 'Se ha guardado el precio',
+            'pricebookentry' => $entry
+        ])->setStatusCode(200);
+    }
 
     public function storePriceBookEntry(Request $request)
     {
@@ -84,6 +102,32 @@ class Productb2bController extends Controller
             'message' => 'Se ha cambiado el estatus del producto'
         ])->setStatusCode(200);
     }
+
+    public function importProducts(Request $request)
+    {
+        $records = $request->get('records');
+        $list = [];
+        foreach($records as $record){
+            $record['created_by_id'] = Auth::id();
+            $record['edited_by_id'] = Auth::id();
+            $record['sold_out'] = false;
+            $record['is_public'] = true;
+            $record['is_private'] = false;
+            $record['public_description'] = $record['description'];
+            $record['public_name'] = $record['name'];
+            $record['created_at'] = Carbon::now();
+            $record['updated_at'] = Carbon::now();
+            unset($record[':::cost']);
+            unset($record[':::price']);
+            array_push($list, $record);
+        }
+        Productb2b::insert($list);
+        return response()->json([
+            'message' => 'Se han importado los productos',
+            'records' => $list
+        ])->setStatusCode(200);
+    }
+
 
     public function migrationProducts()
     {

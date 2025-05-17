@@ -9,8 +9,34 @@ class Productb2b extends Model
 {
     use HasFactory;
 
-    protected $table = 'productb2b';
+    public const WIZARD_COLUMNS = [
+        'name' => 'Nombre',
+        'folio' => 'Folio',
+        'description' => 'Descripción',
+        'unit_measure' => 'Unidad de Medida',
+        'expiration_range' => 'Rango de Expiración',
+        'bimbo' => 'Bimbo',
+        'marinela' => 'Marinela',
+        'sabritas' => 'Sabritas',
+        'barcel' => 'Barcel',
+        'cigars' => 'Cigarros',
+        'order' => 'Orden',
+        'promo' => 'Promo',
+        'bulkSale' => 'Bulk Sale',
+        'drinks' => 'Bebidas',
+        'snacks' => 'Botanas',
+        'groceries' => 'Abarrotes',
+        'cleaning' => 'Limpieza',
+        'underFox' => 'Bajo del Zorro',
+        'package' => 'Paquete',
+        'bundle' => 'Cantidad por caja',
+        ':::cost' => 'Costo',
+        ':::price' => 'Precio',
+        'image' => 'Imagen'
+    ];
 
+
+    protected $table = 'productb2b';
     protected $fillable = [
         'name',
         'folio',
@@ -35,21 +61,29 @@ class Productb2b extends Model
         'package',
         'bundle',
         'cigars',
-        'order'
+        'order',
+        'bimbo',
+        'marinela',
+        'sabritas',
+        'barcel'
     ];
 
     protected $casts = [
-        'sold_out' => 'boolean',
-        'cigars' => 'boolean',
-        'order' => 'integer',
-        'promo' => 'boolean',
-        'bulkSale' => 'boolean',
-        'drinks' => 'boolean',
-        'snacks' => 'boolean',
+        'bimbo'     => 'boolean',
+        'marinela'  => 'boolean',
+        'sabritas'  => 'boolean',
+        'barcel'    => 'boolean',
+        'sold_out'  => 'boolean',
+        'cigars'    => 'boolean',
+        'order'     => 'integer',
+        'promo'     => 'boolean',
+        'bulkSale'  => 'boolean',
+        'drinks'    => 'boolean',
+        'snacks'    => 'boolean',
         'groceries' => 'boolean',
-        'cleaning' => 'boolean',
-        'underFox' => 'boolean',
-        'package' => 'boolean',
+        'cleaning'  => 'boolean',
+        'underFox'  => 'boolean',
+        'package'   => 'boolean',
         'created_at'  => 'datetime:Y-m-d H:i',
         'updated_at' => 'datetime:Y-m-d H:i'
     ];

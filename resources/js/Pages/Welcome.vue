@@ -55,7 +55,7 @@ export default{
 
                 this.products.push(productsB2B[i]);
             }
-
+            this.loadingNavigation = false;
         },
         confirm(){
             this.statusButton = 'inprogress';
@@ -161,6 +161,15 @@ export default{
             this.filterButtonLabel = 'BUSCAR';
 
         },
+
+        searchProducts(){
+            return this.products.filter(
+                (data) =>
+                !this.filters.search || JSON.stringify(data).toLowerCase().includes(this.filters.search.toLowerCase() )
+            );
+
+        },
+
         /**
          * @deprecated
          * this method is not used more, will be removed
@@ -168,45 +177,9 @@ export default{
         handleCloseFilters(){
 
 
+
             let beforeReturn = [];
-            for( let i = 0; i < this.products.length; i++){
-                let skip = false;
-
-                if(this.filters.promo && this.products[i].promo == true && skip == false){
-                    beforeReturn.push(this.products[i]);
-                    skip = true;
-                }
-
-                if(this.filters.bulkSale && this.products[i].bulkSale == true && skip == false){
-                    beforeReturn.push(this.products[i]);
-                    skip = true;
-                }
-                if(this.filters.drinks && this.products[i].drinks == true && skip == false){
-                    beforeReturn.push(this.products[i]);
-                    skip = true;
-                }
-                if(this.filters.snacks && this.products[i].snacks == true && skip == false){
-                    beforeReturn.push(this.products[i]);
-                    skip = true;
-                }
-                if(this.filters.groceries && this.products[i].groceries == true && skip == false){
-                    beforeReturn.push(this.products[i]);
-                    skip = true;
-                }
-                if(this.filters.cleaning && this.products[i].cleaning == true && skip == false){
-                    beforeReturn.push(this.products[i]);
-                    skip = true;
-                }
-                if(this.filters.underFox && this.products[i].underFox == true && skip == false){
-                    beforeReturn.push(this.products[i]);
-                    skip = true;
-                }
-                if(this.filters.search && this.products[i].name.toLowerCase().includes(this.filters.search.toLowerCase()) && skip == false){
-                    beforeReturn.push(this.products[i]);
-                    skip = true;
-                }
-
-            }
+            beforeReturn = this.searchProducts();
 
 
             console.log('localProducts:', beforeReturn);
@@ -220,7 +193,8 @@ export default{
         navigationCategory(){
             console.log('navigationCategory', this.goForIt);
 
-
+            this.filtersDialog = false;
+            this.loadingNavigation = true;
 
             let queryProducts = '';
             for (let i = 0; i < this.categories.length; i++) {
@@ -250,16 +224,26 @@ export default{
                         }
                         console.log('localProducts:', localProducts);
                         this.products = localProducts;
+                        this.loadingNavigation = false;
                 }).catch(error => {
                     console.log('error:', error);
                 });
             }
 
+        },
+        filterTableData(localProducts) {
+            if(localProducts != null )
+                return localProducts.filter(
+                    (data) =>
+                    !this.filters.search || JSON.stringify(data).toLowerCase().includes(this.filters.search.toLowerCase() )
+                );
+            else
+                return localProducts;
         }
-
     },
     data(){
         return {
+            loadingNavigation: false,
             closeSession: 900000, //900000,
             dialogVisible: false,
             dialog: false,
@@ -292,6 +276,26 @@ export default{
                     label: 'Bebidas',
                     apiName: 'drinks',
                     firstVisit: true
+                },
+                {
+                    label: 'Bimbo',
+                    apiName: 'bimbo',
+                    firstVisit: false
+                },
+                {
+                    label: 'Marinela',
+                    apiName: 'marinela',
+                    firstVisit: false
+                },
+                {
+                    label: 'Sabritas',
+                    apiName: 'sabritas',
+                    firstVisit: false
+                },
+                {
+                    label: 'Barcel',
+                    apiName: 'barcel',
+                    firstVisit: false
                 },
                 {
                     label: 'Cigarros',
@@ -372,9 +376,27 @@ export default{
 
         <el-tabs v-model="goForIt" @tab-change="navigationCategory" :key="products.length">
             <el-tab-pane class="touch-manipulation" v-for="(category, index) in categories" :key="index" :label="category.label" :name="category.apiName">
-                <div v-for="product in products" >
+                <TextInput v-if="filtersDialog"   v-model="filters.search" placeholder="Filtra por palabra .. coca, arroz, azucar, huevo ..." class="shadow-lg shadow-red-600  p-2 mb-1 w-[95%] mx-2" />
+                <div v-for="product in filterTableData(products)" >
                     <productItem v-if="product[category.apiName]" :key="product.id" :product="product"  />
                 </div>
+                <span v-if="filterTableData(products).length == 0" class="text-red-600 text-lg py-6 font-bold " >
+                        <div class="px-6" v-if="loadingNavigation">
+                            <center>
+                                Cargando...
+                            </center>
+                            <el-skeleton :rows="10" animated />
+                        </div>
+
+                        <div class="px-6" v-if="!loadingNavigation"><br/><br/>
+                            Puede que tus productos no esten en <u>{{ category.label }}</u>, busca en otras categorias. <br/><br/> Busca en las siguientes categorias:
+                        </div>
+                        <ul v-for="s in categories" v-if="!loadingNavigation" class="max-w-md space-y-1 text-green-500 list-disc list-inside dark:text-green-600">
+                            <li class="px-6" :key="s.apiName" v-if="category.label != s.label" >
+                                {{ s.label }}
+                            </li>
+                        </ul>
+                    </span>
             </el-tab-pane>
 
         </el-tabs>
@@ -425,26 +447,7 @@ export default{
         </div>
     </el-drawer>
 
-    <el-drawer v-model="filtersDialog"  :direction="'ttb'"  size="30%">
 
-        <template #default>
-            <span class="text-sm">El filtro aplica para todas las secciones, navega entre ellas para encontrar los productos que buscas.</span>
-            <br/>
-            <br/>
-
-
-                <TextInput    v-model="filters.search" placeholder="Filtra por palabra .. coca, arroz, azucar, huevo ..." class="shadow-lg shadow-red-200 -mt-6 mb-3 w-full" />
-        </template>
-        <template #footer>
-            <div style="flex: auto">
-                <el-button @click="clearFilters" round>Vaciar filtros</el-button>
-                <el-button type="danger" id="checkout" round  @click="handleCloseFilters">
-                    Aplicar filtros
-                </el-button>
-
-            </div>
-        </template>
-    </el-drawer>
 
 </template>
 <style >

@@ -34,6 +34,7 @@ class AppController extends Controller
 
     }
 
+
     public function utilityLoadProducts(string $filter, string $format){
         set_time_limit(100);
         $productosWpbe = Productb2b::where('is_public', '=', true)
@@ -79,7 +80,11 @@ class AppController extends Controller
                 'underFox'  => $producto->underFox,
                 'package'  => $producto->package,
                 'bundle' => $producto->bundle,
-                'cigars' => $producto->cigars
+                'cigars' => $producto->cigars,
+                'bimbo' => $producto->bimbo,
+                'marinela' => $producto->marinela,
+                'sabritas' => $producto->sabritas,
+                'barcel' => $producto->barcel
             ];
         });
         if($format == 'json') {

@@ -43,5 +43,5 @@ class Account extends Model
     {
         return $this->hasMany(SalesOrder::class, 'account_id');
     }
-  
+
 }
