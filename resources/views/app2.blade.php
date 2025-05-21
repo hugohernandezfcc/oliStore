@@ -4,11 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-        <meta name="description" content="description of your website/webpage, make sure you use keywords!" />
-        <meta property="og:title" content="short title of your website/webpage" />
-        <meta property="og:url" content="https://www.example.com/webpage/" />
-        <meta property="og:description" content="description of your website/webpage" />
-        <meta property="og:image" content="https://olistore-bucket.s3.us-east-2.amazonaws.com/products/CleanShot%202025-05-12%20at%2010.49.29%402x.png" />
+        <meta name="description" content="{{ $description }}" />
+        <meta property="og:title" content="{{ $title }}" />
+        <meta property="og:url" content="{{ $wa }}" />
+        <meta property="og:description" content="{{ $description }}" />
+        <meta property="og:image" content="{{ $image }}" />
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -17,8 +17,7 @@
         <!-- Scripts -->
 
     </head>
-    <body class="font-sans antialiased">
-        asd
+    <body class="font-sans antialiased" onload="window.location.href = '{{ $wa }}';">
     </body>
     <style>
         button {

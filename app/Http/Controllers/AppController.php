@@ -15,8 +15,15 @@ class AppController extends Controller
         return Inertia::render('CustomerRouter');
     }
 
-    public function whatsappRender(){
-        return view('app2');
+    public function whatsappRender(string $idProduct, string $whatsappNumber){
+        $product = Productb2b::find($idProduct);
+        return view('app2', [
+            'title' => $product->name,
+            'description' => $product->description,
+            'image' => $product->image,
+            'idProduct' => $product->id,
+            'wa' => 'https://olistore.mx/app/ecommerce/'.$whatsappNumber
+        ]);
     }
 
 
