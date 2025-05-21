@@ -6,7 +6,7 @@
         </div>
         <div class="p-2 col-span-6">
             <span class="font-bold text-green-600 pr-24">$ {{ product.price }} MXN</span>
-                <el-button  size="small"   @click="sendByWhatsapp(product.name, product.description, product.image, product.id)">
+                <el-button  size="small"   @click="sendByWhatsapp(product.name, product.description, product.id)">
                     <svg height="15px" width="15px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                         viewBox="0 0 512 512" xml:space="preserve">
                     <path style="fill:#EDEDED;" d="M0,512l35.31-128C12.359,344.276,0,300.138,0,254.234C0,114.759,114.759,0,255.117,0
