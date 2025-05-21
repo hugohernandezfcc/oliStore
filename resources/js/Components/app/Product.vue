@@ -111,13 +111,13 @@ export default {
         },
         sendByWhatsapp(title, Description, idProduct){
             const phone = '5522539923'
-            const message = `https://olistore.mx/app/wa/${idProduct}/${phone}
-            Da click en la imagen para finalizar tu pedido de ${title}
+const message = `https://olistore.mx/app/wa/${idProduct}/${phone}
+Da *click en la imagen* para finalizar tu pedido de *${title}*
 
-            Precio: *$ ${this.product.price} MXN*
-            Precio por caja: *$ ${this.product.price * this.product.bundle} MXN*
+Precio: *$ ${this.product.price} MXN*
+Precio por caja: *$ ${this.product.price * this.product.bundle} MXN*
 
-            ${Description}`
+${Description}`;
 
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
             window.open(url, '_blank');
