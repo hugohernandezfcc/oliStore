@@ -15,8 +15,14 @@ class AppController extends Controller
         return Inertia::render('CustomerRouter');
     }
 
+    public function whatsappRender(){
+        return view('app2');
+    }
+
+
     public function validPhoneNumber(String $phoneNumber){
         $account = Account::with('contacts')->where('phone', $phoneNumber)->first();
+
 
         if($account){
             return response()->json([
@@ -41,6 +47,7 @@ class AppController extends Controller
                                    ->where($filter, '=', true)
                                    ->with('pricebookEntries')
                                    ->orderBy('order', 'asc')
+                                   ->limit(80)
                                    ->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
             return $producto->pricebookEntries->isNotEmpty();
@@ -103,7 +110,9 @@ class AppController extends Controller
     {
 
         $account = Account::where('phone', $whatsappNumber)->first();
-
+        if($whatsappNumber == '5522539923'){
+            $account->manager = true;
+        }
 
         return Inertia::render('Welcome',
             [
@@ -121,51 +130,5 @@ class AppController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

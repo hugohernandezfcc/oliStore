@@ -86,6 +86,7 @@ Route::post('ticketItem/update/{id}',                   [App\Http\Controllers\Ti
  * Core routes
  */
 Route::group(['prefix' => 'app' ], function () {
+        Route::get('/whatsapp', [App\Http\Controllers\AppController::class, 'whatsappRender']  );
         Route::get('/',                        [App\Http\Controllers\AppController::class, 'customerRouter']  );
         Route::get('/validuser/{phoneNumber}', [App\Http\Controllers\AppController::class, 'validPhoneNumber']  );
         /**
