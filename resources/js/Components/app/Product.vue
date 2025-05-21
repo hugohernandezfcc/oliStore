@@ -110,7 +110,7 @@ export default {
 
         },
         sendByWhatsapp(title, Description, idProduct){
-            const phone = '5522539923'
+            const phone = '5515686306'
 const message = `https://olistore.mx/app/wa/${idProduct}/${phone}
 Da *click en la imagen* para finalizar tu pedido de *${title}*
 
