@@ -109,13 +109,13 @@ export default {
                 return result;
 
         },
-        sendByWhatsapp(title, Description, image, idProduct){
+        sendByWhatsapp(title, Description, idProduct){
             const phone = '5522539923'
-            const message = `https://olistore.mx/app/whatsapp/${idProduct}/${phone}
-            Da click en la imagen para finalizar tu pedido.
+            const message = `https://olistore.mx/app/wa/${idProduct}/${phone}
+            Da click en la imagen para finalizar tu pedido de ${title}
 
-            Precio: $32930
-            Precio por caja: $1321
+            Precio: *$ ${this.product.price} MXN*
+            Precio por caja: *$ ${this.product.price * this.product.bundle} MXN*
 
             ${Description}`
 
