@@ -22,6 +22,15 @@ class AccountController extends Controller
         ]);
     }
 
+    public function getAccountsToSend()
+    {
+        $accounts = Contact::select('id', 'firstname', 'lastname', 'account_id', 'phone')->with('account')->get();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Accounts retrieved successfully',
+            'accounts' => $accounts
+        ])->setStatusCode(200);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -79,7 +88,7 @@ class AccountController extends Controller
                 'message' => 'Account already exists'
             ])->setStatusCode(400);
         }
-        
+
         $account = Account::create([
             'name'          => $request->name,
             'email'         => $request->email,

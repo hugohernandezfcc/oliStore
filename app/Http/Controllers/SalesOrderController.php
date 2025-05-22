@@ -15,13 +15,26 @@ class SalesOrderController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */ 
+     */
     public function index()
     {
         return Inertia::render('SalesOrders/Index', [
             'salesOrders' => SalesOrder::with(['createdBy', 'updatedBy', 'account'])->get()
         ]);
     }
+
+    public function ordersBySingleAccount(String $accountId){
+        $salesOrder = SalesOrder::with(['account'])->where('account_id', '=', $accountId)->get();
+
+        return response()->json($salesOrder);
+    }
+
+    public function productsOrder(String $orderId){
+        $orpb2b = Orpb2b::with(['productb2b'])->where('salesorder_id', '=', $orderId)->get();
+
+        return response()->json($orpb2b);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -36,7 +49,7 @@ class SalesOrderController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         if($request->get('note') == ''){
             $request->merge(['note' => 'Orden de compra generada por ' . User::find(Auth::id())->name . ' el ' . date('Y-m-d H:i:s') . ' para la tienda ' . Account::find($request->get('account_id'))->name]);
         }else{
@@ -69,8 +82,8 @@ class SalesOrderController extends Controller
         $salesOrder->verified   = false;
         $salesOrder->loaded     = false;
         $salesOrder->deliveried = false;
-        
-        
+
+
         $salesOrder[$field] = true;
         $salesOrder->save();
 
@@ -84,6 +97,9 @@ class SalesOrderController extends Controller
         $account = Account::with(['createdBy', 'editedBy', 'contacts', 'salesOrders'])->where('phone', '=', $request->get('whatsappNumber') )->first();
         $containsActiveOrder = false;
         $salesOrder = null;
+        $message = '*TICKET*'. PHP_EOL;
+        $message .= 'No. de orden: ' . PHP_EOL;
+
         for($i = 0; $i < count($account->salesOrders); $i++){
             if($account->salesOrders[$i]->status == 'Abierta'){
                 $containsActiveOrder = true;
@@ -112,8 +128,12 @@ class SalesOrderController extends Controller
                 'no_products'   => count($pli)
             ]);
         }
-            
+
+        $message .= $salesOrder->id . PHP_EOL;
+        $message .= ' - Pedido: ' . PHP_EOL;
+
         for($i = 1; $i < count($pli); $i++){
+            $message .= $pli[$i]['quantity'] . ' -' . $pli[$i]['name'] . PHP_EOL;
             Orpb2b::create([
                 'salesorder_id'  => $salesOrder->id,
                 'productb2b_id'  => $pli[$i]['id'],
@@ -133,11 +153,13 @@ class SalesOrderController extends Controller
                 'subtotal_price' => floatval($pli[$i]['price']) * floatval(explode(' ', $pli[$i]['quantity'])[0]),
             ]);
         }
-        
+
+        $message .= ' - Total: ' . $request->get('total') . PHP_EOL;
+        $message .= ' Muchas gracias por tu pedido.' . PHP_EOL;
 
         return response()->json([
             'salesOrder' => $salesOrder,
-            'message' => 'Se ha guardado la orden de compra'
+            'message' => $message
         ])->setStatusCode(200);
 
     }
@@ -147,8 +169,8 @@ class SalesOrderController extends Controller
      */
     public function show(String $salesOrder)
     {
-        
-        
+
+
 
         $so = SalesOrder::with(['salesOrderItems', 'createdBy', 'updatedBy', 'account'])->find($salesOrder);
         $so->created_at = $so->created_at->format('Y-m-d H:i:s');

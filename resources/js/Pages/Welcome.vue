@@ -1,13 +1,14 @@
 <script lang="ts">
 import productItem from '../Components/app/Product.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
-import {Search, ShoppingCartFull} from '@element-plus/icons-vue';
+import {Search, ShoppingCartFull, Checked, Expand, DArrowLeft, Close} from '@element-plus/icons-vue';
 import ProductsB2BOrderList from '@/Components/ProductsB2BOrderList.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import TimeLineOrders from '@/Components/TimeLineOrders.vue';
 export default{
     components:{
-        productItem, Search, ProductsB2BOrderList, ShoppingCartFull, InputLabel, PrimaryButton, TextInput
+        productItem, TimeLineOrders, Search, Close, DArrowLeft, Checked, Expand, ProductsB2BOrderList, ShoppingCartFull, InputLabel, PrimaryButton, TextInput
     },
     name: 'App',
     props:{
@@ -24,6 +25,14 @@ export default{
         }
     },
     methods:{
+        reviewOrdersView(){
+            this.reviewOrders = !this.reviewOrders;
+            this.drawerMenu = false;
+        },
+
+        logout(){
+            window.location.href = '/app';
+        },
         onJsonChanged(newVal) {
             this.closeSession = this.closeSession + 60000;
             console.log('onJsonChanged', this.closeSession);
@@ -49,7 +58,7 @@ export default{
                 if(clientType == 'b2c'){
                     productsB2B[i].price += OriginalPrice * 0.05;
                 }else{
-                    productsB2B[i].price -= OriginalPrice * 0.01;
+                    productsB2B[i].price -= OriginalPrice * 0.005;
                 }
                 productsB2B[i].price = parseFloat(productsB2B[i].price.toFixed(1));
 
@@ -79,14 +88,19 @@ export default{
                     setTimeout(() => {
                         this.confirmOrder = false;
                         this.dialog = false;
-                        location.reload();
-                    }, 2500);
+                        this.sendByWhatsapp(response.data.message);
+                    }, 2000);
                 }).catch(error => {
                     console.log('error:', error);
                 })
             }
+        },
 
+        sendByWhatsapp(message){
+            const phone = '5515686306'
 
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+            window.open(url, '_blank');
         },
         preOrder(){
 
@@ -137,12 +151,16 @@ export default{
                 alert('No hay productos seleccionados');
         },
 
-        handleChange(){
-            console.log('handleChange')
+        handleOpen(key, keyPath){
+            console.log(key, keyPath)
+
         },
         openFilters(){
-            this.loadProducts();
-            this.filtersDialog = true;
+            // this.loadProducts();
+            this.showFilterButton = true;
+            this.$nextTick(() => {
+                this.$refs.searchInput.focus();
+            });
         },
         clearFilters(){
             this.filters = {
@@ -191,8 +209,9 @@ export default{
         },
 
         navigationCategory(){
-            console.log('navigationCategory', this.goForIt);
 
+            this.filters.search = '';
+            this.activeTab = this.goForIt;
             this.filtersDialog = false;
             this.loadingNavigation = true;
 
@@ -225,6 +244,7 @@ export default{
                         console.log('localProducts:', localProducts);
                         this.products = localProducts;
                         this.loadingNavigation = false;
+
                 }).catch(error => {
                     console.log('error:', error);
                 });
@@ -232,17 +252,28 @@ export default{
 
         },
         filterTableData(localProducts) {
-            if(localProducts != null )
-                return localProducts.filter(
-                    (data) =>
-                    !this.filters.search || JSON.stringify(data).toLowerCase().includes(this.filters.search.toLowerCase() )
+
+            if(localProducts != null ){
+                console.log('activeTab:', this.activeTab);
+                let toReturn = localProducts.filter(
+                    (data) => !this.filters.search || (JSON.stringify(data).toLowerCase().includes(this.filters.search.toLowerCase()) && data[this.activeTab] == true)
                 );
-            else
+
+                if(toReturn.length == 0 && this.filters.search.length > 0 ){
+                        this.loadingNavigation = false;
+                }
+                return toReturn;
+            }else{
                 return localProducts;
+            }
         }
     },
     data(){
         return {
+            reviewOrders: false,
+            drawerMenu: false,
+            showFilterButton: false,
+            activeTab: 'drinks',
             loadingNavigation: false,
             closeSession: 900000, //900000,
             dialogVisible: false,
@@ -352,9 +383,9 @@ export default{
     <div class="fixed top-0 left-0 right-0  p-1 shadow-md z-50 grid grid-cols-3 border-b-2 border-red-400 place-items-center bg-white">
         <div class=" ">
             <span class="text-l md:text-xl lg:text-xl font-semibold text-red-600" >
-                <el-button type="danger" id="checkout" round  @click="openFilters">
-                        {{filterButtonLabel}} &nbsp; <el-icon><Search /></el-icon>
-                    </el-button>
+                <el-button  id="checkout" round @click="drawerMenu = true"  >
+                     <el-icon size="20"><Expand /></el-icon>
+                </el-button>
             </span>
         </div>
         <div >
@@ -367,18 +398,30 @@ export default{
 
     </div>
 
-    <div class="pt-16">
+    <div v-if="!reviewOrders" class="pt-16">
         <div v-if="appliedFilters" class="w-[95%] bg-red-600 rounded-b-md mx-2 p-1 text-white text-sm font-bold ">
             <center>
                 {{products.length}} Productos filtrados
             </center>
         </div>
-
-        <el-tabs v-model="goForIt" @tab-change="navigationCategory" :key="products.length">
+        <el-button type="danger" id="checkout" class="w-[95%] mx-2" round v-if="!showFilterButton"  @click="openFilters">
+            BUSCAR MIS PRODUCTOS &nbsp;<el-icon><Search /></el-icon>
+        </el-button>
+        <div class="grid grid-cols-12" v-if="showFilterButton">
+            <div class="col-span-10">
+                <TextInput  v-model="filters.search" placeholder="Filtra por palabra .. coca, arroz, azucar, huevo ..." class="shadow-lg shadow-red-600  p-2 mb-1 w-full ml-2" ref="searchInput"/>
+            </div>
+            <div class="col-span-2">
+                <el-button type="danger" id="checkout" class="w-[60%] m-1 ml-4" style="height: 35px!important;"   @click="showFilterButton = false">
+                    <el-icon size="25"><Close /></el-icon>
+                </el-button>
+            </div>
+        </div>
+        <el-tabs  v-model="goForIt" @tab-change="navigationCategory" :key="products.length">
             <el-tab-pane class="touch-manipulation" v-for="(category, index) in categories" :key="index" :label="category.label" :name="category.apiName">
-                <TextInput v-if="filtersDialog"   v-model="filters.search" placeholder="Filtra por palabra .. coca, arroz, azucar, huevo ..." class="shadow-lg shadow-red-600  p-2 mb-1 w-[95%] mx-2" />
+
                 <div v-for="product in filterTableData(products)" >
-                    <productItem v-if="product[category.apiName]" :key="product.id" :product="product"  />
+                    <productItem v-if="product[category.apiName]" :key="product.id" :product="product" :account="account" />
                 </div>
                 <span v-if="filterTableData(products).length == 0" class="text-red-600 text-lg py-6 font-bold " >
                         <div class="px-6" v-if="loadingNavigation">
@@ -402,7 +445,9 @@ export default{
         </el-tabs>
     </div>
 
-
+    <div v-if="reviewOrders" class="w-[95%] mx-4 mt-4">
+        <TimeLineOrders :account="account"/>
+    </div>
 
     <el-dialog v-model="confirmOrder" :modal="false" width="85%">
         <template #header> <div class="my-header">{{ orderProducts.length }} Productos = ${{ total }} MXN</div> </template>
@@ -447,10 +492,28 @@ export default{
         </div>
     </el-drawer>
 
+    <el-drawer v-model="drawerMenu" title="Oli Store App" style="background-color: #fff;" :direction="'ltr'" size="60%" class="-ml-1 ">
+        <br/>
 
+        <el-menu active-text-color="#fff" background-color="#fff" text-color="#fff" @open="handleOpen"  class="w-full">
+            <el-menu-item  class="border-2 border-red-600 rounded-lg my-2 bg-red-600" index="1" @click="reviewOrdersView">
+                <el-icon v-if="reviewOrders" color="#dc2626" size="25"><ShoppingCartFull /></el-icon>
+                <el-icon v-if="!reviewOrders" color="#dc2626" size="25"><Checked /></el-icon>
+                <span class="font-bold text-lg"> {{ reviewOrders ? 'Ir a Tienda' : 'Mis Pedidos' }}</span>
+            </el-menu-item>
+            <el-menu-item class="border-2 border-red-600 rounded-lg my-2 bg-red-600" index="2" @click="logout">
+                <el-icon  color="#dc2626" size="25"><DArrowLeft /></el-icon>
+                <span class="font-bold text-lg">Cerrar sesión</span>
+            </el-menu-item>
+        </el-menu>
+    </el-drawer>
 
 </template>
 <style >
+.el-menu{
+    border-right: none !important;
+
+}
 .my-header {
   display: flex;
   flex-direction: row;
