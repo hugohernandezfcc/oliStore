@@ -59,9 +59,14 @@ export default{
                 if(clientType == 'b2c'){
                     productsB2B[i].price += OriginalPrice * 0.05;
                 }else{
-                    productsB2B[i].price -= OriginalPrice * 0.005;
+                    productsB2B[i].price = OriginalPrice;
                 }
-                productsB2B[i].price = parseFloat(productsB2B[i].price.toFixed(1));
+
+                try {
+                    productsB2B[i].price = parseFloat(productsB2B[i].price.toFixed(1));
+                } catch (error) {
+                    console.log('error:', error);
+                }
 
                 this.products.push(productsB2B[i]);
             }
