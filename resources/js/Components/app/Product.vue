@@ -70,6 +70,7 @@
     </div>
 
     <el-dialog v-model="dialogTableVisible" width="100%"  :show-close="false" >
+        <el-input v-model="search"  placeholder="Type to search" class="shadow-2xl"/>
         <template #header="{ close, titleId, titleClass }">
             <div class="my-header">
                 <h4 :id="titleId" :class="titleClass">Clientes </h4>
@@ -78,10 +79,10 @@
                 </el-button>
             </div>
         </template>
-        <el-table :data="gridData">
+        <el-table :data="filterTableData">
             <el-table-column label="Tel." width="157" >
                 <template #default="scope">
-                    <el-button @click="sendByWhatsapp(title, description, idProduct, scope.row.phone)">
+                    <el-button @click="sendByWhatsapp(title, description, idProduct, scope.row.account.phone)">
                         <svg height="12px" width="12px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                         viewBox="0 0 512 512" xml:space="preserve">
                     <path style="fill:#EDEDED;" d="M0,512l35.31-128C12.359,344.276,0,300.138,0,254.234C0,114.759,114.759,0,255.117,0
@@ -143,6 +144,7 @@ export default {
     },
     data() {
         return {
+            search: '',
             select: '1',
             phoneToSend: '',
             dialogTableVisible: false,
@@ -201,6 +203,17 @@ ${Description}`;
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
             window.open(url, '_blank');
         }
+    },
+    computed: {
+        filterTableData() {
+            if(this.gridData.length == 0)
+                return [];
+
+            return this.gridData.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        },
     },
     mounted() {
         // console.log(this.account);

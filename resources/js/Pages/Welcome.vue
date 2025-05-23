@@ -1,20 +1,21 @@
 <script lang="ts">
 import productItem from '../Components/app/Product.vue';
 import PrimaryButton from '../Components/PrimaryButton.vue';
-import {Search, ShoppingCartFull, Checked, Expand, DArrowLeft, Close} from '@element-plus/icons-vue';
+import {Search, CircleCloseFilled, ShoppingCartFull, Checked, Expand, DArrowLeft, Close} from '@element-plus/icons-vue';
 import ProductsB2BOrderList from '@/Components/ProductsB2BOrderList.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TimeLineOrders from '@/Components/TimeLineOrders.vue';
 export default{
     components:{
-        productItem, TimeLineOrders, Search, Close, DArrowLeft, Checked, Expand, ProductsB2BOrderList, ShoppingCartFull, InputLabel, PrimaryButton, TextInput
+        productItem, CircleCloseFilled, TimeLineOrders, Search, Close, DArrowLeft, Checked, Expand, ProductsB2BOrderList, ShoppingCartFull, InputLabel, PrimaryButton, TextInput
     },
     name: 'App',
     props:{
         whatsappNumber: String,
         account: Object,
         ProductsB2B: Array,
+        optional: Object
     },
     watch: {
         products: {
@@ -104,13 +105,12 @@ export default{
         },
         preOrder(){
 
-            if(this.filterButtonLabel == '**FILTROS'){
-                this.clearFilters();
-            }
 
             console.log('preOrder')
             this.total = 0;
+            let preparePreviousProducts = this.orderProducts;
             this.orderProducts = [];
+
             for (let i = 0; i < this.products.length; i++) {
 
                 if(this.products[i].quantity > 0){
@@ -143,6 +143,10 @@ export default{
                 }
 
             }
+
+            if(preparePreviousProducts.length > 0)
+                this.orderProducts = [...preparePreviousProducts, ...this.orderProducts];
+
             console.log('orderProducts:', this.orderProducts);
 
             if(this.orderProducts.length > 0)
@@ -231,7 +235,7 @@ export default{
                 let localProducts = [...this.products]; // Clonamos el array
                 this.products = [];
 
-                axios.get('/app/ecommerce/' + queryProducts + '/json').then(response => {
+                axios.get('/app/ecommerce/' + queryProducts + '/json/fetch').then(response => {
                         let respuesta = Object.values(response.data);
 
                         if (respuesta.length > 0) {
@@ -266,6 +270,37 @@ export default{
             }else{
                 return localProducts;
             }
+        },
+        validDecimalValues(param1, param2){
+            const result = param1 / param2;
+            if(result % 1 !== 0)
+                return 0;
+            else
+                return result;
+
+        },
+        handleCloseProductDetail(done){
+            this.productDetail = null;
+            this.previewProduct = false;
+            done();
+        },
+        addToCartSingleProduct(product){
+            let addingJustQuantity = false;
+            for(let i = 0; i < this.orderProducts.length; i++){
+                if(this.orderProducts[i].id == product.id){
+                    this.orderProducts[i].quantity += product.quantity;
+                    addingJustQuantity = true;
+                    return;
+                }
+            }
+
+            if(!addingJustQuantity){
+                this.orderProducts.push(product);
+            }
+            this.total += product.price;
+            this.total = parseFloat(this.total.toFixed(1));
+            console.log('this.orderProducts:', this.orderProducts);
+            this.previewProduct = false;
         }
     },
     data(){
@@ -359,7 +394,9 @@ export default{
                     firstVisit: false
                 }
             ],
-            goForIt: ''
+            goForIt: '',
+            previewProduct: false,
+            productDetail: null
         }
     },
     mounted(){
@@ -369,6 +406,21 @@ export default{
         setTimeout(() => {
             this.$inertia.visit('/app')
         }, this.closeSession);
+
+        if(this.optional != null){
+            this.previewProduct = true;
+            this.productDetail = this.optional.product;
+            this.productDetail.quantity = 1;
+            this.productDetail.package = false;
+            this.categories[0].firstVisit = false;
+            for(let i = 0; i < this.categories.length; i++){
+                if(this.categories[i].apiName == this.optional.category){
+                    this.categories[i].firstVisit = true;
+                    this.goForIt = this.optional.category;
+                }
+            }
+        }
+
     },
     computed: {
 
@@ -506,6 +558,64 @@ export default{
                 <span class="font-bold text-lg">Cerrar sesión</span>
             </el-menu-item>
         </el-menu>
+    </el-drawer>
+
+    <el-drawer v-model="previewProduct"  direction="btt" class=" border-red-600  rounded-3xl" size="90%" :before-close="handleCloseProductDetail"><!--:before-close="handleClose"-->
+        <template #header="{ close, titleId, titleClass }">
+            <h4 :id="titleId" class="text-lg font-bold text-red-600">¡Comienza con lo escencial!</h4>
+            <el-button id="checkout" class="touch-manipulation" size="small" round @click="previewProduct = false">
+                <el-icon ><CircleCloseFilled /></el-icon>
+            </el-button>
+        </template>
+        <br/>
+        <center>
+            <img :src="productDetail.image" alt="" class="w-[60%]">
+        </center>
+        <el-descriptions title="Detalle del producto" :column="1" border>
+
+            <el-descriptions-item label="Nombre" label-align="right" align="left" >
+                <span >{{ productDetail.name}}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="Descripción" label-align="right" align="left" >
+                <span >{{productDetail.description}}</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="Precio" label-align="right" align="left" >
+                <span class="font-bold text-green-600">${{productDetail.price}} MXN</span>
+            </el-descriptions-item>
+        </el-descriptions>
+
+        <center>
+            <span class="text-xs font-bold text-blue-700" v-if="productDetail.bundle != null && productDetail.bundle > 0">*Paquete con {{ productDetail.bundle }} piezas = ${{ (productDetail.price * productDetail.bundle).toFixed(1) }} MXN</span>
+        <br/>
+        <el-input-number class="touch-manipulation" style="width: 120px;"  v-model="productDetail.quantity" :min="0" :max="100" v-if="productDetail.unit_type == 'unit'" />
+        <el-input v-model="productDetail.quantity" style="width: 150px; color:white;" placeholder="Please input" class="input-with-select"  v-if="productDetail.unit_type == 'grams'">
+            <template #append>
+                <el-select v-model="productDetail.unit_subtype" placeholder="PESOS" style="width: 80px; color: white;" id="unitType">
+                    <el-option label="$" value="1" />
+                    <el-option label="KG" value="2" />
+                </el-select>
+            </template>
+        </el-input>
+
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="Pedido por caja o pieza"
+            placement="top-end"
+        >
+            <el-switch
+                v-if="productDetail.quantity > 0 && productDetail.unit_type == 'unit'"
+                v-model="productDetail.package"
+                class="ml-2 touch-manipulation"
+                inline-prompt
+                style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+                active-text=" Caja "
+                inactive-text=" Pieza "
+                @change="(productDetail.package) ? productDetail.quantity = productDetail.quantity * productDetail.bundle : productDetail.quantity = this.validDecimalValues(productDetail.quantity, productDetail.bundle) "
+            />
+        </el-tooltip><br/><br/>
+        </center>
+        <el-button type="danger" class="w-full  touch-manipulation" id="checkout" @click="addToCartSingleProduct(productDetail)" round>AGREGAR A MI PEDIDO</el-button>
     </el-drawer>
 
 </template>

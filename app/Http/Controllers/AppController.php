@@ -22,7 +22,7 @@ class AppController extends Controller
             'description' => $product->description,
             'image' => $product->image,
             'idProduct' => $product->id,
-            'wa' => 'https://olistore.mx/app/ecommerce/'.$whatsappNumber
+            'wa' => 'https://olistore.mx/app/ecommerce/'.$whatsappNumber.'/'.$product->id
         ]);
     }
 
@@ -108,12 +108,82 @@ class AppController extends Controller
         }
     }
 
+    public function identifyCategory($producto){
+        if($producto->drinks){
+            return 'drinks';
+        }else if($producto->snacks){
+            return 'snacks';
+        }else if($producto->groceries){
+            return 'groceries';
+        }else if($producto->cleaning){
+            return 'cleaning';
+        }else if($producto->underFox){
+            return 'underFox';
+        }else if($producto->package){
+            return 'package';
+        }else if($producto->bundle){
+            return 'bundle';
+        }else if($producto->cigars){
+            return 'cigars';
+        }else if($producto->bimbo){
+            return 'bimbo';
+        }else if($producto->marinela){
+            return 'marinela';
+        }else if($producto->sabritas){
+            return 'sabritas';
+        }else if($producto->barcel){
+            return 'barcel';
+        }else{
+            return 'drinks';
+        }
+    }
 
+    public function prepareProduct($producto){
+        return [
+            'id' => $producto->id,
+            'name' => $producto->name,
+            'description' => $producto->description,
+            'price_details' => $producto->pricebookEntries->map(function ($price){
+                if ($price->is_active == 0) {
+                    return null;
+                }
+                return [
+                    'pricebook' => $price->pricebook->name,
+                    'price' => $price->price,
+                    'cost' => $price->cost,
+                ];
+            }),
+            'price' => $producto->pricebookEntries->map(function ($price){
+                if ($price->is_active == 0) {
+                    return null;
+                }
+                return $price->price;
+            })->first(),
+            'image' => $producto->image,
+            'unit_type' => ($producto->unit_measure == 'Granel') ? 'grams' : 'unit',
+            'unit_subtype' => '1',
+            'quantity' => 0,
+            'promo' => $producto->promo,
+            'bulkSale'  => $producto->bulkSale,
+            'drinks'    => $producto->drinks,
+            'snacks'    => $producto->snacks,
+            'groceries' => $producto->groceries,
+            'cleaning'  => $producto->cleaning,
+            'underFox'  => $producto->underFox,
+            'package'  => $producto->package,
+            'bundle' => $producto->bundle,
+            'cigars' => $producto->cigars,
+            'bimbo' => $producto->bimbo,
+            'marinela' => $producto->marinela,
+            'sabritas' => $producto->sabritas,
+            'barcel' => $producto->barcel
+        ];
+    }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(string $whatsappNumber)
+    public function index(string $whatsappNumber, string $optionalProduct = null)
     {
 
         $account = Account::where('phone', $whatsappNumber)->first();
@@ -121,13 +191,34 @@ class AppController extends Controller
             $account->manager = true;
         }
 
-        return Inertia::render('Welcome',
-            [
-                'whatsappNumber' => $whatsappNumber,
-                'account' => $account,
-                'ProductsB2B' => $this->utilityLoadProducts('drinks', 'php')
-            ]
-        );
+        if($optionalProduct != null){
+            $product = Productb2b::with('pricebookEntries')->find($optionalProduct);
+            $categoria = $this->identifyCategory($product);
+            return Inertia::render('Welcome',
+                [
+                    'whatsappNumber' => $whatsappNumber,
+                    'account' => $account,
+                    'ProductsB2B' => $this->utilityLoadProducts( $categoria, 'php'),
+                    'optional' => [
+                        'product' => $this->prepareProduct($product),
+                        'category' => $categoria,
+                        'actions' => []
+                    ]
+                ]
+            );
+
+        }else{
+
+            return Inertia::render('Welcome',
+                [
+                    'whatsappNumber' => $whatsappNumber,
+                    'account' => $account,
+                    'ProductsB2B' => $this->utilityLoadProducts('drinks', 'php'),
+                    'optional' => null
+                ]
+            );
+        }
+
     }
 
     public function search(String $searchWord){

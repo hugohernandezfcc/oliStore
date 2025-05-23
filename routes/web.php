@@ -92,8 +92,8 @@ Route::group(['prefix' => 'app' ], function () {
         /**
          * Routes for users
          */
-        Route::get('/ecommerce/{whatsappNumber}',           [App\Http\Controllers\AppController::class,         'index']  );
-        Route::get('/ecommerce/{filter}/{format}',          [App\Http\Controllers\AppController::class,         'utilityLoadProducts']);
+        Route::get('/ecommerce/{whatsappNumber}/{optionalProduct?}',           [App\Http\Controllers\AppController::class,         'index']  );
+        Route::get('/ecommerce/{filter}/{format}/fetch',          [App\Http\Controllers\AppController::class,         'utilityLoadProducts']);
         Route::get('/ecommerce/accounts/with/contacts',    [App\Http\Controllers\AccountController::class,     'getAccountsToSend']);
         Route::post('salesorder/store',                     [App\Http\Controllers\SalesOrderController::class,  'storeApp'])->name('salesorder.store.app');
         Route::get('salesorder/osa/{accountId}',           [App\Http\Controllers\SalesOrderController::class,  'ordersBySingleAccount'])->name('salesorder.orders.by.account');

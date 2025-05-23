@@ -18,6 +18,7 @@
 
     </head>
     <body class="font-sans antialiased" onload="window.location.href = '{{ $wa }}';">
+
     </body>
     <style>
         button {
