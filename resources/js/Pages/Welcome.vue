@@ -59,7 +59,11 @@ export default{
                 if(clientType == 'b2c'){
                     productsB2B[i].price += OriginalPrice * 0.05;
                 }else{
-                    productsB2B[i].price = OriginalPrice;
+                    if(productsB2B[i].sabritas){
+                        productsB2B[i].price -= OriginalPrice * 0.06;
+                    }else{
+                        productsB2B[i].price = OriginalPrice;
+                    }
                 }
 
                 try {
@@ -224,6 +228,16 @@ export default{
             this.filtersDialog = false;
             this.loadingNavigation = true;
 
+            let clientType = '';
+
+            if(this.account.email == 'b2c@olistore.mx'){
+                clientType = 'b2c';
+            }else{
+                clientType = 'b2b';
+            }
+
+
+
             let queryProducts = '';
             for (let i = 0; i < this.categories.length; i++) {
                 console.log('category:', this.categories[i]);
@@ -246,6 +260,11 @@ export default{
                         if (respuesta.length > 0) {
                             for (let i = 0; i < respuesta.length; i++) {
                                 respuesta[i].package = false;
+
+                                if((respuesta[i].sabritas || respuesta[i].bimbo) && clientType != 'b2c'){
+                                    respuesta[i].price -= respuesta[i].price * 0.055;
+                                }
+
                                 console.log('respuesta[i]:', respuesta[i]);
                                 localProducts.push(respuesta[i]);
                             }
