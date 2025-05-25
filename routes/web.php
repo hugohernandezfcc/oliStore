@@ -210,7 +210,8 @@ Route::group( ['prefix' => 'integrations' ], function () {
 });
 
 Route::group( ['prefix' => 'b2b',  'middleware' => ['auth:sanctum'] ], function () {
-        Route::resource('productsb2b',               App\Http\Controllers\Productb2bController::class      )->middleware('auth:sanctum');
+        Route::get('products/to/fix',                          [App\Http\Controllers\Productb2bController::class,     'productsToFix'])->name('products.to.fix');
+        Route::resource('productsb2b',                           App\Http\Controllers\Productb2bController::class      )->middleware('auth:sanctum');
         Route::post('productsb2b/upload',                       [App\Http\Controllers\Productb2bController::class,     'storeImage']);
         Route::post('productsb2b/changestatus',                 [App\Http\Controllers\Productb2bController::class,     'changeStatus']);
         Route::post('productsb2b/changing/cateogry',            [App\Http\Controllers\Productb2bController::class,     'changinCategory']);

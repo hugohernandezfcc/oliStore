@@ -91,10 +91,82 @@ export default{
             }).catch(error => {
                 console.log(error);
             });
+        },
+        navigationCategory(){
+            this.loading = true;
+            console.log('navigationCategory', this.activeTab);
+            if(this.activeTab == 'correctionWizard'){
+                axios.get(route('products.to.fix')).then(response => {
+                    console.log(response.data);
+                    this.productsb2bToFix = this.organizeCategories(response.data.productsb2bToFix);
+                    this.loading = false;
+
+                }).catch(error => {
+                    console.log(error);
+                    this.loading = false;
+                });
+            }
+
+
+            //this.virtualProductsToFix = this.productsb2bToFix;
+        },
+
+        organizeCategories( virtualList){
+            for(let i = 0; i < virtualList.length; i++){
+                virtualList[i].virtualCategories = [];
+
+                if(virtualList[i].bulkSale){
+                    virtualList[i].virtualCategories.push('bulkSale')
+                }
+
+                if(virtualList[i].drinks){
+                    virtualList[i].virtualCategories.push('drinks')
+                }
+
+                if(virtualList[i].snacks){
+                    virtualList[i].virtualCategories.push('snacks')
+                }
+
+                if(virtualList[i].groceries){
+                    virtualList[i].virtualCategories.push('groceries')
+                }
+
+                if(virtualList[i].cleaning){
+                    virtualList[i].virtualCategories.push('cleaning')
+                }
+
+                if(virtualList[i].underFox){
+                    virtualList[i].virtualCategories.push('underFox')
+                }
+
+                if(virtualList[i].cigars){
+                    virtualList[i].virtualCategories.push('cigars')
+                }
+
+                if(virtualList[i].bimbo){
+                    virtualList[i].virtualCategories.push('bimbo')
+                }
+
+                if(virtualList[i].marinela){
+                    virtualList[i].virtualCategories.push('marinela')
+                }
+
+                if(virtualList[i].sabritas){
+                    virtualList[i].virtualCategories.push('sabritas')
+                }
+
+                if(virtualList[i].barcel){
+                    virtualList[i].virtualCategories.push('barcel')
+                }
+
+            }
+            return virtualList;
         }
     },
     data(){
         return {
+            loading: false,
+            productsb2bToFix: [],
             productName: '',
             addPriceDialogVisible: false,
             costLocal: 0,
@@ -121,55 +193,7 @@ export default{
         }
     },
     mounted(){
-        this.virtualProducts = this.productsb2b;
-        for(let i = 0; i < this.virtualProducts.length; i++){
-            this.virtualProducts[i].virtualCategories = [];
-
-            if(this.virtualProducts[i].bulkSale){
-                this.virtualProducts[i].virtualCategories.push('bulkSale')
-            }
-
-            if(this.virtualProducts[i].drinks){
-                this.virtualProducts[i].virtualCategories.push('drinks')
-            }
-
-            if(this.virtualProducts[i].snacks){
-                this.virtualProducts[i].virtualCategories.push('snacks')
-            }
-
-            if(this.virtualProducts[i].groceries){
-                this.virtualProducts[i].virtualCategories.push('groceries')
-            }
-
-            if(this.virtualProducts[i].cleaning){
-                this.virtualProducts[i].virtualCategories.push('cleaning')
-            }
-
-            if(this.virtualProducts[i].underFox){
-                this.virtualProducts[i].virtualCategories.push('underFox')
-            }
-
-            if(this.virtualProducts[i].cigars){
-                this.virtualProducts[i].virtualCategories.push('cigars')
-            }
-
-            if(this.virtualProducts[i].bimbo){
-                this.virtualProducts[i].virtualCategories.push('bimbo')
-            }
-
-            if(this.virtualProducts[i].marinela){
-                this.virtualProducts[i].virtualCategories.push('marinela')
-            }
-
-            if(this.virtualProducts[i].sabritas){
-                this.virtualProducts[i].virtualCategories.push('sabritas')
-            }
-
-            if(this.virtualProducts[i].barcel){
-                this.virtualProducts[i].virtualCategories.push('barcel')
-            }
-
-        }
+        this.virtualProducts = this.organizeCategories(this.productsb2b);
         console.log('mounted',this.productsb2b);
     },
     computed: {
@@ -179,6 +203,12 @@ export default{
                 !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
             );
         },
+        filterTableDataToFix() {
+            return this.productsb2bToFix.filter(
+                (data) =>
+                !this.search || JSON.stringify(data).toLowerCase().includes(this.search.toLowerCase() )
+            );
+        }
     }
 
 }
@@ -235,8 +265,13 @@ export default{
 
             <br/>
 
-            <el-tabs v-model="activeTab" class="demo-tabs">
-                <el-tab-pane label="Tabla de Productos" name="productList">
+            <el-tabs v-model="activeTab" @tab-change="navigationCategory" class="demo-tabs" type="border-card">
+                <el-tab-pane name="productList">
+                    <template #label>
+                        <span class="custom-tabs-label">
+                            <span class="font-bold text-lg text-blue-600">Tabla de Productos</span>
+                        </span>
+                    </template>
                     <el-table :data="filterTableData" class="shadow-lg m-1" stripe  >
                         <el-table-column width="90" label="Editar" >
                             <template #default="scope" >
@@ -298,7 +333,79 @@ export default{
 
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="Importar Productos" name="importerWizard">
+                <el-tab-pane name="correctionWizard">
+                    <template #label>
+                        <span class="custom-tabs-label">
+                            <span class="font-bold text-lg text-red-600">Productos a corregir</span>
+                        </span>
+                    </template>
+                    <el-table :data="filterTableDataToFix" class="shadow-lg m-1" stripe v-loading="loading">
+                        <el-table-column width="90" label="Editar" >
+                            <template #default="scope" >
+                                <a :href="route('productsb2b.edit', scope.row.id)" class="text-blue-500 hover:text-blue-600" >
+                                    Editar
+                                </a>
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="100" label="Eliminar" >
+                            <template #default="scope" >
+                                <el-button size="small" color="#dc2626" @click="deleteProduct(scope.row.id)" >
+                                    X
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                        <el-table-column align="left" width="385" label="Nombre producto" fixed="left">
+                            <template #default="scope">
+                                <a :href="route('productsb2b.show', scope.row.id)" class="text-blue-500 hover:text-blue-600" >
+                                    <b>{{scope.row.name}}</b>
+                                </a>
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="140" label="Publicar" >
+                            <template #default="scope" >
+                                <el-checkbox v-model="scope.row.is_public" @change="changeStatus(scope.row.id, scope.row.is_public)" :label="(scope.row.is_public) ? 'Publico' : 'Oculto'" />
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="280" label="Categorías" >
+                            <template #default="scope" >
+                                <el-select-v2
+                                    v-model="scope.row.virtualCategories"
+                                    :options="virtualCategories"
+                                    placeholder="Seleccionar categorias"
+                                    style="width: 240px"
+                                    multiple
+                                    clearable
+                                    filterable
+                                    @visible-change="updateCategories($event, scope.row.id, scope.row.virtualCategories)"
+                                />
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="90" label="Orden" sortable >
+                            <template #default="scope" >
+                                <el-input v-model="scope.row.order" style="width: 50px" placeholder="Orden" @blur="updateOrder(scope.row.id, scope.row.order)" />
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="80" label="Precio" >
+                            <template #default="scope" >
+                                <el-button size="small" color="#dc2626" @click="addPriceTo(scope.row.id, scope.row.name)" >
+                                    $$
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="180" label="Fecha de creación" sortable >
+                            <template #default="scope" >
+                                {{ scope.row.created_at }}
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane name="importerWizard">
+                    <template #label>
+                        <span class="custom-tabs-label">
+                            <span class="font-bold text-lg text-green-600">Importar Productos</span>
+                        </span>
+                    </template>
                     <div class="bg-gray-50 p-4 border-gray-400 border-2 rounded-xl">
                         <ImporterWizard :modelFields="wizard" />
                     </div>

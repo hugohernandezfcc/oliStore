@@ -19,10 +19,17 @@ class Productb2bController extends Controller
      */
     public function index()
     {
-        //
+
         return Inertia::render('Productsb2b/Index', [
             'wizard' => Productb2b::WIZARD_COLUMNS,
-            'productsb2b' => Productb2b::where('image', '!=', 'https://olistore-bucket.s3.us-east-2.amazonaws.com/products/CleanShot+2025-04-25+at+18.16.59%402x.png')->orderBy('created_at', 'desc')->get()
+            'productsb2b' => Productb2b::where('image', '!=', 'https://olistore-bucket.s3.us-east-2.amazonaws.com/products/CleanShot+2025-04-25+at+18.16.59%402x.png')->orderBy('id', 'desc')->get()
+        ]);
+    }
+
+    public function productsToFix(){
+        return response()->json([
+            'productsb2bToFix' => Productb2b::where('image', '=', 'https://olistore-bucket.s3.us-east-2.amazonaws.com/products/CleanShot+2025-04-25+at+18.16.59%402x.png')->orderBy('id', 'desc')->get()
+
         ]);
     }
 
