@@ -47,6 +47,76 @@ class AppController extends Controller
 
     }
 
+    public function globalSearch(Request $request){
+        $search = $request->get('search');
+        $products = Productb2b::where(function($query) use ($search) {
+            $string_sin_ultima_letra = substr($search, 0, -1);
+
+
+            $query->whereRaw("LOWER(name) LIKE ?", ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw("LOWER(description) LIKE ?", ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw("LOWER(name) LIKE ?", ['%' . strtolower($string_sin_ultima_letra) . '%'])
+                  ->orWhereRaw("LOWER(description) LIKE ?", ['%' . strtolower($string_sin_ultima_letra) . '%'])
+                  ->orWhereRaw("LOWER(name) LIKE ?", ['%' . strtolower($string_sin_ultima_letra.'s') . '%'])
+                  ->orWhereRaw("LOWER(description) LIKE ?", ['%' . strtolower($string_sin_ultima_letra.'s') . '%']);
+        })
+        ->where('is_public', '=', true)
+        ->with('pricebookEntries')
+        ->orderBy('order', 'asc')
+        ->limit(80)
+        ->get();
+
+        $products = $products->filter(function ($producto) {
+            return $producto->pricebookEntries->isNotEmpty();
+        });
+        $products = $products->map(function ($producto) {
+            return [
+                'id' => $producto->id,
+                'name' => $producto->name,
+                'description' => $producto->description,
+                'price_details' => $producto->pricebookEntries->map(function ($price){
+                    if ($price->is_active == 0) {
+                        return null;
+                    }
+                    return [
+                        'pricebook' => $price->pricebook->name,
+                        'price' => $price->price,
+                        'cost' => $price->cost,
+                    ];
+                }),
+                'price' => $producto->pricebookEntries->map(function ($price){
+                    if ($price->is_active == 0) {
+                        return null;
+                    }
+                    return $price->price;
+                })->first(),
+                'image' => $producto->image,
+                'unit_type' => ($producto->unit_measure == 'Granel') ? 'grams' : 'unit',
+                'unit_subtype' => '1',
+                'quantity' => 0,
+                'promo' => $producto->promo,
+                'bulkSale'  => $producto->bulkSale,
+                'drinks'    => $producto->drinks,
+                'snacks'    => $producto->snacks,
+                'groceries' => $producto->groceries,
+                'cleaning'  => $producto->cleaning,
+                'underFox'  => $producto->underFox,
+                'package'  => $producto->package,
+                'bundle' => $producto->bundle,
+                'cigars' => $producto->cigars,
+                'bimbo' => $producto->bimbo,
+                'marinela' => $producto->marinela,
+                'sabritas' => $producto->sabritas,
+                'barcel' => $producto->barcel
+            ];
+        });
+
+        return response()->json([
+            'products' => $products,
+            'total' => $products->count(),
+            'search' => $search
+        ]);
+    }
 
     public function utilityLoadProducts(string $filter, string $format){
         set_time_limit(100);

@@ -100,6 +100,7 @@ Route::group(['prefix' => 'app' ], function () {
         Route::get('salesorder/osa/products/{orderId}',    [App\Http\Controllers\SalesOrderController::class,  'productsOrder'])->name('salesorder.products.order');
         Route::get('salesorder/{field}/{orpb2bId}',         [App\Http\Controllers\SalesOrderController::class,  'updateProductOrderStatus'])->name('salesorder.update.status.item');
         Route::get('salesorder/{status}/{recordId}/status', [App\Http\Controllers\SalesOrderController::class,  'updateStatus'])->name('salesorder.update.status.item');
+        Route::post('ecommerce/global/search/products', [App\Http\Controllers\AppController::class, 'globalSearch'])->name('ecommerce.global.search.products');
 
 });
 

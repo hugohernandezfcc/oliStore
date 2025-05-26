@@ -38,7 +38,7 @@
             </span>
             <span class="text-xs font-bold text-blue-700" v-if="product.bundle != null && product.bundle > 0">*Paquete con {{ product.bundle }} piezas = ${{ (product.price * product.bundle).toFixed(1) }} MXN</span>
             <br/>
-            <el-input-number class="touch-manipulation" style="width: 120px;"  v-model="product.quantity" :min="0" :max="100" v-if="product.unit_type == 'unit'" />
+            <el-input-number @change="counterProductItem(product)" class="touch-manipulation" style="width: 120px;"  v-model="product.quantity" :min="0" :max="100" v-if="product.unit_type == 'unit'" />
             <el-input v-model="product.quantity" style="width: 150px; color:white;" placeholder="Please input" class="input-with-select"  v-if="product.unit_type == 'grams'">
                 <template #append>
                     <el-select v-model="product.unit_subtype" placeholder="PESOS" style="width: 80px; color: white;" id="unitType">
@@ -155,6 +155,9 @@ export default {
         }
     },
     methods: {
+        counterProductItem(product){
+            this.$emit('counterProducts', product);
+        },
         openClients(title, Description, idProduct){
 
             axios.get('/app/ecommerce/accounts/with/contacts').then(response => {
