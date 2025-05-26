@@ -64,7 +64,7 @@ export default{
             let productsB2B = Object.values(this.ProductsB2B);
             // console.log(Array.isArray(productsB2B));
             for (let i = 0; i < productsB2B.length; i++) {
-                console.log('loadProduct:', productsB2B[i]);
+                // console.log('loadProduct:', productsB2B[i]);
                 productsB2B[i].package = false;
                 let OriginalPrice = productsB2B[i].price;
 
@@ -132,6 +132,8 @@ export default{
             let preparePreviousProducts = this.orderProducts;
             this.orderProducts = [];
             let prepareOrderProducts = (typeCar == 'GLOBAL_CAR') ? this.globalSearchProducts : this.products;
+            console.log('prepareOrderProducts:', prepareOrderProducts);
+            console.log('typeCar:', typeCar);
             for (let i = 0; i < prepareOrderProducts.length; i++) {
 
                 if(prepareOrderProducts[i].quantity > 0){
@@ -172,8 +174,7 @@ export default{
             this.globalSearchProducts = [];
             if(this.orderProducts.length > 0 && typeCar != 'GLOBAL_CAR')
                 this.dialog = true;
-            else
-                alert('No hay productos seleccionados');
+
         },
 
         handleOpen(key, keyPath){
@@ -294,7 +295,7 @@ export default{
         filterTableData(localProducts) {
 
             if(localProducts != null ){
-                console.log('activeTab:', this.activeTab);
+                // console.log('activeTab:', this.activeTab);
                 let toReturn = localProducts.filter(
                     (data) => !this.filters.search || (JSON.stringify(data).toLowerCase().includes(this.filters.search.toLowerCase()) && data[this.activeTab] == true)
                 );
@@ -349,6 +350,9 @@ export default{
             }).then(response => {
                 console.log(response.data);
                 this.globalSearchProducts = response.data.products;
+                for(let i = 0; i < this.globalSearchProducts.length; i++){
+                    this.globalSearchProducts[i].package = false;
+                }
             }).catch(error => {
                 console.log(error);
             });
@@ -598,10 +602,14 @@ export default{
 
 
     <el-drawer v-model="dialog"  direction="btt" class=" border-red-600  rounded-3xl" size="80%"><!--:before-close="handleClose"-->
-        <el-button type="danger" class="w-full -mt-8 touch-manipulation" id="checkout" @click="confirmOrder = true" round>CONFIRMO PEDIDO (${{ total }} MXN)</el-button>
-
-
+        <template #header="{ close, titleId, titleClass }">
+            <h4 :id="titleId" class="text-lg font-bold text-red-600">Carrito de compras</h4>
+            <el-button id="checkout" class="touch-manipulation -mt-2" size="small" round @click="dialog = false">
+                <el-icon ><CircleCloseFilled /></el-icon>
+            </el-button>
+        </template>
         <br/>
+        <el-button type="success" class="w-full mb-3 touch-manipulation" id="checkoutorder" size="large" @click="confirmOrder = true" round>CONFIRMO PEDIDO (${{ total }} MXN)</el-button>
         <br/>
         <div class="demo-drawer__content  ">
             <ProductsB2BOrderList :tableData="orderProducts"></ProductsB2BOrderList>
@@ -633,7 +641,7 @@ export default{
         </template>
         <el-button @click="preOrder('GLOBAL_CAR')" type="danger" class="w-full -mt-8 touch-manipulation" id="checkout" round>Agregar al carrito</el-button>
         <br/>
-        <productItem v-for="product in globalSearchProducts" :key="product.id" :product="product" :account="account" />
+        <productItem v-for="product in globalSearchProducts" :key="product.id" :product="product" :account="account" @counterProducts="counterProducts" />
     </el-drawer>
 
     <el-drawer v-model="previewProduct"  direction="btt" class=" border-red-600  rounded-3xl" size="90%" :before-close="handleCloseProductDetail"><!--:before-close="handleClose"-->
