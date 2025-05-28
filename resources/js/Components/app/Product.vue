@@ -202,7 +202,7 @@ Precio: *$ ${this.product.price} MXN*
 Precio por caja: *$ ${this.product.price * this.product.bundle} MXN*
 
 ${Description}`;
-
+            this.dialogTableVisible = false;
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
             window.open(url, '_blank');
         }

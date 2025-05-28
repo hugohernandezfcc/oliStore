@@ -124,7 +124,6 @@ class AppController extends Controller
                                    ->where($filter, '=', true)
                                    ->with('pricebookEntries')
                                    ->orderBy('order', 'asc')
-                                   ->limit(80)
                                    ->get();
         $productosWpbe = $productosWpbe->filter(function ($producto) {
             return $producto->pricebookEntries->isNotEmpty();
