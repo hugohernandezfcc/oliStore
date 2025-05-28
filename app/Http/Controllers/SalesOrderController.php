@@ -132,27 +132,30 @@ class SalesOrderController extends Controller
         $message .= $salesOrder->id . PHP_EOL;
         $message .= ' - Pedido: ' . PHP_EOL;
 
-        for($i = 1; $i < count($pli); $i++){
-            $message .= $pli[$i]['quantity'] . ' -' . $pli[$i]['name'] . PHP_EOL;
-            Orpb2b::create([
-                'salesorder_id'  => $salesOrder->id,
-                'productb2b_id'  => $pli[$i]['id'],
-                'quantity'       => $pli[$i]['quantity'],
-                'price'          => $pli[$i]['price'],
-                'created_by_id'  => 1,
-                'edited_by_id'   => 1,
-                'requested'      => true,
-                'verified'       => false,
-                'loaded'         => false,
-                'delivered'      => false,
-                'delivery_date'  => Carbon::now()->addDays(1),
-                'name'           => $pli[$i]['name'] . ' - ' . $pli[$i]['description'],
-                'quantity'       => $pli[$i]['quantity'],
-                'image'          => $pli[$i]['image'],
-                'unit_price'     => floatval($pli[$i]['price']),
-                'subtotal_price' => floatval($pli[$i]['price']) * floatval(explode(' ', $pli[$i]['quantity'])[0]),
-            ]);
-        }
+
+            for($i = 0; $i < count($pli); $i++){
+                $message .= $pli[$i]['quantity'] . ' -' . $pli[$i]['name'] . PHP_EOL;
+                 Orpb2b::create([
+                    'salesorder_id'  => $salesOrder->id,
+                    'productb2b_id'  => $pli[$i]['id'],
+                    'quantity'       => $pli[$i]['quantity'],
+                    'price'          => $pli[$i]['price'],
+                    'created_by_id'  => 1,
+                    'edited_by_id'   => 1,
+                    'requested'      => true,
+                    'verified'       => false,
+                    'loaded'         => false,
+                    'delivered'      => false,
+                    'delivery_date'  => Carbon::now()->addDays(1),
+                    'name'           => $pli[$i]['name'] . ' - ' . $pli[$i]['description'],
+                   // 'quantity'       => $pli[$i]['quantity'],
+                    'image'          => $pli[$i]['image'],
+                    'unit_price'     => floatval($pli[$i]['price']),
+                    'subtotal_price' => floatval($pli[$i]['price']) * floatval(explode(' ', $pli[$i]['quantity'])[0]),
+                ]);
+
+            }
+
 
         $message .= ' - Total: ' . $request->get('total') . PHP_EOL;
         $message .= ' Muchas gracias por tu pedido.' . PHP_EOL;
@@ -175,6 +178,8 @@ class SalesOrderController extends Controller
         $so = SalesOrder::with(['salesOrderItems', 'createdBy', 'updatedBy', 'account'])->find($salesOrder);
         $so->created_at = $so->created_at->format('Y-m-d H:i:s');
         $so->updated_at = $so->updated_at->format('Y-m-d H:i:s');
+
+        dd($so);
 
         return Inertia::render('SalesOrders/Show', [
             'customRecord' => $so,
